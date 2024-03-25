@@ -23,6 +23,7 @@ namespace CustomEncounter
             LogFatalError = (string log, Action action) => { LogError(log); Debug.LogError(log); };
             try
             {
+                CustomEncounterHook.Setup(Log);
                 Harmony harmony = new(NAME);
                 harmony.PatchAll(typeof(CustomEncounterHook));
             }

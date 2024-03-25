@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3b1598e6-6e71-445a-9db0-9a0b135869ca" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/EncounterData.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/EncounterHelper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CustomEncounter.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounter.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CustomEncounter.sln" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounter.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CustomEncounterHook.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounterHook.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CustomEncounterMod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounterMod.cs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/d4/18b6233d/SupportPersonality.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../Release/CustomEncounter_BIE.deps.json" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../Release/LimbusLocalize_BIE.deps.json" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/CustomEncounter.csproj" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/obj/x64/BIE/.NETCoreApp,Version=v7.0.AssemblyAttributes.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2eBkBXQfCM4DBPMBNsQehuVq72l" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/home/octeep/RiderProjects/CustomEncounter",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "/home/octeep/.config/JetBrains/Rider2023.3/resharper-host/DecompilerCache",
+      "/home/octeep/.config/JetBrains/Rider2023.3/resharper-host/SourcesCache",
+      "/home/octeep/.local/share/Symbols/src"
+    ]
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3b1598e6-6e71-445a-9db0-9a0b135869ca" name="Changes" comment="" />
+      <created>1711385223554</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1711385223554</updated>
+      <workItem from="1711385224989" duration="284000" />
+      <workItem from="1711385520354" duration="2877000" />
+    </task>
+    <task id="LOCAL-00001" summary="strip stuff">
+      <option name="closed" value="true" />
+      <created>1711387028894</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1711387028894</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="strip stuff" />
+    <option name="LAST_COMMIT_MESSAGE" value="strip stuff" />
+  </component>
+</project>
