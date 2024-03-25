@@ -100,6 +100,11 @@
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>..\lib\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
+    <!--
+    <Reference Include="UniverseLib.IL2CPP.Interop">
+      <HintPath>..\lib\UniverseLib.IL2CPP.Interop.dll</HintPath>
+    </Reference>
+     -->
   </ItemGroup>
   <Target Name="CopyFile" AfterTargets="build">
     <Message Text="Copying BIE files..." Importance="high" Condition="'$(Configuration)' == 'BIE'" />

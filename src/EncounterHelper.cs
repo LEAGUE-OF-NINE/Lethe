@@ -66,9 +66,13 @@ public static class EncounterHelper
                                                 node.EncounterId);
                                             break;
                                         case ENCOUNTER.AB_BATTLE:
+                                            stage = StaticDataManager.Instance.abBattleStageList.GetStage(
+                                                node.EncounterId);
+                                            break;
                                         case ENCOUNTER.BOSS:
                                             stage = StaticDataManager.Instance.abBattleStageList.GetStage(
                                                 node.EncounterId);
+                                            Console.WriteLine(node.EncounterId);
                                             break;
                                     }
 
@@ -111,47 +115,6 @@ public static class EncounterHelper
                 StageData = expData,
                 StageType = STAGE_TYPE.EXP_DUNGEON,
             });
-        }
-
-        // Thread Luxcavation
-        var threadList = StaticDataManager.Instance.ThreadDungeonDataList.GetList();
-        var threadEncounters = new List<EncounterData>();
-        EncounterLists.Add(new(uiList.GetText("enter_thread_dungeon"), threadEncounters));
-        foreach (var threadDungeonData in threadList)
-        {
-            var name = TextDataManager.Instance.ThreadDungeon.GetData(threadDungeonData.ID).GetName();
-            foreach (var threadStage in threadDungeonData.SelectStage)
-            {
-                threadEncounters.Add(new()
-                {
-                    Name = $"{name} {uiList.GetText("recommended_level")} {threadStage.RecommendedLevel}",
-                    StageData = StaticDataManager.Instance.ThreadDungeonBattleList.GetStage(threadStage.StageId),
-                    StageType = STAGE_TYPE.THREAD_DUNGEON,
-                });
-            }
-        }
-
-        // Railway Lines
-        var railwayList = StaticDataManager.Instance.RailwayDungeonDataList.GetList().ToArray();
-        foreach (var railwayDungeonData in railwayList)
-        {
-            var data = (
-                string.Format(uiList.GetText("mirror_refraction_railway_with_dungeon_name"),
-                    TextDataManager.Instance.RailwayDungeonText.GetData(railwayDungeonData.ID).GetName()),
-                new List<EncounterData>());
-            foreach (var dungeonSector in railwayDungeonData.Sector)
-            {
-                data.Item2.Add(new()
-                {
-                    Name = TextDataManager.Instance.RailwayDungeonStationName.GetData(railwayDungeonData.ID)
-                        .GetStationName(dungeonSector.NodeId),
-                    StageData = StaticDataManager.Instance.GetDungeonStage(dungeonSector.StageId, default,
-                        DUNGEON_TYPES.RAILWAY_DUNGEON),
-                    StageType = STAGE_TYPE.RAILWAY_DUNGEON,
-                });
-            }
-
-            EncounterLists.Add(data);
         }
     }
 
