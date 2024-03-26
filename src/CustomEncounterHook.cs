@@ -1,5 +1,6 @@
 ﻿using System;
 using BepInEx.Logging;
+using Dungeon;
 using HarmonyLib;
 using UnityEngine;
 using Il2CppInterop.Runtime.Injection;
@@ -29,6 +30,7 @@ namespace CustomEncounter
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 EncounterHelper.SaveEncounters();
+                EncounterHelper.SaveFormation();
             }
 
             if (Input.GetKeyDown(KeyCode.F11))
@@ -38,12 +40,16 @@ namespace CustomEncounter
                 {
                     var json = File.ReadAllText(CustomEncounterMod.EncounterConfig);
                     Log.LogInfo("Fight data:\n" + json);
+                    var stageData = JsonUtility.FromJson<StageStaticData>(json);
+                    json = File.ReadAllText(CustomEncounterMod.FormationConfig);
+                    Log.LogInfo("Formation data:\n" + json);
+                    var formation = JsonUtility.FromJson<Formation>(json);
                     EncounterHelper.ExecuteEncounter(new()
                     {
                         Name = "Custom Fight",
-                        StageData = JsonUtility.FromJson<StageStaticData>(json),
+                        StageData = stageData,
                         StageType = STAGE_TYPE.STORY_DUNGEON
-                    });
+                    }, formation);
                 }
                 catch (Exception ex)
                 {

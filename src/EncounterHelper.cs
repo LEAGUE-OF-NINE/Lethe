@@ -168,15 +168,24 @@ public static class EncounterHelper
         // }
     }
 
-    public static void ExecuteEncounter(EncounterData encounter)
+    public static void SaveFormation()
+    {
+        var path = Path.Combine(Paths.ConfigPath, "formation.json");
+        Log.LogInfo("Saving formation to " + path);
+        var formation = UserDataManager.Instance.Formations.GetCurrentFormation();
+        File.WriteAllText(path, JsonUtility.ToJson(formation, true));
+    }
+
+    public static void ExecuteEncounter(EncounterData encounter, Formation formation)
     {
         var gm = GlobalGameManager.Instance;
         gm.CurrentStage.SetNodeIDs(-1, -1, -1, -1);
         gm.CurrentStage.SetCurrentStageType(encounter.StageType);
-        var formation = UserDataManager.Instance.Formations.GetCurrentFormation();
+       
         var support = new SupportPersonality();
         var restrict = new RestrictParticipationData(new RestrictParticipationStaticData(), DUNGEON_TYPES.NONE);
         var unitFormation = new PlayerUnitFormation(formation, support, false, -1, restrict);
+        
         Singleton<StageController>.Instance
             .InitStageModel(encounter.StageData, encounter.StageType, new(), false, unitFormation);
         gm.LoadScene(SCENE_STATE.Battle, (Action)(() => gm.StartStage()));

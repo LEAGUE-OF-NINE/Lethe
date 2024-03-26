@@ -20,6 +20,7 @@ namespace CustomEncounter
        //  public static UIBase UiBase { get; private set; }
       
         public static string EncounterConfig = Path.Combine(Paths.ConfigPath, "encounter.json");
+        public static string FormationConfig = Path.Combine(Paths.ConfigPath, "formation.json");
 
         public override void Load()
         {
@@ -35,6 +36,10 @@ namespace CustomEncounter
                 if (!File.Exists(EncounterConfig))
                 {
                     File.Create(EncounterConfig).Close();
+                }
+                if (!File.Exists(FormationConfig))
+                {
+                    File.Create(FormationConfig).Close();
                 }
             }
             catch (Exception e)
