@@ -2,7 +2,6 @@ using System;
 
 namespace CustomEncounter;
 
-[Serializable]
 public class EncounterData
 {
     public string Name { get; set; }

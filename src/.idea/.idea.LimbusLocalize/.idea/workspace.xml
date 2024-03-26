@@ -6,9 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="3b1598e6-6e71-445a-9db0-9a0b135869ca" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LimbusLocalize/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LimbusLocalize/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CustomEncounter.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounter.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CustomEncounterHook.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounterHook.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CustomEncounterMod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounterMod.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncounterData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EncounterData.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EncounterHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EncounterHelper.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -38,6 +38,8 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/c7/7b2e5043/StoryInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/d4/18b6233d/SupportPersonality.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/d4/cd34f3bb/EnemyData.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9038fac216644bd5a48936828bc8923a5c9e00/06/c82daac5/Object.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9038fac216644bd5a48936828bc8923a5c9e00/9e/79dd9be7/File.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../Release/CustomEncounter_BIE.deps.json" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../Release/LimbusLocalize_BIE.deps.json" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CustomEncounter.csproj" root0="FORCE_HIGHLIGHTING" />
@@ -52,27 +54,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/octeep/RiderProjects/CustomEncounter",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/octeep/RiderProjects/CustomEncounter&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "/home/octeep/.config/JetBrains/Rider2023.3/resharper-host/DecompilerCache",
-      "/home/octeep/.config/JetBrains/Rider2023.3/resharper-host/SourcesCache",
-      "/home/octeep/.local/share/Symbols/src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;/home/octeep/.config/JetBrains/Rider2023.3/resharper-host/DecompilerCache&quot;,
+      &quot;/home/octeep/.config/JetBrains/Rider2023.3/resharper-host/SourcesCache&quot;,
+      &quot;/home/octeep/.local/share/Symbols/src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
       <option name="allowRunningInParallel" value="false" />

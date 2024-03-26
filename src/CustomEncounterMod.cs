@@ -2,6 +2,7 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using System;
+using Il2CppSystem.IO;
 using UnityEngine;
 
 namespace CustomEncounter
@@ -17,6 +18,9 @@ namespace CustomEncounter
         public static Action<string> LogError { get; set; }
         public static Action<string> LogWarning { get; set; }
        //  public static UIBase UiBase { get; private set; }
+      
+        public static string EncounterConfig = Path.Combine(Paths.ConfigPath, "encounter.json");
+
         public override void Load()
         {
             LogError = (string log) => { Log.LogError(log); Debug.LogError(log); };
@@ -27,12 +31,11 @@ namespace CustomEncounter
                 CustomEncounterHook.Setup(Log);
                 Harmony harmony = new(NAME);
                 harmony.PatchAll(typeof(CustomEncounterHook));
-                // Universe.Init(5f, OnInitialized, UniverseLog, new UniverseLibConfig()
-                // {
-                //     Disable_EventSystem_Override = true,
-                //     Force_Unlock_Mouse = true,
-                //     Unhollowed_Modules_Folder = Path.Combine(Paths.BepInExRootPath, "interop")
-                // });
+                EncounterHelper.Log = Log;
+                if (!File.Exists(EncounterConfig))
+                {
+                    File.Create(EncounterConfig).Close();
+                }
             }
             catch (Exception e)
             {

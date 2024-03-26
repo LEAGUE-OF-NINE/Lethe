@@ -1,4 +1,5 @@
-﻿using BepInEx.Logging;
+﻿using System;
+using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 using Il2CppInterop.Runtime.Injection;
@@ -25,33 +26,29 @@ namespace CustomEncounter
 
         private void Update()
         {
-            // if (Input.GetKeyDown(KeyCode.F10) && 
-            //     StaticDataManager.Instance is {IsDataLoaded:true} && 
-            //     TextDataManager.Instance is {IsLoadedRemote:true} &&
-            //     !AddressableManager.Instance.IsLocalizeDataLoading())
-            // {
-            //     EncounterPanel.Instance ??= new EncounterPanel(CustomEncounterMod.UiBase);
-            //     EncounterPanel.IsShown = !EncounterPanel.IsShown;
-            // }
+            if (Input.GetKeyDown(KeyCode.F10))
+            {
+                EncounterHelper.SaveEncounters();
+            }
 
             if (Input.GetKeyDown(KeyCode.F11))
             {
-                //var sd = Singleton<StaticDataManager>.Instance.GetDungeonStage(99999, true, DUNGEON_TYPES.STORY_DUNGEON);
                 Log.LogInfo("Entering custom fight");
-                var sd = StaticDataManager.Instance.abBattleStageList.GetStage(10348);
-                var ms = new MemoryStream();
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(ms, sd);
-                ms.Position = 0;
-                sd = formatter.Deserialize(ms).Cast<StageStaticData>();
-                ms.Close();
-                Log.LogInfo("Copied");
-                sd.waveList[0].unitList[0].unitCount = 3;
-                EncounterHelper.ExecuteEncounter(new EncounterData()
+                try
                 {
-                    StageData = sd,
-                    StageType = STAGE_TYPE.STORY_DUNGEON,
-                });
+                    var json = File.ReadAllText(CustomEncounterMod.EncounterConfig);
+                    Log.LogInfo("Fight data:\n" + json);
+                    EncounterHelper.ExecuteEncounter(new()
+                    {
+                        Name = "Custom Fight",
+                        StageData = JsonUtility.FromJson<StageStaticData>(json),
+                        StageType = STAGE_TYPE.STORY_DUNGEON
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError("Error loading custom fight: " + ex.Message);
+                }
             }
         }
         
