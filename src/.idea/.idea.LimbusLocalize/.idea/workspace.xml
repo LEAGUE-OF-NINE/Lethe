@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3b1598e6-6e71-445a-9db0-9a0b135869ca" name="Changes" comment="read encounter from a file">
+    <list default="true" id="3b1598e6-6e71-445a-9db0-9a0b135869ca" name="Changes" comment="customizable formation">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LimbusLocalize/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LimbusLocalize/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CustomEncounterHook.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounterHook.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CustomEncounterMod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounterMod.cs" afterDir="false" />
@@ -33,19 +33,33 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/15/b495c750/PlayerUnitFormation.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/17/986c0522/MainLobbyUIPanel.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/28/d39fd2bd/LoginSceneManager.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/44/dc391c5d/SwitchAccountUI.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/45/daaa93b7/StageStaticData.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/52/fc3b5ef8/SCENE_STATE.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/61/f9a0e949/StageStaticDataList.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/7c/c0e1f0bf/MainSceneLoadingManager.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/8a/8747f1aa/GlobalGameManager.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/9c/04286cb7/ExpDungeonUIPanel.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/9e/b73ca334/StaticDataManager.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/bc/15cda550/FormationPersonalityUIList.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/c7/7b2e5043/StoryInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/c9/3dfb1229/UserDataManager.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/c9/bdc8ad7a/UIPanel.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/d4/18b6233d/SupportPersonality.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/d4/cd34f3bb/EnemyData.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/fc/e7f584f6/Formation.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/120e08b8c2e34c6286e1a572a179d4ec2215400/fe/c7404748/FormationUIPanel.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/4295207aa79b4ee48bd30e2ea8cbf806329800/f2/16c799d9/MonoBehaviour.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9038fac216644bd5a48936828bc8923a5c9e00/06/c82daac5/Object.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9038fac216644bd5a48936828bc8923a5c9e00/9e/79dd9be7/File.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../Release/CustomEncounter_BIE.deps.json" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../Release/LimbusLocalize_BIE.deps.json" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CustomEncounter.csproj" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock:///home/octeep/RiderProjects/CustomEncounter/src/CustomEncounterHook.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/octeep/RiderProjects/CustomEncounter/src/CustomEncounterHook.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/octeep/RiderProjects/CustomEncounter/src/EncounterHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/obj/x64/BIE/.NETCoreApp,Version=v7.0.AssemblyAttributes.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
@@ -125,7 +139,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711461239777</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="customizable formation">
+      <option name="closed" value="true" />
+      <created>1711462125286</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1711462125286</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -148,6 +170,7 @@
     <MESSAGE value="strip stuff" />
     <MESSAGE value="finally getting somewhere" />
     <MESSAGE value="read encounter from a file" />
-    <option name="LAST_COMMIT_MESSAGE" value="read encounter from a file" />
+    <MESSAGE value="customizable formation" />
+    <option name="LAST_COMMIT_MESSAGE" value="customizable formation" />
   </component>
 </project>

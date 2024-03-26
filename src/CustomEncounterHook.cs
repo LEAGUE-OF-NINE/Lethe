@@ -6,12 +6,14 @@ using UnityEngine;
 using Il2CppInterop.Runtime.Injection;
 using Il2CppSystem.IO;
 using Il2CppSystem.Runtime.Serialization.Formatters.Binary;
+using MainUI;
 
 namespace CustomEncounter
 {
     public class CustomEncounterHook : MonoBehaviour
     {
         public static CustomEncounterHook Instance;
+        internal static StageStaticData Encounter;
         internal static ManualLogSource Log;
 
         internal static void Setup(ManualLogSource log)
@@ -30,7 +32,6 @@ namespace CustomEncounter
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 EncounterHelper.SaveEncounters();
-                EncounterHelper.SaveFormation();
             }
 
             if (Input.GetKeyDown(KeyCode.F11))
@@ -40,16 +41,8 @@ namespace CustomEncounter
                 {
                     var json = File.ReadAllText(CustomEncounterMod.EncounterConfig);
                     Log.LogInfo("Fight data:\n" + json);
-                    var stageData = JsonUtility.FromJson<StageStaticData>(json);
-                    json = File.ReadAllText(CustomEncounterMod.FormationConfig);
-                    Log.LogInfo("Formation data:\n" + json);
-                    var formation = JsonUtility.FromJson<Formation>(json);
-                    EncounterHelper.ExecuteEncounter(new()
-                    {
-                        Name = "Custom Fight",
-                        StageData = stageData,
-                        StageType = STAGE_TYPE.STORY_DUNGEON
-                    }, formation);
+                    Encounter = JsonUtility.FromJson<StageStaticData>(json);
+                    Log.LogInfo("Success, please go to excavation 1 to start the fight.");
                 }
                 catch (Exception ex)
                 {
@@ -63,6 +56,22 @@ namespace CustomEncounter
         private static void SetLoginInfo(LoginSceneManager __instance)
         {
             __instance.tmp_loginAccount.text = "CustomEncounter v" + CustomEncounterMod.VERSION;
+        }
+        
+        [HarmonyPatch(typeof(StageStaticDataList), nameof(StageStaticDataList.GetStage))]
+        [HarmonyPrefix]
+        private static bool PreGetStage(ref int id, ref StageStaticData __result)
+        {
+            switch (id)
+            {
+                case 1 when Encounter != null:
+                    __result = Encounter;
+                    return false;
+                case -1:
+                    id = 1;
+                    break;
+            }
+            return true;
         }
     }
 }

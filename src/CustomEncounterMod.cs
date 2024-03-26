@@ -20,7 +20,6 @@ namespace CustomEncounter
        //  public static UIBase UiBase { get; private set; }
       
         public static string EncounterConfig = Path.Combine(Paths.ConfigPath, "encounter.json");
-        public static string FormationConfig = Path.Combine(Paths.ConfigPath, "formation.json");
 
         public override void Load()
         {
@@ -37,10 +36,6 @@ namespace CustomEncounter
                 {
                     File.Create(EncounterConfig).Close();
                 }
-                if (!File.Exists(FormationConfig))
-                {
-                    File.Create(FormationConfig).Close();
-                }
             }
             catch (Exception e)
             {
@@ -48,36 +43,5 @@ namespace CustomEncounter
                 LogError(e.ToString());
             }
         }
-        
-        private void UniverseLog(string arg1, LogType arg2)
-        {
-            switch (arg2)
-            {
-                case LogType.Error:
-                    LogError(arg1);
-                    break;
-                case LogType.Assert:
-                    LogError(arg1);
-                    break;
-                case LogType.Warning:
-                    LogWarning(arg1);
-                    break;
-                case LogType.Log:
-                    Log.LogInfo(arg1);
-                    break;
-                case LogType.Exception:
-                    LogError(arg1);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(arg2), arg2, null);
-            }
-        }
-        
-        // private void OnInitialized()
-        // {
-        //     UiBase = UniversalUI.RegisterUI(GUID, () => {});
-        //     UiBase.SetOnTop();
-        //     EncounterPanel.IsShown = false;
-        // }
     }
 }
