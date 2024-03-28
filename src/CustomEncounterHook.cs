@@ -73,5 +73,15 @@ namespace CustomEncounter
             }
             return true;
         }
+        
+        [HarmonyPatch(typeof(SeasonInfoStaticDataList), nameof(SeasonInfoStaticDataList.GetNowSeasonInfo))]
+        [HarmonyPrefix]
+        private static bool PreGetNowSeasonInfo(SeasonInfoStaticDataList __instance, ref SeasonInfoStaticData __result)
+        {
+            var list = __instance.list;
+            __result = list.ToArray()[list.Count - 1];
+            return false;
+        }
+        
     }
 }

@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3b1598e6-6e71-445a-9db0-9a0b135869ca" name="Changes" comment="customizable formation">
+    <list default="true" id="3b1598e6-6e71-445a-9db0-9a0b135869ca" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LimbusLocalize/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LimbusLocalize/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CustomEncounterHook.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounterHook.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CustomEncounterMod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CustomEncounterMod.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EncounterHelper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EncounterHelper.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +54,7 @@
     <setting file="file://$PROJECT_DIR$/../Release/CustomEncounter_BIE.deps.json" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../Release/LimbusLocalize_BIE.deps.json" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CustomEncounter.csproj" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/octeep/RiderProjects/CustomEncounter/src/CustomEncounterHook.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///home/octeep/RiderProjects/CustomEncounter/src/CustomEncounterHook.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///home/octeep/RiderProjects/CustomEncounter/src/CustomEncounterHook.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///home/octeep/RiderProjects/CustomEncounter/src/EncounterHelper.cs" root0="SKIP_HIGHLIGHTING" />
@@ -147,7 +145,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711462125286</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="hijack excavation">
+      <option name="closed" value="true" />
+      <created>1711471865428</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1711471865428</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -171,6 +177,7 @@
     <MESSAGE value="finally getting somewhere" />
     <MESSAGE value="read encounter from a file" />
     <MESSAGE value="customizable formation" />
-    <option name="LAST_COMMIT_MESSAGE" value="customizable formation" />
+    <MESSAGE value="hijack excavation" />
+    <option name="LAST_COMMIT_MESSAGE" value="hijack excavation" />
   </component>
 </project>
