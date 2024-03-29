@@ -149,26 +149,19 @@ public static class EncounterHelper
         }
 
         // Railway Lines
-        // var railwayList = StaticDataManager.Instance.RailwayDungeonDataList.GetList().ToArray();
-        // foreach (var railwayDungeonData in railwayList)
-        // {
-        //     var data = (
-        //         string.Format(uiList.GetText("mirror_refraction_railway_with_dungeon_name"),
-        //             TextDataManager.Instance.RailwayDungeonText.GetData(railwayDungeonData.ID).GetName()),
-        //         new List<EncounterData>());
-        //     foreach (var dungeonSector in railwayDungeonData.Sector)
-        //     {
-        //         data.Item2.Add(new()
-        //         {
-        //             Name = TextDataManager.Instance.RailwayDungeonStationName.GetData(railwayDungeonData.ID)
-        //                 .GetStationName(dungeonSector.NodeId),
-        //             StageData = StaticDataManager.Instance.GetDungeonStage(dungeonSector.StageId, default,
-        //                 DUNGEON_TYPES.RAILWAY_DUNGEON),
-        //             StageType = STAGE_TYPE.RAILWAY_DUNGEON,
-        //         });
-        //     }
-
-        //     EncounterLists.Add(data);
-        // }
+        var railwayList = StaticDataManager.Instance.RailwayDungeonDataList;
+        foreach (var railwayData in railwayList.GetList())
+        {
+            var name = TextDataManager.Instance.RailwayDungeonText.GetData(railwayData.ID).GetName();
+            foreach (var railwayStage in railwayData.Sector)
+            {
+                SaveToFile(new()
+                {
+                    Name = $"{name}-{railwayStage.nodeId}-{railwayStage.stageId}",
+                    StageData = StaticDataManager.Instance.GetDungeonStage(railwayStage.stageId, default, DUNGEON_TYPES.RAILWAY_DUNGEON),
+                    StageType = STAGE_TYPE.RAILWAY_DUNGEON,
+                });
+            }
+        }
     }
 }
