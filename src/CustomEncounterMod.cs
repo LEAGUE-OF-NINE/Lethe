@@ -12,7 +12,7 @@ namespace CustomEncounter
     {
         public const string GUID = "carra.CustomEncounter";
         public const string NAME = "CustomEncounter";
-        public const string VERSION = "0.0.3";
+        public const string VERSION = "0.0.4.14";
         public const string AUTHOR = "Carra";
         public static Action<string, Action> LogFatalError { get; set; }
         public static Action<string> LogError { get; set; }
