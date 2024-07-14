@@ -101,8 +101,11 @@ namespace CustomEncounter
                 model._egoSkillModelList ??= new List<SkillModel>();
                 model._slotWeightConditionList ??= new List<string>();
                 model._defenseSkillIDList ??= new List<int>();
+
+                order++;
+                Log.LogInfo($"Adding assistant at {order} Owner: {assistantStaticData.ID}");
                 BattleUnitModel_Player player = new BattleUnitModel_Player(
-                    model, assistantStaticData.ID, order++, order);
+                    model, order, order, order);
                 
                 // needed for some reason
                 
@@ -164,24 +167,6 @@ namespace CustomEncounter
         [HarmonyPostfix]
         private static void SetSkillDictionary(ActionSlotDetail __instance)
         {
-            Log.LogInfo("===================================");
-            Log.LogInfo("Owner: " + __instance._owner.InstanceID);
-            Log.LogInfo("ATTRIBUTES: " + string.Join(", ", 
-                __instance._owner._unitDataModel.ClassInfo.AttributeList.ToArray().Select(x => x.SkillId)));
-            
-            Log.LogInfo("SKILL POOL");
-            foreach (var keyValuePair in __instance._owner.GetSkillPool())
-            {
-                Log.LogInfo("Key: " + keyValuePair.key + ", Value: " + keyValuePair.value);
-            }
-            
-            Log.LogInfo("SKILL DICTIONARY");
-            foreach (var keyValuePair in __instance._skillDictionary)
-            {
-                Log.LogInfo("Key: " + attributeName(keyValuePair.key) + ", Value: " + string.Join(", ", keyValuePair.value.ToArray().ToArray()));
-            }
-            Log.LogInfo("===================================");
-
             if (__instance._skillDictionary.Count == 0)
             {
                 var attackSkills = __instance._owner._unitDataModel.ClassInfo.AttributeList;
@@ -199,6 +184,15 @@ namespace CustomEncounter
                     __instance._skillDictionary[sin] = sinSkills;
                 }
             }
+        }
+
+        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.ReturnToDirection))]
+        [HarmonyPostfix]
+        private static void ReturnToDirection(BattleUnitView __instance)
+        {
+            Log.LogInfo($"Unit {__instance._instanceID} test {SingletonBehavior<BattleObjectManager>.Instance == null}");
+            BattleUnitModel model = SingletonBehavior<BattleObjectManager>.Instance.GetModel(__instance._instanceID);
+            Log.LogInfo($"Unit {__instance._instanceID} is null? ${model == null} Owner: ${model._unitDataModel._classInfo.ID}");
         }
     }
 }
