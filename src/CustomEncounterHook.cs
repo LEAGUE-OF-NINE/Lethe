@@ -128,41 +128,6 @@ namespace CustomEncounter
             Log.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
         }
 
-        private static string attributeName(ATTRIBUTE_TYPE attr)
-        {
-            switch (attr)
-            {
-                case ATTRIBUTE_TYPE.CRIMSON:
-                    return "CRIMSON";
-                case ATTRIBUTE_TYPE.SCARLET:
-                    return "SCARLET";
-                case ATTRIBUTE_TYPE.AMBER:
-                    return "AMBER";
-                case ATTRIBUTE_TYPE.SHAMROCK:
-                    return "SHAMROCK";
-                case ATTRIBUTE_TYPE.AZURE:
-                    return "AZURE";
-                case ATTRIBUTE_TYPE.INDIGO:
-                    return "INDIGO";
-                case ATTRIBUTE_TYPE.VIOLET:
-                    return "VIOLET";
-                case ATTRIBUTE_TYPE.WHITE:
-                    return "WHITE";
-                case ATTRIBUTE_TYPE.BLACK:
-                    return "BLACK";
-                case ATTRIBUTE_TYPE.SPECIAL_RED:
-                    return "SPECIAL RED";
-                case ATTRIBUTE_TYPE.SPECIAL_PALE:
-                    return "SPECIAL PALE";
-                case ATTRIBUTE_TYPE.NEUTRAL:
-                    return "NEUTRAL";
-                case ATTRIBUTE_TYPE.NONE:
-                    return "NONE";
-                default:
-                    return attr.ToString();
-            }
-        }
-
         [HarmonyPatch(typeof(ActionSlotDetail), nameof(ActionSlotDetail.SetSkillDictionary), new Type[]{  })]
         [HarmonyPostfix]
         private static void SetSkillDictionary(ActionSlotDetail __instance)
@@ -184,15 +149,20 @@ namespace CustomEncounter
                     __instance._skillDictionary[sin] = sinSkills;
                 }
             }
+
+            if (__instance._owner._unitDataModel._defenseSkillIDList.Count == 0)
+            {
+                __instance._owner._unitDataModel._defenseSkillIDList.Add(1100904);
+            }
         }
 
         [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.ReturnToDirection))]
         [HarmonyPostfix]
         private static void ReturnToDirection(BattleUnitView __instance)
         {
-            Log.LogInfo($"Unit {__instance._instanceID} test {SingletonBehavior<BattleObjectManager>.Instance == null}");
             BattleUnitModel model = SingletonBehavior<BattleObjectManager>.Instance.GetModel(__instance._instanceID);
             Log.LogInfo($"Unit {__instance._instanceID} is null? ${model == null} Owner: ${model._unitDataModel._classInfo.ID}");
+            Log.LogInfo($"Unit {__instance._instanceID} test {string.Join(", ", model.GetDefenseSkillIDList().ToArray().ToArray())}");
         }
     }
 }
