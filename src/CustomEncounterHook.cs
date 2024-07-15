@@ -93,7 +93,6 @@ namespace CustomEncounter
                 model._passiveList ??= new List<PassiveModel>();
                 model._addCondtionList ??= new List<EachMentalConditionInfo>();
                 model._associationList ??= new List<UNIT_KEYWORD>();
-                model._skillList ??= new List<SkillModel>();
                 model._minCondtionList ??= new List<EachMentalConditionInfo>();
                 model._supporterPassiveList ??= new List<SupporterPassiveModel>();
                 model._unitAttributeList ??= new List<UnitAttribute>();
@@ -102,30 +101,30 @@ namespace CustomEncounter
                 model._slotWeightConditionList ??= new List<string>();
                 model._defenseSkillIDList ??= new List<int>();
 
+                var skillList = new List<SkillModel>();
+                foreach (var unitAttribute in model.ClassInfo.AttributeList)
+                {
+                    var skillModel = Singleton<StaticDataManager>.Instance.SkillList.GetData(unitAttribute.SkillId);
+                    skillList.Add(new SkillModel(skillModel, 45, 1));
+                    Log.LogInfo($"Registering skill {unitAttribute.SkillId}");
+                }
+                model._skillList ??= skillList;
+                
                 order++;
                 Log.LogInfo($"Adding assistant at {order} Owner: {assistantStaticData.ID}");
                 BattleUnitModel_Player player = new BattleUnitModel_Player(
                     model, order, order, order);
                 
-                // needed for some reason
+                // add erosion data
+                var erosionData = new BattleUnitModel.EgoAndErosionState();
+                erosionData._egoList = new List<BattleEgoModel>();
+                var baseEgo = Singleton<StaticDataManager>.Instance.EgoList.GetData(20101);
+                erosionData._egoList.Add(new BattleEgoModel(UNIT_FACTION.PLAYER, baseEgo, 4));
+                player._erosionData ??= erosionData;
                 
                 // player._actionSlotDetail._skillDictionary.ad
                 __instance.AddUnit(player, 45, 4);
             }
-        }
-
-        [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]
-        [HarmonyPrefix]
-        private static void PreInitStage(StageController __instance, bool isCleared, bool isSandbox)
-        {
-            Log.LogInfo("Pre-InitStage " + isCleared + " " + isSandbox);
-        }
-        
-        [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]
-        [HarmonyPostfix]
-        private static void PostInitStage(StageController __instance, bool isCleared, bool isSandbox)
-        {
-            Log.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
         }
 
         [HarmonyPatch(typeof(ActionSlotDetail), nameof(ActionSlotDetail.SetSkillDictionary), new Type[]{  })]
@@ -154,15 +153,6 @@ namespace CustomEncounter
             {
                 __instance._owner._unitDataModel._defenseSkillIDList.Add(1100904);
             }
-        }
-
-        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.ReturnToDirection))]
-        [HarmonyPostfix]
-        private static void ReturnToDirection(BattleUnitView __instance)
-        {
-            BattleUnitModel model = SingletonBehavior<BattleObjectManager>.Instance.GetModel(__instance._instanceID);
-            Log.LogInfo($"Unit {__instance._instanceID} is null? ${model == null} Owner: ${model._unitDataModel._classInfo.ID}");
-            Log.LogInfo($"Unit {__instance._instanceID} test {string.Join(", ", model.GetDefenseSkillIDList().ToArray().ToArray())}");
         }
     }
 }
