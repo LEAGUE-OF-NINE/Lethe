@@ -7,6 +7,7 @@ using Il2CppSystem.IO;
 using Il2CppSystem.Text.RegularExpressions;
 using MainUI;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CustomEncounter;
 
@@ -16,16 +17,40 @@ public static class EncounterHelper
 
     public static void SaveToFile(EncounterData data)
     {
-        var path = Path.Combine(Paths.ConfigPath, "encounters", Regex.Replace(data.Name, @"\W", "") + ".json");
+        SaveToFile(data.StageData, "encounters", Regex.Replace(data.Name, @"\W", ""));
+    }
+    
+    public static void SaveToFile(Il2CppSystem.Object data, string root, string name)
+    {
+        var path = Path.Combine(Paths.ConfigPath, root, name + ".json");
         Log.LogInfo("Saving encounter to " + path);
         try
         {
-            var json = JsonUtility.ToJson(data.StageData, true);
+            var json = JsonUtility.ToJson(data, true);
             File.WriteAllText(path, json);
         }
         catch
         {
             Log.LogInfo("Failed saving " + path);
+        }
+    }
+
+    public static void SaveIdentities()
+    {
+        var root = "identities";
+        Log.LogInfo("Dumping identities....");
+        Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, root));
+        foreach (var personalityStaticData in Singleton<StaticDataManager>.Instance.PersonalityStaticDataList.list)
+        {
+            SaveToFile(personalityStaticData, root, personalityStaticData.ID.ToString());
+        }
+
+        root = "skills";
+        Log.LogInfo("Dumping skills....");
+        Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, root));
+        foreach (var skillStaticData in Singleton<StaticDataManager>.Instance.SkillList.list)
+        {
+            SaveToFile(skillStaticData, root, skillStaticData.ID.ToString());
         }
     }
     

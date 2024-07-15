@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BattleUI.Operation;
+using BepInEx;
 using BepInEx.Logging;
 using Dungeon;
 using HarmonyLib;
@@ -10,6 +11,8 @@ using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.IO;
 using Il2CppSystem.Runtime.Serialization.Formatters.Binary;
 using MainUI;
+using Server;
+using SimpleJSON;
 
 namespace CustomEncounter
 {
@@ -35,6 +38,7 @@ namespace CustomEncounter
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 EncounterHelper.SaveEncounters();
+                EncounterHelper.SaveIdentities();
             }
 
             if (Input.GetKeyDown(KeyCode.F11))
@@ -59,6 +63,51 @@ namespace CustomEncounter
         private static void SetLoginInfo(LoginSceneManager __instance)
         {
             __instance.tmp_loginAccount.text = "CustomEncounter v" + CustomEncounterMod.VERSION;
+        }
+        
+        [HarmonyPatch(typeof(StaticDataManager), nameof(StaticDataManager.LoadStaticDataFromJsonFile))]
+        [HarmonyPostfix]
+        private static void LoadStaticDataFromJsonFile(StaticDataManager __instance, string dataClass, ref List<JSONNode> nodeList)
+        {
+            Log.LogInfo($"Dumping {dataClass}");
+            var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "limbus_data", dataClass));
+            int i = 0;
+            foreach (var jsonNode in nodeList)
+            {
+                File.WriteAllText(Path.Combine(root.FullPath, $"{i}.json"), jsonNode.ToString(2));
+            }
+            
+            root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_data", dataClass));
+            foreach (var file in Directory.GetFiles(root.FullPath, "*.json"))
+            {
+                try
+                {
+                    Log.LogInfo($"Loading {file}");
+                    nodeList.Add(JSONNode.Parse(File.ReadAllText(file)));
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError($"Error parsing {file}: {ex.GetType()} {ex.Message}");
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(UserDataManager), nameof(UserDataManager.UpdateData))]
+        [HarmonyPostfix]
+        private static void UpdateData(UserDataManager __instance, UpdatedFormat updated)
+        {
+            var unlockedPersonalities = __instance._personalities._personalityList._list;
+            unlockedPersonalities.Clear();
+            foreach (var personalityStaticData in Singleton<StaticDataManager>.Instance.PersonalityStaticDataList.list)
+            {
+                var personality = new Personality(personalityStaticData.ID)
+                {
+                    _gacksung = 4,
+                    _level = 45,
+                    _acquireTime = new DateUtil()
+                };
+                unlockedPersonalities.Add(personality);
+            }
         }
 
         [HarmonyPatch(typeof(StageStaticDataList), nameof(StageStaticDataList.GetStage))]
