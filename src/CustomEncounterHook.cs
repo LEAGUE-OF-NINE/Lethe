@@ -117,6 +117,11 @@ namespace CustomEncounter
         [HarmonyPrefix]
         private static void PassiveUIManagerSetData(PassiveUIManager __instance)
         {
+            for (int i = 0; i < CUSTOM_PERSONALITY_REGISTRY.Count; i++)
+            {
+                __instance._passiveIconSlotList.Add(__instance._passiveIconSlotList.GetFirstElement());
+            }
+            // TODO: Error happens here because custom units mess with the passive bar on the left, is there a better way to fix this?
             // stub, to catch errors
         }
        
