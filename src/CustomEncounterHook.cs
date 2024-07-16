@@ -78,6 +78,7 @@ namespace CustomEncounter
             foreach (var jsonNode in nodeList)
             {
                 File.WriteAllText(Path.Combine(root.FullPath, $"{i}.json"), jsonNode.ToString(2));
+                i++;
             }
             
             root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_data", dataClass));
