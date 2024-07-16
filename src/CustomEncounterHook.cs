@@ -144,11 +144,23 @@ namespace CustomEncounter
             // stub, to catch errors
         }
 
-        [HarmonyPatch(typeof(BattleObjectManager), nameof(BattleObjectManager.CreateAllyUnits), typeof(List<PlayerUnitData>))]
+        private static System.Collections.Generic.Dictionary<int, PersonalityStaticData> CUSTOM_PERSONALITY_REGISTRY = new();
+        
+        [HarmonyPatch(typeof(PersonalityStaticDataList), nameof(PersonalityStaticDataList.GetData))]
+        [HarmonyPrefix]
+        private static bool PersonalityStaticDataListGetData(ref int id, ref PersonalityStaticData __result)
+        {
+            if (CUSTOM_PERSONALITY_REGISTRY.TryGetValue(id, out __result))
+                return false;
+            return true;
+        }
 
+        [HarmonyPatch(typeof(BattleObjectManager), nameof(BattleObjectManager.CreateAllyUnits), typeof(List<PlayerUnitData>))]
         [HarmonyPrefix]
         private static void CreateAllyUnits(BattleObjectManager __instance, ref List<PlayerUnitData> sortedParticipants)
         {
+            CUSTOM_PERSONALITY_REGISTRY.Clear();
+            
             int order = sortedParticipants.Count;
             var customAssistantFolder = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_assistant"));
             Log.LogInfo("Scanning custom assistant data");
@@ -171,6 +183,7 @@ namespace CustomEncounter
                         };
                         var egos = new[] { new Ego(20101, EGO_OWNED_TYPES.USER)  };
                         var unit = new PlayerUnitData(personality, new Il2CppReferenceArray<Ego>(egos), false);
+                        CUSTOM_PERSONALITY_REGISTRY[personalityStaticData.ID] = personalityStaticData;
                         sortedParticipants.Add(unit);
                     }
                 }
