@@ -2,7 +2,9 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using System;
+using System.Linq;
 using Il2CppSystem.IO;
+using SD;
 using UnityEngine;
 
 namespace CustomEncounter
@@ -31,6 +33,17 @@ namespace CustomEncounter
                 CustomEncounterHook.Setup(Log);
                 Harmony harmony = new(NAME);
                 harmony.PatchAll(typeof(CustomEncounterHook));
+                foreach (var declaredMethod in AccessTools.GetDeclaredMethods(typeof(SDCharacterSkinUtil)))
+                {
+                    if (declaredMethod.Name == nameof(SDCharacterSkinUtil.CreateSkin))
+                    {
+                        Log.LogInfo($"Patching {declaredMethod.Name}");
+                        var isDirect = declaredMethod.GetParameters().ToArray().Any(x => x.Name == "appearanceID");
+                        harmony.Patch(declaredMethod,
+                            prefix: new HarmonyMethod(AccessTools.Method(typeof(CustomEncounterHook), isDirect ? nameof(CustomEncounterHook.CreateSkin) : nameof(CustomEncounterHook.CreateSkinForModel))));
+                    }
+                }
+                
                 EncounterHelper.Log = Log;
                 if (!File.Exists(EncounterConfig))
                 {

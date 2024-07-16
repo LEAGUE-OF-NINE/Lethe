@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+using Addressable;
 using BattleUI;
 using BattleUI.Operation;
 using BepInEx;
@@ -13,6 +15,7 @@ using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.IO;
 using Il2CppSystem.Runtime.Serialization.Formatters.Binary;
 using MainUI;
+using SD;
 using Server;
 using SimpleJSON;
 using Utils;
@@ -143,6 +146,56 @@ namespace CustomEncounter
             return true;
         }
 
+        public static bool CreateSkinForModel(BattleUnitView view, BattleUnitModel unit, Transform parent,
+            out DelegateEvent handler, ref CharacterAppearance __result)
+        {
+            return CreateSkin(view, unit.GetAppearanceID(), parent, out handler, ref __result);
+        }
+
+        public static bool CreateSkin(BattleUnitView view, string appearanceID, Transform parent,
+            out DelegateEvent handle, ref CharacterAppearance __result)
+        {
+            var label = "";
+            handle = null;
+            Log.LogInfo($"Loading asset {label}: {appearanceID}");
+
+            var prefix = "!abno_";
+            if (appearanceID.StartsWith(prefix))
+            {
+                label = SDCharacterSkinUtil._LABEL_ABNORMALITY;
+                appearanceID = appearanceID.Substring(prefix.Length);
+            }
+
+            prefix = "!enemy_";
+            if (appearanceID.StartsWith(prefix))
+            {
+                label = SDCharacterSkinUtil._LABEL_ENEMY;
+                appearanceID = appearanceID.Substring(prefix.Length);
+            }
+
+            if (label == "")
+            {
+                return true;
+            }
+
+            var res = AddressableManager.Instance.LoadAssetSync<GameObject>(label, appearanceID, parent);
+            if (res == null)
+            {
+                return true;
+            }
+           
+            var skin = res.Item1.GetComponent<CharacterAppearance>();
+            if (skin != null) {
+              skin.Initialize(view);
+              skin.charInfo.appearanceID = appearanceID;
+              handle = res.Item2;
+              __result = skin;
+              return false;
+            }
+
+            return true;
+        }
+
         [HarmonyPatch(typeof(BattleObjectManager), nameof(BattleObjectManager.CreateAllyUnits), typeof(List<PlayerUnitData>))]
         [HarmonyPrefix]
         private static void CreateAllyUnits(BattleObjectManager __instance, ref List<PlayerUnitData> sortedParticipants)
@@ -181,5 +234,20 @@ namespace CustomEncounter
                 }
             }
         }
+        
+        [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]
+        [HarmonyPrefix]
+        private static void PreInitStage(StageController __instance, bool isCleared, bool isSandbox)
+        {
+            Log.LogInfo("Pre-InitStage " + isCleared + " " + isSandbox);
+        }
+        
+        [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]
+        [HarmonyPostfix]
+        private static void PostInitStage(StageController __instance, bool isCleared, bool isSandbox)
+        {
+            Log.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
+        }
+        
     }
 }
