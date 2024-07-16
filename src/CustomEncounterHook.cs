@@ -96,24 +96,6 @@ namespace CustomEncounter
             }
         }
 
-        [HarmonyPatch(typeof(UserDataManager), nameof(UserDataManager.UpdateData))]
-        [HarmonyPostfix]
-        private static void UpdateData(UserDataManager __instance, UpdatedFormat updated)
-        {
-            var unlockedPersonalities = __instance._personalities._personalityList._list;
-            unlockedPersonalities.Clear();
-            foreach (var personalityStaticData in Singleton<StaticDataManager>.Instance.PersonalityStaticDataList.list)
-            {
-                var personality = new Personality(personalityStaticData.ID)
-                {
-                    _gacksung = 4,
-                    _level = 45,
-                    _acquireTime = new DateUtil()
-                };
-                unlockedPersonalities.Add(personality);
-            }
-        }
-
         [HarmonyPatch(typeof(StageStaticDataList), nameof(StageStaticDataList.GetStage))]
         [HarmonyPrefix]
         private static bool PreGetStage(ref int id, ref StageStaticData __result)
