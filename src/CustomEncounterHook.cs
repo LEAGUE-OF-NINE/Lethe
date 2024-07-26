@@ -18,6 +18,7 @@ using MainUI;
 using SD;
 using Server;
 using SimpleJSON;
+using UI.Utility;
 using Utils;
 
 namespace CustomEncounter
@@ -72,7 +73,7 @@ namespace CustomEncounter
         }
         
         [HarmonyPatch(typeof(StaticDataManager), nameof(StaticDataManager.LoadStaticDataFromJsonFile))]
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         private static void LoadStaticDataFromJsonFile(StaticDataManager __instance, string dataClass, ref List<JSONNode> nodeList)
         {
             Log.LogInfo($"Dumping {dataClass}");
@@ -131,6 +132,13 @@ namespace CustomEncounter
         [HarmonyPatch(typeof(DamageStatistics), nameof(DamageStatistics.SetResult))]
         [HarmonyPrefix]
         private static void DamageStatisticsSetResult(DamageStatistics __instance)
+        {
+            // stub, to catch errors
+        }
+       
+        [HarmonyPatch(typeof(BuffAbility_EgoAwakenDongrangTree), nameof(BuffAbility_EgoAwakenDongrangTree.OnRoundStart_After_Event))]
+        [HarmonyPrefix]
+        private static void BuffAbility_EgoAwakenDongrangTreeOnRoundStart_After_Event(BuffAbility_EgoAwakenDongrangTree __instance)
         {
             // stub, to catch errors
         }
