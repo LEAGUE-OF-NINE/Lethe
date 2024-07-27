@@ -247,10 +247,5 @@ public static class EncounterHelper
         DumpLocale(root, "userBanner", textManager._userBanner);
     }
 
-    public static void LoadCustomLocale<T>(JsonDataList<T> list, string name) where T : LocalizeTextData, new()
-    {
-        
-    }
-
     
 }
