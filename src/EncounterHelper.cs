@@ -6,6 +6,7 @@ using Dungeon.Map;
 using Il2CppSystem.IO;
 using Il2CppSystem.Text.RegularExpressions;
 using MainUI;
+using SimpleJSON;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -189,4 +190,67 @@ public static class EncounterHelper
             }
         }
     }
+    
+    private static void DumpLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list) where T : LocalizeTextData, new()
+    {
+        JSONObject obj = new JSONObject();
+        foreach (var keyValuePair in list._dic)
+        {
+            obj[keyValuePair.key] = JSONNode.Parse(JsonUtility.ToJson(keyValuePair.value));
+        }
+
+        File.WriteAllText(Path.Combine(root.FullPath, $"{name}.json"), obj.ToString(2));
+    }
+    
+    public static void SaveLocale()
+    {
+        TextDataManager textManager = Singleton<TextDataManager>.Instance;
+        LOCALIZE_LANGUAGE lang = GlobalGameManager.Instance.Lang;
+        Log.LogInfo("Dumping locale data: " + lang);
+        var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "limbus_locale", lang.ToString()));
+        DumpLocale(root, "uiList", textManager._uiList);
+        DumpLocale(root, "characterList", textManager._characterList);
+        DumpLocale(root, "personalityList", textManager._personalityList);
+        DumpLocale(root, "enemyList", textManager._enemyList);
+        DumpLocale(root, "egoList", textManager._egoList);
+        DumpLocale(root, "skillList", textManager._skillList);
+        DumpLocale(root, "passiveList", textManager._passiveList);
+        DumpLocale(root, "bufList", textManager._bufList);
+        DumpLocale(root, "itemList", textManager._itemList);
+        DumpLocale(root, "keywordList", textManager._keywordList);
+        DumpLocale(root, "skillTagList", textManager._skillTagList);
+        DumpLocale(root, "abnormalityEventList", textManager._abnormalityEventList);
+        DumpLocale(root, "attributeList", textManager._attributeList);
+        DumpLocale(root, "abnormalityCotentData", textManager._abnormalityCotentData);
+        DumpLocale(root, "keywordDictionary", textManager._keywordDictionary);
+        DumpLocale(root, "actionEvents", textManager._actionEvents);
+        DumpLocale(root, "egoGiftData", textManager._egoGiftData);
+        DumpLocale(root, "stageChapter", textManager._stageChapter);
+        DumpLocale(root, "stagePart", textManager._stagePart);
+        DumpLocale(root, "stageNodeText", textManager._stageNodeText);
+        DumpLocale(root, "dungeonNodeText", textManager._dungeonNodeText);
+        DumpLocale(root, "storyDungeonNodeText", textManager._storyDungeonNodeText);
+        DumpLocale(root, "quest", textManager._quest);
+        DumpLocale(root, "dungeonArea", textManager._dungeonArea);
+        DumpLocale(root, "battlePass", textManager._battlePass);
+        DumpLocale(root, "storyTheater", textManager._storyTheater);
+        DumpLocale(root, "announcer", textManager._announcer);
+        DumpLocale(root, "normalBattleResultHint", textManager._normalBattleResultHint);
+        DumpLocale(root, "abBattleResultHint", textManager._abBattleResultHint);
+        DumpLocale(root, "tutorialDesc", textManager._tutorialDesc);
+        DumpLocale(root, "iapProductText", textManager._iapProductText);
+        DumpLocale(root, "illustGetConditionText", textManager._illustGetConditionText);
+        DumpLocale(root, "choiceEventResultDesc", textManager._choiceEventResultDesc);
+        DumpLocale(root, "battlePassMission", textManager._battlePassMission);
+        DumpLocale(root, "gachaTitle", textManager._gachaTitle);
+        DumpLocale(root, "introduceCharacter", textManager._introduceCharacter);
+        DumpLocale(root, "userBanner", textManager._userBanner);
+    }
+
+    public static void LoadCustomLocale<T>(JsonDataList<T> list, string name) where T : LocalizeTextData, new()
+    {
+        
+    }
+
+    
 }
