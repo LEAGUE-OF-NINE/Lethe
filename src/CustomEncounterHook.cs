@@ -262,29 +262,29 @@ public class CustomEncounterHook : MonoBehaviour
             Log.LogInfo("Loading custom locale: " + file);
             foreach (var keyValuePair in localeJson)
             {
+                var valueJson = keyValuePair.value.ToString(2);
+                
                 try
                 {
-                    list._dic[keyValuePair.key] = JsonUtility.FromJson<T>(keyValuePair.value);
+                    var value = JsonUtility.FromJson<T>(valueJson);
+                    if (value == null)
+                    {
+                        throw new NullReferenceException("json parse result is null");
+                    }
+                    list._dic[keyValuePair.key] = value;
                     Log.LogInfo("Loaded custom locale for " + keyValuePair.key);
                 }
                 catch (Exception ex)
                 {
                     Log.LogError("Cannot load custom locale for " + keyValuePair.key + ", reason: " + ex);
+                    Log.LogError(valueJson);
                 }
             }
         }
     }
 
-    private static IEnumerator<WaitForSeconds> LoadCustomLocale(TextDataManager __instance, LOCALIZE_LANGUAGE lang)
+    private static void LoadCustomLocale(TextDataManager __instance, LOCALIZE_LANGUAGE lang)
     {
-        while (AddressableManager.Instance.IsLocalizeDataLoading())
-        {
-            Log.LogInfo("Waiting for locale to finish loading");
-            yield return new WaitForSeconds(1.0f);
-        }
-        
-        Log.LogInfo("Loading custom locale");
-
         var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_locale", lang.ToString()));
         LoadCustomLocale(root, "uiList", __instance._uiList);
         LoadCustomLocale(root, "characterList", __instance._characterList);
@@ -324,13 +324,18 @@ public class CustomEncounterHook : MonoBehaviour
         LoadCustomLocale(root, "introduceCharacter", __instance._introduceCharacter);
         LoadCustomLocale(root, "userBanner", __instance._userBanner);
     }
+
+    private static bool _localizeDataLoaded;
     
-    [HarmonyPatch(typeof(TextDataManager), nameof(TextDataManager.LoadRemote))]
+    [HarmonyPatch(typeof(MainUI.LobbyUIPresenter), nameof(MainUI.LobbyUIPresenter.Initialize))]
     [HarmonyPostfix]
-    private static void PostLoadRemote(TextDataManager __instance, LOCALIZE_LANGUAGE lang)
+    private static void PostMainUILoad()
     {
-        var coroutine = LoadCustomLocale(__instance, lang).WrapToIl2Cpp();
-        AddressableManager.Instance.StartCoroutine(coroutine);
+        if (!_localizeDataLoaded)
+        {
+            LoadCustomLocale(Singleton<TextDataManager>.Instance, GlobalGameManager.Instance.Lang);
+            _localizeDataLoaded = true;
+        }
     }
 
     [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]
