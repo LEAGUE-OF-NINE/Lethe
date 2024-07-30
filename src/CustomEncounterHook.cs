@@ -63,6 +63,8 @@ public class CustomEncounterHook : MonoBehaviour
         DontDestroyOnLoad(obj);
         obj.hideFlags |= HideFlags.HideAndDontSave;
         Instance = obj.AddComponent<CustomEncounterHook>();
+        
+        Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
     }
 
     [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.SetLoginInfo))]
@@ -182,7 +184,60 @@ public class CustomEncounterHook : MonoBehaviour
         handle = null;
         Log.LogInfo($"Loading asset {label}: {appearanceID}");
 
-        var prefix = "!abno_";
+        var prefix = "!custom_";
+        if (appearanceID.StartsWith(prefix))
+        {
+            appearanceID = appearanceID.Substring(prefix.Length);
+            var prefabPath = "";
+            if (appearanceID.Contains("/"))
+            {
+                var appearancePath = appearanceID.Split("/", 2);
+                appearanceID = appearancePath[0];
+                prefabPath = appearancePath[1];
+            }
+            
+            var appearanceDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
+            var path = Path.Combine(appearanceDir.FullPath, appearanceID + ".bundle");
+            if (!File.Exists(path))
+            {
+                Log.LogError("Cannot find asset bundle at: " + path);
+                return true;
+            }
+
+            var bundle = AssetBundle.LoadFromFile(path);
+            try
+            {
+                if (prefabPath == "")
+                {
+                    foreach (var assetName in bundle.AllAssetNames())
+                    {
+                        Log.LogInfo("Found asset: " + assetName);
+                    }
+
+                    prefabPath = bundle.AllAssetNames()[0];
+                }
+               
+                Log.LogInfo("Using prefab: " + prefabPath);
+                var asset = bundle.LoadAsset(prefabPath);
+                var gameObject = Instantiate(asset, parent.position, parent.rotation, parent).Cast<GameObject>();
+                var appearance = gameObject.GetComponent<CharacterAppearance>();
+                if (appearance != null)
+                {
+                    appearance.charInfo.appearanceID = appearanceID;
+                    appearance.Initialize(view);
+                    __result = appearance;
+                    return false;
+                }
+                
+                Log.LogError(appearanceID + ": appearance is null!?");
+            }
+            finally
+            {
+                bundle.Unload(false);
+            }
+        }
+        
+        prefix = "!abno_";
         if (appearanceID.StartsWith(prefix))
         {
             label = SDCharacterSkinUtil._LABEL_ABNORMALITY;
