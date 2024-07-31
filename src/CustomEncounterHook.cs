@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Addressable;
 using BattleUI;
+using BattleUI.BattleUnit;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP.Utils;
@@ -26,7 +27,9 @@ public class CustomEncounterHook : MonoBehaviour
     internal static StageStaticData Encounter;
     internal static ManualLogSource Log;
 
-    private static readonly Dictionary<int, PersonalityStaticData> CUSTOM_PERSONALITY_REGISTRY = new();
+    private static readonly Dictionary<int, PersonalityStaticData> CustomPersonalityRegistry = new();
+
+    private static DirectoryInfo _customAppearanceDir, _customSpriteDir, _customLocaleDir, _customAssistantDir;
 
     private void Update()
     {
@@ -64,7 +67,10 @@ public class CustomEncounterHook : MonoBehaviour
         obj.hideFlags |= HideFlags.HideAndDontSave;
         Instance = obj.AddComponent<CustomEncounterHook>();
         
-        Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
+        _customAppearanceDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
+        _customSpriteDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_sprites"));
+        _customLocaleDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_locale"));
+        _customAssistantDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_assistant"));
     }
 
     [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.SetLoginInfo))]
@@ -140,7 +146,7 @@ public class CustomEncounterHook : MonoBehaviour
     [HarmonyPrefix]
     private static void PassiveUIManagerSetData(PassiveUIManager __instance)
     {
-        for (var i = 0; i < CUSTOM_PERSONALITY_REGISTRY.Count; i++)
+        for (var i = 0; i < CustomPersonalityRegistry.Count; i++)
             __instance._passiveIconSlotList.Add(__instance._passiveIconSlotList.GetFirstElement());
         // TODO: Error happens here because custom units mess with the passive bar on the left, is there a better way to fix this?
         // stub, to catch errors
@@ -166,7 +172,7 @@ public class CustomEncounterHook : MonoBehaviour
     [HarmonyPrefix]
     private static bool PersonalityStaticDataListGetData(ref int id, ref PersonalityStaticData __result)
     {
-        if (CUSTOM_PERSONALITY_REGISTRY.TryGetValue(id, out __result))
+        if (CustomPersonalityRegistry.TryGetValue(id, out __result))
             return false;
         return true;
     }
@@ -196,8 +202,7 @@ public class CustomEncounterHook : MonoBehaviour
                 prefabPath = appearancePath[1];
             }
             
-            var appearanceDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
-            var path = Path.Combine(appearanceDir.FullPath, appearanceID + ".bundle");
+            var path = Path.Combine(_customAppearanceDir.FullPath, appearanceID + ".bundle");
             if (!File.Exists(path))
             {
                 Log.LogError("Cannot find asset bundle at: " + path);
@@ -275,12 +280,11 @@ public class CustomEncounterHook : MonoBehaviour
     private static void CreateAllyUnits(BattleObjectManager __instance,
         ref Il2CppSystem.Collections.Generic.List<PlayerUnitData> sortedParticipants)
     {
-        CUSTOM_PERSONALITY_REGISTRY.Clear();
+        CustomPersonalityRegistry.Clear();
 
         var order = sortedParticipants.Count;
-        var customAssistantFolder = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_assistant"));
         Log.LogInfo("Scanning custom assistant data");
-        foreach (var file in Directory.GetFiles(customAssistantFolder.FullPath, "*.json"))
+        foreach (var file in Directory.GetFiles(_customAssistantDir.FullPath, "*.json"))
             try
             {
                 var assistantJson = JSONNode.Parse(File.ReadAllText(file));
@@ -298,7 +302,7 @@ public class CustomEncounterHook : MonoBehaviour
                     };
                     var egos = new[] { new Ego(20101, EGO_OWNED_TYPES.USER) };
                     var unit = new PlayerUnitData(personality, new Il2CppReferenceArray<Ego>(egos), false);
-                    CUSTOM_PERSONALITY_REGISTRY[personalityStaticData.ID] = personalityStaticData;
+                    CustomPersonalityRegistry[personalityStaticData.ID] = personalityStaticData;
                     sortedParticipants.Add(unit);
                 }
             }
@@ -340,7 +344,7 @@ public class CustomEncounterHook : MonoBehaviour
 
     private static void LoadCustomLocale(TextDataManager __instance, LOCALIZE_LANGUAGE lang)
     {
-        var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_locale", lang.ToString()));
+        var root = Directory.CreateDirectory(Path.Combine(_customLocaleDir.FullPath, lang.ToString()));
         LoadCustomLocale(root, "uiList", __instance._uiList);
         LoadCustomLocale(root, "characterList", __instance._characterList);
         LoadCustomLocale(root, "personalityList", __instance._personalityList);
@@ -406,4 +410,65 @@ public class CustomEncounterHook : MonoBehaviour
     {
         Log.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
     }
+
+    private static Sprite LoadSpriteFromFile(string fileName)
+    {
+        try
+        {
+            var path = Path.Combine(_customSpriteDir.FullPath, fileName + ".png");
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+           
+            var data = File.ReadAllBytes(path);
+            var tex = new Texture2D(2, 2);
+            ImageConversion.LoadImage(tex, data);
+            return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+        }
+        catch (Exception ex)
+        {
+            Log.LogError("Error loading sprite " + fileName + ": " + ex);
+            return null;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerUnitSpriteList), nameof(PlayerUnitSpriteList.GetNormalProfileSprite))]
+    [HarmonyPrefix]
+    private static bool GetNormalProfileSprite(int personalityId, ref Sprite __result)
+    {
+        var customSprite = LoadSpriteFromFile("profile_" + personalityId);
+        if (customSprite == null) return true;
+        __result = customSprite;
+        return false;
+    }
+    
+   
+    [HarmonyPatch(typeof(PlayerUnitSpriteList), nameof(PlayerUnitSpriteList.GetInfoSprite))]
+    [HarmonyPrefix]
+    private static bool GetInfoSprite(int personalityId, ref Sprite __result)
+    {
+        return GetNormalProfileSprite(personalityId, ref __result);
+    }
+   
+    [HarmonyPatch(typeof(PlayerUnitSpriteList), nameof(PlayerUnitSpriteList.GetCGData))]
+    [HarmonyPrefix]
+    private static bool GetCGData(int personalityId, ref Sprite __result)
+    {
+        var customSprite = LoadSpriteFromFile("cg_" + personalityId);
+        if (customSprite == null) return true;
+        __result = customSprite;
+        return false;
+    }
+    
+    [HarmonyPatch(typeof(SkillModel), nameof(SkillModel.GetSkillSprite))]
+    [HarmonyPrefix]
+    private static bool GetSkillSprite(SkillModel __instance, ref Sprite __result)
+    {
+        var customSprite = LoadSpriteFromFile("skill_" + __instance.GetID());
+        if (customSprite == null) return true;
+        __result = customSprite;
+        return false;
+    }
+    
 }
