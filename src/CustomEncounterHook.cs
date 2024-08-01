@@ -152,6 +152,13 @@ public class CustomEncounterHook : MonoBehaviour
         // stub, to catch errors
     }
 
+    [HarmonyPatch(typeof(AbnormalityAppearance_Cromer1p), nameof(AbnormalityAppearance_Cromer1p.OnEndBehaviour))]
+    [HarmonyPrefix]
+    private static void KromerOnEndBehavior(AbnormalityAppearance_Cromer1p __instance)
+    {
+        // stub, to catch errors
+    }
+    
     [HarmonyPatch(typeof(DamageStatistics), nameof(DamageStatistics.SetResult))]
     [HarmonyPrefix]
     private static void DamageStatisticsSetResult(DamageStatistics __instance)
