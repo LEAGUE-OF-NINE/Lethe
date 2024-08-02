@@ -13,10 +13,12 @@ using Il2CppInterop.Runtime.Injection;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Collections;
 using Il2CppSystem.IO;
+using Il2CppSystem.Linq;
 using SD;
 using Server;
 using SimpleJSON;
 using UnityEngine;
+using UnityEngine.Playables;
 using Utils;
 
 namespace CustomEncounter;
@@ -418,20 +420,33 @@ public class CustomEncounterHook : MonoBehaviour
         Log.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
     }
 
+    public static Dictionary<string, Sprite> Sprites = new();
+    public static Dictionary<string, bool> SpriteExist = new();
+
     private static Sprite LoadSpriteFromFile(string fileName)
     {
+        if (SpriteExist.TryGetValue(fileName, out var spriteExists) && !spriteExists)
+            return null;
+        
+        if (Sprites.TryGetValue(fileName, out var sprite) && sprite != null)
+            return sprite;
+        
         try
         {
             var path = Path.Combine(_customSpriteDir.FullPath, fileName + ".png");
             if (!File.Exists(path))
             {
+                SpriteExist[fileName] = false;
                 return null;
             }
            
+            SpriteExist[fileName] = true;
             var data = File.ReadAllBytes(path);
             var tex = new Texture2D(2, 2);
             ImageConversion.LoadImage(tex, data);
-            return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+            sprite = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+            Sprites[fileName] = sprite;
+            return sprite;
         }
         catch (Exception ex)
         {
