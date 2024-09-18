@@ -1,0 +1,7 @@
+<Project>
+    <PropertyGroup>
+        <!-- Modify this file and change it to Directory.Build.props -->
+        <!-- LimbusCompanyFolder should be where your LimbusCompany.exe lives -->
+        <LimbusCompanyFolder>\path\to\Limbus Company</LimbusCompanyFolder>
+    </PropertyGroup>
+</Project>

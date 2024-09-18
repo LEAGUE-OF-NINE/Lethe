@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.IO;
 using Addressable;
 using BattleUI;
-using BattleUI.BattleUnit;
 using BepInEx;
 using BepInEx.Logging;
-using BepInEx.Unity.IL2CPP.Utils;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppSystem.Collections;
-using Il2CppSystem.IO;
-using Il2CppSystem.Linq;
 using SD;
 using Server;
 using SimpleJSON;
 using UnityEngine;
-using UnityEngine.Playables;
 using Utils;
 
 namespace CustomEncounter;
@@ -92,12 +84,12 @@ public class CustomEncounterHook : MonoBehaviour
         var i = 0;
         foreach (var jsonNode in nodeList)
         {
-            File.WriteAllText(Path.Combine(root.FullPath, $"{i}.json"), jsonNode.ToString(2));
+            File.WriteAllText(Path.Combine(root.FullName, $"{i}.json"), jsonNode.ToString(2));
             i++;
         }
 
         root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_data", dataClass));
-        foreach (var file in Directory.GetFiles(root.FullPath, "*.json"))
+        foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
             try
             {
                 Log.LogInfo($"Loading {file}");
@@ -211,7 +203,7 @@ public class CustomEncounterHook : MonoBehaviour
                 prefabPath = appearancePath[1];
             }
             
-            var path = Path.Combine(_customAppearanceDir.FullPath, appearanceID + ".bundle");
+            var path = Path.Combine(_customAppearanceDir.FullName, appearanceID + ".bundle");
             if (!File.Exists(path))
             {
                 Log.LogError("Cannot find asset bundle at: " + path);
@@ -283,48 +275,11 @@ public class CustomEncounterHook : MonoBehaviour
         return true;
     }
 
-    [HarmonyPatch(typeof(BattleObjectManager), nameof(BattleObjectManager.CreateAllyUnits),
-        typeof(Il2CppSystem.Collections.Generic.List<PlayerUnitData>))]
-    [HarmonyPrefix]
-    private static void CreateAllyUnits(BattleObjectManager __instance,
-        ref Il2CppSystem.Collections.Generic.List<PlayerUnitData> sortedParticipants)
-    {
-        CustomPersonalityRegistry.Clear();
-
-        var order = sortedParticipants.Count;
-        Log.LogInfo("Scanning custom assistant data");
-        foreach (var file in Directory.GetFiles(_customAssistantDir.FullPath, "*.json"))
-            try
-            {
-                var assistantJson = JSONNode.Parse(File.ReadAllText(file));
-                var personalityStaticDataList = new PersonalityStaticDataList();
-                var assistantJsonList = new Il2CppSystem.Collections.Generic.List<JSONNode>();
-                assistantJsonList.Add(assistantJson);
-                personalityStaticDataList.Init(assistantJsonList);
-                foreach (var personalityStaticData in personalityStaticDataList.list)
-                {
-                    Log.LogInfo($"Adding assistant at {order} Owner: {personalityStaticData.ID}");
-                    var personality = new CustomPersonality(11001, 45, 4, 0, false)
-                    {
-                        _classInfo = personalityStaticData,
-                        _battleOrder = order++
-                    };
-                    var egos = new[] { new Ego(20101, EGO_OWNED_TYPES.USER) };
-                    var unit = new PlayerUnitData(personality, new Il2CppReferenceArray<Ego>(egos), false);
-                    CustomPersonalityRegistry[personalityStaticData.ID] = personalityStaticData;
-                    sortedParticipants.Add(unit);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError($"Error parsing assistant data {file}: {ex.GetType()}: {ex.Message}");
-            }
-    }
     public static void LoadCustomLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list) where T : LocalizeTextData, new()
     {
         Log.LogInfo("Checking for custom locale: " + name);
-        root = Directory.CreateDirectory(Path.Combine(root.FullPath, name));
-        foreach (var file in Directory.GetFiles(root.FullPath, "*.json"))
+        root = Directory.CreateDirectory(Path.Combine(root.FullName, name));
+        foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
         {
             var localeJson = JSONNode.Parse(File.ReadAllText(file));
             Log.LogInfo("Loading custom locale: " + file);
@@ -353,7 +308,7 @@ public class CustomEncounterHook : MonoBehaviour
 
     private static void LoadCustomLocale(TextDataManager __instance, LOCALIZE_LANGUAGE lang)
     {
-        var root = Directory.CreateDirectory(Path.Combine(_customLocaleDir.FullPath, lang.ToString()));
+        var root = Directory.CreateDirectory(Path.Combine(_customLocaleDir.FullName, lang.ToString()));
         LoadCustomLocale(root, "uiList", __instance._uiList);
         LoadCustomLocale(root, "characterList", __instance._characterList);
         LoadCustomLocale(root, "personalityList", __instance._personalityList);
@@ -433,7 +388,7 @@ public class CustomEncounterHook : MonoBehaviour
         
         try
         {
-            var path = Path.Combine(_customSpriteDir.FullPath, fileName + ".png");
+            var path = Path.Combine(_customSpriteDir.FullName, fileName + ".png");
             if (!File.Exists(path))
             {
                 SpriteExist[fileName] = false;

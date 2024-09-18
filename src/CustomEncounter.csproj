@@ -40,79 +40,20 @@
   <!-- ~~~~~ ASSEMBLY REFERENCES ~~~~~ -->
   <!-- BepinEx -->
   <ItemGroup Condition="'$(Configuration)'=='BIE'">
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\lib\Assembly-CSharp.dll</HintPath>
+    <Reference Include="$(LimbusCompanyFolder)\BepInEx\core\*.dll">
+      <HintPath>%(Identity)</HintPath>
     </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>..\lib\BepInEx.Core.dll</HintPath>
+    <Reference Include="$(LimbusCompanyFolder)\BepInEx\unhollowed\*.dll">
+      <HintPath>%(Identity)</HintPath>
     </Reference>
-    <Reference Include="BepInEx.IL2CPP">
-      <HintPath>..\lib\BepInEx.Unity.IL2CPP.dll</HintPath>
+    <Reference Include="$(LimbusCompanyFolder)\mono\Managed\*.dll">
+      <HintPath>%(Identity)</HintPath>
     </Reference>
-    <Reference Include="Il2CppSystem">
-      <HintPath>..\lib\Il2CppSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2Cppmscorlib">
-      <HintPath>..\lib\Il2Cppmscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="Il2CppSystem.Core">
-      <HintPath>..\lib\Il2CppSystem.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\lib\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\lib\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>..\lib\UnityEngine.AssetBundleModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AudioModule">
-      <HintPath>..\lib\UnityEngine.AudioModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\lib\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>..\lib\UnityEngine.ImageConversionModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>..\lib\UnityEngine.JSONSerializeModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\lib\UnityEngine.PhysicsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>..\lib\UnityEngine.TextRenderingModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\lib\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UIModule">
-      <HintPath>..\lib\UnityEngine.UIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\lib\UnityEngine.IMGUIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>..\lib\UnityEngine.UnityWebRequestModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>..\lib\UnityEngine.InputLegacyModule.dll</HintPath>
-    </Reference>
-    <Reference Include="ACTk.Runtime">
-      <HintPath>..\lib\ACTk.Runtime.dll</HintPath>
-    </Reference>
-    <!--
-    <Reference Include="UniverseLib.IL2CPP.Interop">
-      <HintPath>..\lib\UniverseLib.IL2CPP.Interop.dll</HintPath>
-    </Reference>
-     -->
   </ItemGroup>
   <Target Name="CopyFile" AfterTargets="build">
     <Message Text="Copying BIE files..." Importance="high" Condition="'$(Configuration)' == 'BIE'" />
-    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(OutputPath)BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
-    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(GameDirectoryPath)BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(OutputPath)\BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(LimbusCompanyFolder)\BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
   </Target>
   <Import Project="../GamePath.targets" />
 </Project>

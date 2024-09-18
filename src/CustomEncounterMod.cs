@@ -1,9 +1,8 @@
 using BepInEx;
-using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using System;
 using System.Linq;
-using Il2CppInterop.Runtime.Injection;
+using BepInEx.IL2CPP;
 using Il2CppSystem.IO;
 using SD;
 using UnityEngine;
