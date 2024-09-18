@@ -1,29 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Addressable;
-using BattleUI;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using Il2CppInterop.Runtime.Injection;
+using Il2CppSystem.IO;
 using SD;
 using Server;
 using SimpleJSON;
+using UnhollowerRuntimeLib;
 using UnityEngine;
-using Utils;
 
 namespace CustomEncounter;
 
 public class CustomEncounterHook : MonoBehaviour
 {
-    public static CustomEncounterHook Instance;
-    internal static StageStaticData Encounter;
-    internal static ManualLogSource Log;
+    private static StageStaticData _encounter;
+    private static ManualLogSource _log;
 
-    private static readonly Dictionary<int, PersonalityStaticData> CustomPersonalityRegistry = new();
-
-    private static DirectoryInfo _customAppearanceDir, _customSpriteDir, _customLocaleDir, _customAssistantDir;
+    private static DirectoryInfo _customAppearanceDir, _customSpriteDir, _customLocaleDir;
 
     private void Update()
     {
@@ -36,17 +31,17 @@ public class CustomEncounterHook : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F11))
         {
-            Log.LogInfo("Entering custom fight");
+            _log.LogInfo("Entering custom fight");
             try
             {
                 var json = File.ReadAllText(CustomEncounterMod.EncounterConfig);
-                Log.LogInfo("Fight data:\n" + json);
-                Encounter = JsonUtility.FromJson<StageStaticData>(json);
-                Log.LogInfo("Success, please go to excavation 1 to start the fight.");
+                _log.LogInfo("Fight data:\n" + json);
+                _encounter = JsonUtility.FromJson<StageStaticData>(json);
+                _log.LogInfo("Success, please go to excavation 1 to start the fight.");
             }
             catch (Exception ex)
             {
-                Log.LogError("Error loading custom fight: " + ex.Message);
+                _log.LogError("Error loading custom fight: " + ex.Message);
             }
         }
     }
@@ -54,17 +49,15 @@ public class CustomEncounterHook : MonoBehaviour
     internal static void Setup(ManualLogSource log)
     {
         ClassInjector.RegisterTypeInIl2Cpp<CustomEncounterHook>();
-        Log = log;
+        _log = log;
 
         GameObject obj = new("carra.customencounter.bootstrap");
         DontDestroyOnLoad(obj);
         obj.hideFlags |= HideFlags.HideAndDontSave;
-        Instance = obj.AddComponent<CustomEncounterHook>();
         
         _customAppearanceDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
         _customSpriteDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_sprites"));
         _customLocaleDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_locale"));
-        _customAssistantDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_assistant"));
     }
 
     [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.SetLoginInfo))]
@@ -79,7 +72,7 @@ public class CustomEncounterHook : MonoBehaviour
     private static void LoadStaticDataFromJsonFile(StaticDataManager __instance, string dataClass,
         ref Il2CppSystem.Collections.Generic.List<JSONNode> nodeList)
     {
-        Log.LogInfo($"Dumping {dataClass}");
+        _log.LogInfo($"Dumping {dataClass}");
         var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "limbus_data", dataClass));
         var i = 0;
         foreach (var jsonNode in nodeList)
@@ -92,12 +85,12 @@ public class CustomEncounterHook : MonoBehaviour
         foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
             try
             {
-                Log.LogInfo($"Loading {file}");
+                _log.LogInfo($"Loading {file}");
                 nodeList.Add(JSONNode.Parse(File.ReadAllText(file)));
             }
             catch (Exception ex)
             {
-                Log.LogError($"Error parsing {file}: {ex.GetType()} {ex.Message}");
+                _log.LogError($"Error parsing {file}: {ex.GetType()} {ex.Message}");
             }
     }
 
@@ -125,8 +118,8 @@ public class CustomEncounterHook : MonoBehaviour
     {
         switch (id)
         {
-            case 1 when Encounter != null:
-                __result = Encounter;
+            case 1 when _encounter != null:
+                __result = _encounter;
                 return false;
             case -1:
                 id = 1;
@@ -134,16 +127,6 @@ public class CustomEncounterHook : MonoBehaviour
         }
 
         return true;
-    }
-
-    [HarmonyPatch(typeof(PassiveUIManager), nameof(PassiveUIManager.SetData))]
-    [HarmonyPrefix]
-    private static void PassiveUIManagerSetData(PassiveUIManager __instance)
-    {
-        for (var i = 0; i < CustomPersonalityRegistry.Count; i++)
-            __instance._passiveIconSlotList.Add(__instance._passiveIconSlotList.GetFirstElement());
-        // TODO: Error happens here because custom units mess with the passive bar on the left, is there a better way to fix this?
-        // stub, to catch errors
     }
 
     [HarmonyPatch(typeof(AbnormalityAppearance_Cromer1p), nameof(AbnormalityAppearance_Cromer1p.OnEndBehaviour))]
@@ -169,15 +152,6 @@ public class CustomEncounterHook : MonoBehaviour
         // stub, to catch errors
     }
 
-    [HarmonyPatch(typeof(PersonalityStaticDataList), nameof(PersonalityStaticDataList.GetData))]
-    [HarmonyPrefix]
-    private static bool PersonalityStaticDataListGetData(ref int id, ref PersonalityStaticData __result)
-    {
-        if (CustomPersonalityRegistry.TryGetValue(id, out __result))
-            return false;
-        return true;
-    }
-
     public static bool CreateSkinForModel(BattleUnitView view, BattleUnitModel unit, Transform parent,
         out DelegateEvent handler, ref CharacterAppearance __result)
     {
@@ -189,7 +163,7 @@ public class CustomEncounterHook : MonoBehaviour
     {
         var label = "";
         handle = null;
-        Log.LogInfo($"Loading asset {label}: {appearanceID}");
+        _log.LogInfo($"Loading asset {label}: {appearanceID}");
 
         var prefix = "!custom_";
         if (appearanceID.StartsWith(prefix))
@@ -198,7 +172,7 @@ public class CustomEncounterHook : MonoBehaviour
             var prefabPath = "";
             if (appearanceID.Contains("/"))
             {
-                var appearancePath = appearanceID.Split("/", 2);
+                var appearancePath = appearanceID.Split("/".ToCharArray(), 2);
                 appearanceID = appearancePath[0];
                 prefabPath = appearancePath[1];
             }
@@ -206,7 +180,7 @@ public class CustomEncounterHook : MonoBehaviour
             var path = Path.Combine(_customAppearanceDir.FullName, appearanceID + ".bundle");
             if (!File.Exists(path))
             {
-                Log.LogError("Cannot find asset bundle at: " + path);
+                _log.LogError("Cannot find asset bundle at: " + path);
                 return true;
             }
 
@@ -217,13 +191,13 @@ public class CustomEncounterHook : MonoBehaviour
                 {
                     foreach (var assetName in bundle.AllAssetNames())
                     {
-                        Log.LogInfo("Found asset: " + assetName);
+                        _log.LogInfo("Found asset: " + assetName);
                     }
 
                     prefabPath = bundle.AllAssetNames()[0];
                 }
                
-                Log.LogInfo("Using prefab: " + prefabPath);
+                _log.LogInfo("Using prefab: " + prefabPath);
                 var asset = bundle.LoadAsset(prefabPath);
                 var gameObject = Instantiate(asset, parent.position, parent.rotation, parent).Cast<GameObject>();
                 var appearance = gameObject.GetComponent<CharacterAppearance>();
@@ -235,7 +209,7 @@ public class CustomEncounterHook : MonoBehaviour
                     return false;
                 }
                 
-                Log.LogError(appearanceID + ": appearance is null!?");
+                _log.LogError(appearanceID + ": appearance is null!?");
             }
             finally
             {
@@ -277,12 +251,12 @@ public class CustomEncounterHook : MonoBehaviour
 
     public static void LoadCustomLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list) where T : LocalizeTextData, new()
     {
-        Log.LogInfo("Checking for custom locale: " + name);
+        _log.LogInfo("Checking for custom locale: " + name);
         root = Directory.CreateDirectory(Path.Combine(root.FullName, name));
         foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
         {
             var localeJson = JSONNode.Parse(File.ReadAllText(file));
-            Log.LogInfo("Loading custom locale: " + file);
+            _log.LogInfo("Loading custom locale: " + file);
             foreach (var keyValuePair in localeJson)
             {
                 var valueJson = keyValuePair.value.ToString(2);
@@ -295,12 +269,12 @@ public class CustomEncounterHook : MonoBehaviour
                         throw new NullReferenceException("json parse result is null");
                     }
                     list._dic[keyValuePair.key] = value;
-                    Log.LogInfo("Loaded custom locale for " + keyValuePair.key);
+                    _log.LogInfo("Loaded custom locale for " + keyValuePair.key);
                 }
                 catch (Exception ex)
                 {
-                    Log.LogError("Cannot load custom locale for " + keyValuePair.key + ", reason: " + ex);
-                    Log.LogError(valueJson);
+                    _log.LogError("Cannot load custom locale for " + keyValuePair.key + ", reason: " + ex);
+                    _log.LogError(valueJson);
                 }
             }
         }
@@ -365,18 +339,18 @@ public class CustomEncounterHook : MonoBehaviour
     [HarmonyPrefix]
     private static void PreInitStage(StageController __instance, bool isCleared, bool isSandbox)
     {
-        Log.LogInfo("Pre-InitStage " + isCleared + " " + isSandbox);
+        _log.LogInfo("Pre-InitStage " + isCleared + " " + isSandbox);
     }
 
     [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]
     [HarmonyPostfix]
     private static void PostInitStage(StageController __instance, bool isCleared, bool isSandbox)
     {
-        Log.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
+        _log.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
     }
 
-    public static Dictionary<string, Sprite> Sprites = new();
-    public static Dictionary<string, bool> SpriteExist = new();
+    private static readonly Dictionary<string, Sprite> Sprites = new();
+    private static readonly Dictionary<string, bool> SpriteExist = new();
 
     private static Sprite LoadSpriteFromFile(string fileName)
     {
@@ -405,7 +379,7 @@ public class CustomEncounterHook : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Log.LogError("Error loading sprite " + fileName + ": " + ex);
+            _log.LogError("Error loading sprite " + fileName + ": " + ex);
             return null;
         }
     }
