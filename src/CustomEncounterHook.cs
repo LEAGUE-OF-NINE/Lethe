@@ -152,17 +152,14 @@ public class CustomEncounterHook : MonoBehaviour
         // stub, to catch errors
     }
 
-    public static bool CreateSkinForModel(BattleUnitView view, BattleUnitModel unit, Transform parent,
-        out DelegateEvent handler, ref CharacterAppearance __result)
+    public static bool CreateSkinForModel(BattleUnitView view, BattleUnitModel unit, Transform parent, ref CharacterAppearance __result)
     {
-        return CreateSkin(view, unit.GetAppearanceID(), parent, out handler, ref __result);
+        return CreateSkin(view, unit.GetAppearanceID(), parent, ref __result);
     }
 
-    public static bool CreateSkin(BattleUnitView view, string appearanceID, Transform parent,
-        out DelegateEvent handle, ref CharacterAppearance __result)
+    public static bool CreateSkin(BattleUnitView view, string appearanceID, Transform parent, ref CharacterAppearance __result)
     {
         var label = "";
-        handle = null;
         _log.LogInfo($"Loading asset {label}: {appearanceID}");
 
         var prefix = "!custom_";
@@ -230,6 +227,13 @@ public class CustomEncounterHook : MonoBehaviour
             label = SDCharacterSkinUtil._LABEL_ENEMY;
             appearanceID = appearanceID.Substring(prefix.Length);
         }
+        
+        prefix = "!identity_";
+        if (appearanceID.StartsWith(prefix))
+        {
+            label = SDCharacterSkinUtil._LABEL_PERSONALITY;
+            appearanceID = appearanceID.Substring(prefix.Length);
+        }
 
         if (label == "") return true;
 
@@ -237,16 +241,11 @@ public class CustomEncounterHook : MonoBehaviour
         if (res == null) return true;
 
         var skin = res.Item1.GetComponent<CharacterAppearance>();
-        if (skin != null)
-        {
-            skin.Initialize(view);
-            skin.charInfo.appearanceID = appearanceID;
-            handle = res.Item2;
-            __result = skin;
-            return false;
-        }
-
-        return true;
+        if (skin == null) return true;
+        skin.Initialize(view);
+        skin.charInfo.appearanceID = appearanceID;
+        __result = skin;
+        return false;
     }
 
     public static void LoadCustomLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list) where T : LocalizeTextData, new()
