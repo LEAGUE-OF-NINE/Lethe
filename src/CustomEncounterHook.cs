@@ -7,7 +7,9 @@ using HarmonyLib;
 using Il2CppSystem.IO;
 using SD;
 using Server;
+using ServerConfig;
 using SimpleJSON;
+using Steamworks;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 
@@ -65,6 +67,29 @@ public class CustomEncounterHook : MonoBehaviour
     private static void SetLoginInfo(LoginSceneManager __instance)
     {
         __instance.tmp_loginAccount.text = "CustomEncounter v" + CustomEncounterMod.VERSION;
+    }
+    
+    [HarmonyPatch(typeof(ServerSelector), nameof(ServerSelector.GetServerURL))]
+    [HarmonyPostfix]
+    private static void ServerSelector_GetServerURL(ServerSelector __instance, ref string __result)
+    {
+        var serverURL = CustomEncounterMod.ConfigServer.Value;
+        if (!string.IsNullOrEmpty(serverURL))
+        {
+            __result = serverURL;
+        }
+    }
+
+    [HarmonyPatch(typeof(SteamUser), nameof(SteamUser.GetAuthSessionTicket))]
+    [HarmonyPrefix]
+    private static bool SteamUser_GetAuthSessionTicket(ref AuthTicket __result)
+    {
+        __result = new AuthTicket
+        {
+            Data = CustomEncounterMod.Identity
+        };
+
+        return false;
     }
 
     [HarmonyPatch(typeof(StaticDataManager), nameof(StaticDataManager.LoadStaticDataFromJsonFile))]
