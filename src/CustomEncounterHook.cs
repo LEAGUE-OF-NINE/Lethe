@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Addressable;
+using BattleUI;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -12,6 +13,7 @@ using SimpleJSON;
 using Steamworks;
 using UnhollowerRuntimeLib;
 using UnityEngine;
+using Utils;
 
 namespace CustomEncounter;
 
@@ -20,7 +22,7 @@ public class CustomEncounterHook : MonoBehaviour
     private static StageStaticData _encounter;
     private static ManualLogSource _log;
 
-    private static DirectoryInfo _customAppearanceDir, _customSpriteDir, _customLocaleDir;
+    private static DirectoryInfo _customAppearanceDir, _customSpriteDir, _customLocaleDir, _customAssistantDir;
 
     public CustomEncounterHook(IntPtr ptr) : base(ptr)
     {
@@ -65,6 +67,28 @@ public class CustomEncounterHook : MonoBehaviour
         _customAppearanceDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
         _customSpriteDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_sprites"));
         _customLocaleDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_locale"));
+        _customAssistantDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_assistant"));
+    }
+    
+    private static readonly Dictionary<int, PersonalityStaticData> CustomPersonalityRegistry = new();
+    
+    [HarmonyPatch(typeof(PassiveUIManager), nameof(PassiveUIManager.SetData))]
+    [HarmonyPrefix]
+    private static void PassiveUIManagerSetData(PassiveUIManager __instance)
+    {
+        for (var i = 0; i < CustomPersonalityRegistry.Count; i++)
+            __instance._passiveIconSlotList.Add(__instance._passiveIconSlotList.GetFirstElement());
+        // TODO: Error happens here because custom units mess with the passive bar on the left, is there a better way to fix this?
+        // stub, to catch errors
+    }
+    
+    [HarmonyPatch(typeof(PersonalityStaticDataList), nameof(PersonalityStaticDataList.GetData))]
+    [HarmonyPrefix]
+    private static bool PersonalityStaticDataListGetData(ref int id, ref PersonalityStaticData __result)
+    {
+        if (CustomPersonalityRegistry.TryGetValue(id, out __result))
+            return false;
+        return true;
     }
 
     [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.SetLoginInfo))]
