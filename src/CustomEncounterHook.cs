@@ -22,16 +22,20 @@ public class CustomEncounterHook : MonoBehaviour
 
     private static DirectoryInfo _customAppearanceDir, _customSpriteDir, _customLocaleDir;
 
-    private void Update()
+    public CustomEncounterHook(IntPtr ptr) : base(ptr)
     {
-        if (Input.GetKeyDown(KeyCode.F10))
+    }
+
+    internal void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             EncounterHelper.SaveLocale();
             EncounterHelper.SaveEncounters();
             EncounterHelper.SaveIdentities();
         }
 
-        if (Input.GetKeyDown(KeyCode.F11))
+        if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             _log.LogInfo("Entering custom fight");
             try
@@ -53,9 +57,10 @@ public class CustomEncounterHook : MonoBehaviour
         ClassInjector.RegisterTypeInIl2Cpp<CustomEncounterHook>();
         _log = log;
 
-        GameObject obj = new("carra.customencounter.bootstrap");
+        GameObject obj = new("CustomEncounterHook");
         DontDestroyOnLoad(obj);
         obj.hideFlags |= HideFlags.HideAndDontSave;
+        obj.AddComponent<CustomEncounterHook>();
         
         _customAppearanceDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
         _customSpriteDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_sprites"));
