@@ -6,6 +6,7 @@ using Server;
 using ServerConfig;
 using SimpleJSON;
 using UnhollowerRuntimeLib;
+using UnityEngine;
 
 namespace CustomEncounter.Patches;
 
@@ -59,8 +60,12 @@ public class Login : Il2CppSystem.Object
         try
         {
             var url = Singleton<ServerSelector>.Instance.GetServerURL() + "/Custom/Upload/" + dataClass;
-            var body = customDataList.ToString(2);
-            var schema = new HttpApiSchema(url, body, new Action<string>(_ => { }), "", false);
+            var auth = SingletonBehavior<LoginInfoManager>.Instance.UserAuth.ToServerUserAuthFormat();
+            var body = JSONNode.Parse(JsonUtility.ToJson(auth));
+            var subNode = new JSONObject();
+            subNode.Add("list", customDataList);
+            body.Add("parameters", subNode);
+            var schema = new HttpApiSchema(url, body.ToString(2), new Action<string>(_ => { }), "", false);
             HttpApiRequester.Instance.SendRequest(schema, true);
         }
         catch (Exception ex)
