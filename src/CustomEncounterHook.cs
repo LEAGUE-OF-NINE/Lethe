@@ -175,17 +175,43 @@ public class CustomEncounterHook : MonoBehaviour
             i++;
         }
 
+       
+        var customDataList = new JSONArray();
+        
         root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_data", dataClass));
         foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
+        {
             try
             {
                 _log.LogInfo($"Loading {file}");
-                nodeList.Add(JSONNode.Parse(File.ReadAllText(file)));
+                var node = JSONNode.Parse(File.ReadAllText(file));
+                customDataList.Add(node);
+                nodeList.Add(node);
             }
             catch (Exception ex)
             {
                 _log.LogError($"Error parsing {file}: {ex.GetType()} {ex.Message}");
             }
+        }
+
+        try
+        {
+            var url = Singleton<ServerSelector>.Instance.GetServerURL() + "/Custom/Upload/" + dataClass;
+            var body = customDataList.ToString(2);
+            var schema = new HttpApiSchema(url, body, new Action<string>(_ => { }), "", false);
+            HttpApiRequester.Instance.SendRequest(schema, isUrgent: true);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError($"Error uploading {dataClass}: {ex.GetType()} {ex.Message}");
+        }
+    }
+
+    [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.OnResponseWithErrorCode))]
+    [HarmonyPrefix]
+    private static void OnResponseWithErrorCode(HttpApiRequester __instance)
+    {
+        __instance._errorCount = 0;
     }
 
     [HarmonyPatch(typeof(UserDataManager), nameof(UserDataManager.UpdateData))]
