@@ -11,6 +11,7 @@ using Server;
 using ServerConfig;
 using SimpleJSON;
 using Steamworks;
+using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Utils;
@@ -89,6 +90,45 @@ public class CustomEncounterHook : MonoBehaviour
         if (CustomPersonalityRegistry.TryGetValue(id, out __result))
             return false;
         return true;
+    }
+    
+    
+    [HarmonyPatch(typeof(BattleObjectManager), nameof(BattleObjectManager.CreateAllyUnits),
+        typeof(Il2CppSystem.Collections.Generic.List<PlayerUnitData>))]
+    [HarmonyPrefix]
+    private static void CreateAllyUnits(BattleObjectManager __instance,
+        ref Il2CppSystem.Collections.Generic.List<PlayerUnitData> sortedParticipants)
+    {
+        CustomPersonalityRegistry.Clear();
+
+        var order = sortedParticipants.Count;
+        _log.LogInfo("Scanning custom assistant data");
+        foreach (var file in Directory.GetFiles(_customAssistantDir.FullPath, "*.json"))
+            try
+            {
+                var assistantJson = JSONNode.Parse(File.ReadAllText(file));
+                var personalityStaticDataList = new PersonalityStaticDataList();
+                var assistantJsonList = new Il2CppSystem.Collections.Generic.List<JSONNode>();
+                assistantJsonList.Add(assistantJson);
+                personalityStaticDataList.Init(assistantJsonList);
+                foreach (var personalityStaticData in personalityStaticDataList.list)
+                {
+                    _log.LogInfo($"Adding assistant at {order} Owner: {personalityStaticData.ID}");
+                    var personality = new CustomPersonality(11001, 45, 4, 0, false)
+                    {
+                        _classInfo = personalityStaticData,
+                        _battleOrder = order++
+                    };
+                    var egos = new[] { new Ego(20101, EGO_OWNED_TYPES.USER) };
+                    var unit = new PlayerUnitData(personality, new Il2CppReferenceArray<Ego>(egos), false);
+                    CustomPersonalityRegistry[personalityStaticData.ID] = personalityStaticData;
+                    sortedParticipants.Add(unit);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError($"Error parsing assistant data {file}: {ex.GetType()}: {ex.Message}");
+            }
     }
 
     [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.SetLoginInfo))]
