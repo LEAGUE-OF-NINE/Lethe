@@ -1,4 +1,3 @@
-using System;
 using BepInEx;
 using BepInEx.Logging;
 using Dungeon;
@@ -8,7 +7,7 @@ using Il2CppSystem.Text.RegularExpressions;
 using MainUI;
 using SimpleJSON;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using Object = Il2CppSystem.Object;
 
 namespace CustomEncounter;
 
@@ -20,8 +19,8 @@ public static class EncounterHelper
     {
         SaveToFile(data.StageData, "encounters", Regex.Replace(data.Name, @"\W", ""));
     }
-    
-    public static void SaveToFile(Il2CppSystem.Object data, string root, string name)
+
+    public static void SaveToFile(Object data, string root, string name)
     {
         var path = Path.Combine(Paths.ConfigPath, root, name + ".json");
         Log.LogInfo("Saving encounter to " + path);
@@ -42,23 +41,19 @@ public static class EncounterHelper
         Log.LogInfo("Dumping identities....");
         Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, root));
         foreach (var personalityStaticData in Singleton<StaticDataManager>.Instance.PersonalityStaticDataList.list)
-        {
             SaveToFile(personalityStaticData, root, personalityStaticData.ID.ToString());
-        }
 
         root = "skills";
         Log.LogInfo("Dumping skills....");
         Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, root));
         foreach (var skillStaticData in Singleton<StaticDataManager>.Instance.SkillList.list)
-        {
             SaveToFile(skillStaticData, root, skillStaticData.ID.ToString());
-        }
     }
-    
+
     public static void SaveEncounters()
     {
         var uiList = TextDataManager.Instance.UIList;
-        Log.LogInfo("Dumping encounters to files..."); 
+        Log.LogInfo("Dumping encounters to files...");
         Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "encounters"));
 
         // Story Data
@@ -87,54 +82,50 @@ public static class EncounterHelper
                         var dungeonName = TextDataManager.Instance.StageNodeText.GetData(stageNodeInfo.NodeId)
                             .GetTitle();
                         foreach (var floor in dungeonData.Floors)
-                        {
-                            foreach (var sector in floor.sectors)
+                        foreach (var sector in floor.sectors)
+                            for (var i = 0; i < sector.Nodes.Count; i++)
                             {
-                                for (var i = 0; i < sector.Nodes.Count; i++)
+                                var node = sector.Nodes[i];
+                                if (node == null || node.EncounterType is
+                                        ENCOUNTER.START or
+                                        ENCOUNTER.SAVE or
+                                        ENCOUNTER.EVENT)
+                                    continue;
+
+                                StageStaticData stage = null;
+                                switch (node.EncounterType)
                                 {
-                                    var node = sector.Nodes[i];
-                                    if (node == null || node.EncounterType is
-                                            ENCOUNTER.START or
-                                            ENCOUNTER.SAVE or
-                                            ENCOUNTER.EVENT)
-                                        continue;
-
-                                    StageStaticData stage = null;
-                                    switch (node.EncounterType)
-                                    {
-                                        case ENCOUNTER.BATTLE:
-                                        case ENCOUNTER.HARD_BATTLE:
-                                            stage = StaticDataManager.Instance.dungeonBattleStageList.GetStage(
-                                                node.EncounterId);
-                                            break;
-                                        case ENCOUNTER.AB_BATTLE:
-                                        case ENCOUNTER.BOSS:
-                                            stage = StaticDataManager.Instance.abBattleStageList.GetStage(
-                                                node.EncounterId);
-                                            break;
-                                    }
-
-                                    var title = TextDataManager.Instance.StoryDungeonNodeText
-                                        .GetData(stageNodeInfo.StageId)?.GetStageText(node.ID)?.GetTitle();
-                                    var encounter = new EncounterData()
-                                    {
-                                        Name = $"{name}-{dungeonName}-{title}-#{i}",
-                                        StageData = stage,
-                                        StageType = STAGE_TYPE.NORMAL_BATTLE,
-                                    };
-                                    SaveToFile(encounter);
+                                    case ENCOUNTER.BATTLE:
+                                    case ENCOUNTER.HARD_BATTLE:
+                                        stage = StaticDataManager.Instance.dungeonBattleStageList.GetStage(
+                                            node.EncounterId);
+                                        break;
+                                    case ENCOUNTER.AB_BATTLE:
+                                    case ENCOUNTER.BOSS:
+                                        stage = StaticDataManager.Instance.abBattleStageList.GetStage(
+                                            node.EncounterId);
+                                        break;
                                 }
+
+                                var title = TextDataManager.Instance.StoryDungeonNodeText
+                                    .GetData(stageNodeInfo.StageId)?.GetStageText(node.ID)?.GetTitle();
+                                var encounter = new EncounterData
+                                {
+                                    Name = $"{name}-{dungeonName}-{title}-#{i}",
+                                    StageData = stage,
+                                    StageType = STAGE_TYPE.NORMAL_BATTLE
+                                };
+                                SaveToFile(encounter);
                             }
-                        }
                     }
                     else
                     {
                         var stage = StaticDataManager.Instance.storyBattleStageList.GetStage(stageNodeInfo.StageId);
-                        SaveToFile(new()
+                        SaveToFile(new EncounterData
                         {
                             Name = TextDataManager.Instance.StageNodeText.GetData(stageNodeInfo.NodeId).GetTitle(),
                             StageData = stage,
-                            StageType = STAGE_TYPE.NORMAL_BATTLE,
+                            StageType = STAGE_TYPE.NORMAL_BATTLE
                         });
                     }
                 }
@@ -146,15 +137,12 @@ public static class EncounterHelper
         for (var i = 0; i < expList.Count; i++)
         {
             var expData = expList[i];
-            if (i == 0)
-            {
-                expData = StaticDataManager.Instance.ExpDungeonBattleList.GetStage(-1);
-            }
-            SaveToFile(new()
+            if (i == 0) expData = StaticDataManager.Instance.ExpDungeonBattleList.GetStage(-1);
+            SaveToFile(new EncounterData
             {
                 Name = string.Format(uiList.GetText("exp_dungeon_index"), i),
                 StageData = expData,
-                StageType = STAGE_TYPE.EXP_DUNGEON,
+                StageType = STAGE_TYPE.EXP_DUNGEON
             });
         }
 
@@ -164,14 +152,12 @@ public static class EncounterHelper
         {
             var name = TextDataManager.Instance.ThreadDungeon.GetData(threadDungeonData.ID).GetName();
             foreach (var threadStage in threadDungeonData.SelectStage)
-            {
-                SaveToFile(new()
+                SaveToFile(new EncounterData
                 {
                     Name = $"{name}-{uiList.GetText("recommended_level")}-{threadStage.RecommendedLevel}",
                     StageData = StaticDataManager.Instance.ThreadDungeonBattleList.GetStage(threadStage.StageId),
-                    StageType = STAGE_TYPE.THREAD_DUNGEON,
+                    StageType = STAGE_TYPE.THREAD_DUNGEON
                 });
-            }
         }
 
         // Railway Lines
@@ -180,32 +166,30 @@ public static class EncounterHelper
         {
             var name = TextDataManager.Instance.RailwayDungeonText.GetData(railwayData.ID).GetName();
             foreach (var railwayStage in railwayData.Sector)
-            {
-                SaveToFile(new()
+                SaveToFile(new EncounterData
                 {
                     Name = $"{name}-{railwayStage.nodeId}-{railwayStage.stageId}",
-                    StageData = StaticDataManager.Instance.GetDungeonStage(railwayStage.stageId, default, DUNGEON_TYPES.RAILWAY_DUNGEON),
-                    StageType = STAGE_TYPE.RAILWAY_DUNGEON,
+                    StageData = StaticDataManager.Instance.GetDungeonStage(railwayStage.stageId, default,
+                        DUNGEON_TYPES.RAILWAY_DUNGEON),
+                    StageType = STAGE_TYPE.RAILWAY_DUNGEON
                 });
-            }
         }
     }
-    
-    private static void DumpLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list) where T : LocalizeTextData, new()
+
+    private static void DumpLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list)
+        where T : LocalizeTextData, new()
     {
-        JSONObject obj = new JSONObject();
+        var obj = new JSONObject();
         foreach (var keyValuePair in list._dic)
-        {
             obj[keyValuePair.key] = JSONNode.Parse(JsonUtility.ToJson(keyValuePair.value));
-        }
 
         File.WriteAllText(Path.Combine(root.FullPath, $"{name}.json"), obj.ToString(2));
     }
-    
+
     public static void SaveLocale()
     {
-        TextDataManager textManager = Singleton<TextDataManager>.Instance;
-        LOCALIZE_LANGUAGE lang = GlobalGameManager.Instance.Lang;
+        var textManager = Singleton<TextDataManager>.Instance;
+        var lang = GlobalGameManager.Instance.Lang;
         Log.LogInfo("Dumping locale data: " + lang);
         var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "limbus_locale", lang.ToString()));
         DumpLocale(root, "uiList", textManager._uiList);
@@ -246,6 +230,4 @@ public static class EncounterHelper
         DumpLocale(root, "introduceCharacter", textManager._introduceCharacter);
         DumpLocale(root, "userBanner", textManager._userBanner);
     }
-
-    
 }
