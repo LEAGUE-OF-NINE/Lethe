@@ -4,6 +4,7 @@ using CustomEncounter.SkillAbility;
 using HarmonyLib;
 using Il2CppSystem;
 using UnhollowerRuntimeLib;
+using UnityEngine;
 
 namespace CustomEncounter.Patches;
 
@@ -36,39 +37,67 @@ public class Skills : Il2CppSystem.Object
         foreach (var defenseAction in defense)
         {
             CustomEncounterHook.LOG.LogInfo($"Defense {defenseAction._skill.GetID()}, is used {defenseAction._isDone}");
-            if (!defenseAction._isDone)
+            if (defenseAction._isDone) continue;
+            var skillRegistry = Singleton<StaticDataManager>.Instance.SkillList;
+            var attackSkillData = attackerAction._skill._skillData;
+            attackSkillData = defenseAction._skill._skillData;
+            
+            var newSkillDataList = new Il2CppSystem.Collections.Generic.List<SkillDataByLevel>();
+            foreach (var skillData in skillRegistry.GetData(attackSkillData.id).skillData)
             {
-                var attackSkillData = attackerAction._skill._skillData;
-                newDefense = new BattleActionModel(defenseAction)
-                {
-                    _isDone = false,
-                    _isReusedAction = false,
-                    _reusedTimes = 0,
-                    _actionInstanceID = defenseAction._actionInstanceID, // needed to make coin UI show up
-                    // by default it is Singleton<StageController>.Instance._stageModel._actionInstanceIDGiver++;
-                    
-                    _skill = new SkillModel(defenseAction._skill)
-                    {
-                        // _coinList = attackerAction._skill._coinList,
-                        _skillData =
-                        {
-                            id = attackSkillData.id,
-                            skillIconID = attackSkillData.skillIconID,
-                            skillName = attackSkillData.skillName,
-                            coinDataList = attackSkillData.coinDataList,
-                            abilityScriptList = attackSkillData.abilityScriptList,
-                            _attributeType = attackSkillData._attributeType,
-                            _atkType = attackSkillData._atkType,
-                            // canDuel = false,
-                            // level = defenseAction._skill._skillData.level,
-                            // viewType = defenseAction._skill._skillData.viewType,
-                            // _defenseType = (int) DEFENSE_TYPE.COUNTER,
-                            // _skillMotion = defenseAction._skill._skillData._skillMotion,
-                            // _targetType = (int) SKILL_TARGET_TYPE.FRONT,
-                        }
-                    }
-                };
+                newSkillDataList.Add(skillData);
+                // newSkillDataList.Add(new SkillDataByLevel
+                // {
+                //     iconID = attackSkillData.id.ToString(),
+                //     gaksungLevel = skillData.gaksungLevel,
+                //     _attributeType = skillData._attributeType,
+                //     attributeType = skillData.attributeType,
+                //     _atkType = skillData._atkType,
+                //     atkType = skillData.atkType,
+                //     _defenseType = DEFENSE_TYPE.COUNTER,
+                //     _skillMotion = defenseAction._skill.GetSkillMotion(),
+                //     _viewType = defenseAction._skill.GetViewType(),
+                //     actionScript = attackSkillData.actionScript,
+                //     targetNum = 1,
+                //     defaultValue = attackSkillData.defaultSkillPower,
+                //     mpUsage = attackSkillData.mpUsage,
+                //     abilityScriptList = attackSkillData.abilityScriptList,
+                //     coinList = attackSkillData.coinDataList,
+                //     actionList = attackSkillData.actionData,
+                //     skillLevelCorrection = attackSkillData.skillLevelCorrection,
+                //     viewType = "BATTLE",
+                //     informationID = -1,
+                //     range = -1,
+                //     arearange = -1,
+                //     _parryingCloseType = PARRYING_CLOSE_TYPE.NEAR,
+                // });
             }
+            
+            var newSkillData = new SkillStaticData
+            {
+                id = attackSkillData.id * 37 % 2147483647,
+                textID = attackSkillData.id,
+                skillTier = 1,
+                skillData = newSkillDataList,
+                requireIDList = new Il2CppSystem.Collections.Generic.List<string>(),
+                _skillType = SKILL_TYPE.SKILL,
+            };
+
+            if (!skillRegistry.dict.ContainsKey(newSkillData.id))
+            {
+                skillRegistry.list.Add(newSkillData);
+                skillRegistry.dict.Add(newSkillData.id, newSkillData);
+            }
+                
+            newDefense = new BattleActionModel(defenseAction)
+            {
+                _isDone = false,
+                _isReusedAction = false,
+                _reusedTimes = 0,
+                _actionInstanceID = defenseAction._actionInstanceID, // needed to make coin UI show up
+                // by default it is Singleton<StageController>.Instance._stageModel._actionInstanceIDGiver++;
+                _skill = new SkillModel(skillRegistry.GetData(1100204), defenseAction._skill.skillData.level, defenseAction._skill.skillData.gaksungLevel),
+            };
         }
         
         defense.Add(newDefense);
