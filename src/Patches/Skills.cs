@@ -1,4 +1,6 @@
+using System;
 using HarmonyLib;
+using Il2CppSystem.Collections.Generic;
 using UnhollowerRuntimeLib;
 
 namespace CustomEncounter.Patches;
@@ -12,53 +14,70 @@ public class Skills : Il2CppSystem.Object
         harmony.PatchAll(typeof(Skills));
     }
 
-    [HarmonyPatch(typeof(BattleLog_Defense), nameof(BattleLog_Defense.CreateOneCoinLog))]
+    [HarmonyPatch(typeof(BattleActionModel), nameof(BattleActionModel.CallTargetDefenseActionsByAttack))]
     [HarmonyPrefix]
-    private static bool CreateOneCoinLogPatch(BattleLog_Defense __instance, BattleActionModel actorAction, CoinModel coin, int skillLevel, ref OneCoinLog __result)
+    private static void CallTargetDefenseActionsByAttackPatch(
+        BattleActionModel __instance,
+        BattleRunLog runLog,
+        ref DEFENSE_TYPE type,
+        ref bool canDuel,
+        OneCoinLog_Attack oneCoinLog,
+        BattleUnitModel specificTarget)
     {
-        if (__instance is not BattleLog_Evade) return true;
-        CustomEncounterHook.LOG.LogInfo("ZAZA MAN PLEASE I AM BEGGING YOU");
-        OneCoinLog_Attack oneCoinLog = new OneCoinLog_Attack(actorAction, coin, skillLevel);
-        __instance._actorOneCoinLogList?.Add(oneCoinLog);
-        __result = oneCoinLog;
-        return false;
+        CustomEncounterHook.LOG.LogInfo($"Defend attack {oneCoinLog?._oneSkillPowerData.skillId}!! Defense type {type}! Can duel {canDuel}, target {specificTarget == null} {specificTarget?._instanceID}");
+        //       actionLog = (BattleLog_Defense) oneCoinLog.CreateEvadeLog(defenseAction, runLog.TakeBattleLogIdForEvadeLog(), attackerInstanceID, runLog.SystemLogInstanceID);
+        // if (oneCoinLog == null) return;
+        // oneCoinLog.CreateEvadeLog(__instance, runLog.TakeBattleLogIdForEvadeLog(), __instance._model._instanceID, runLog.SystemLogInstanceID);
     }
+    
+    private static BattleRunLog _runLog;
 
-
-    [HarmonyPatch(typeof(BattleLog_Evade), nameof(BattleLog_Evade.SetAfterLog))]
-    [HarmonyPrefix]
-    private static bool SetAfterLogPatch(BattleLog_Evade __instance, BattleActionModel actorAction)
-    {
-        CustomEncounterHook.LOG.LogInfo("ZAZA MAN I AM BEGGING YOU");
-        __instance._afterStatus = new StatusLog_Attack(actorAction);
-        return false;
-    }
-
-
-    [HarmonyPatch(typeof(BattleLog_Evade), nameof(BattleLog_Evade.SetStartLog))]
+    [HarmonyPatch(typeof(BattleActionModelManager), nameof(BattleActionModelManager.DefenseRun))]
     [HarmonyPostfix]
-    private static void SetStartLog(BattleLog_Evade __instance, BattleActionModel actorAction)
+    private static void PatchDefenseRun(
+        BattleRunLog runLog,
+        BattleActionModel defenseAction,
+        int attackerInstanceID,
+        BattleActionModel attackerAction,
+        OneCoinLog_Attack oneCoinLog,
+        bool isTemperaryTargetSlot)
     {
-        CustomEncounterHook.LOG.LogInfo("EVADE START");
-        __instance._startStatus = new StatusLog_Attack(actorAction);
-        var targetUnitModelList = actorAction.GetTargetUnitModelList();
-        __instance._subTargetInfoList_Start = new List<SubBattleLog_CharacterInfo>();
-        int index1 = 0;
-        for (int count = targetUnitModelList.Count; index1 < count; ++index1)
+        // var actionLog = runLog.CreateDefenseLog(defenseAction, attackerInstanceID);
+        // CustomEncounterHook.LOG.LogInfo($"Inserted defense action {actionLog}");
+        // actionLog.SetStartLog(defenseAction);
+        // defenseAction.Behave(runLog, actionLog);
+        // defenseAction.Done();
+        // defenseAction.DoneWithAction();
+    }
+
+    [HarmonyPatch(typeof(BattleActionModelManager), nameof(BattleActionModelManager.Run), typeof(BattleActionModel))]
+    [HarmonyPostfix]
+    private static void RunActions(BattleActionModel action, ref List<BattleActionModel> __result)
+    {
+        CustomEncounterHook.LOG.LogInfo($"===============================");
+        CustomEncounterHook.LOG.LogInfo($"Battle log {action._model._instanceID} {action._skill.GetID()}");
+        var counters = new List<BattleActionModel>();
+        foreach (var subaction in __result)
         {
-            BattleUnitModel actor = targetUnitModelList[index1];
-            if (!actor.InstanceID.Equals(this._mainTargetInfo_Start.GetInstanceIDPartFirst()))
-                this._subTargetInfoList_Start.Add(new SubBattleLog_CharacterInfo(actor));
+            CustomEncounterHook.LOG.LogInfo($"Sub-action {subaction._model._instanceID} {subaction._skill.GetID()}");
+            if (action.IsCounter()) { counters.Add(action); }
         }
-
+        CustomEncounterHook.LOG.LogInfo($"===============================");
     }
 
-    [HarmonyPatch(typeof(BattleLog_Evade), nameof(BattleLog_Evade.SetBeforeLog))]
+   
+    [HarmonyPatch(typeof(OneCoinLog_Attack), nameof(OneCoinLog_Attack.CreateEvadeLog))]
     [HarmonyPostfix]
-    private static void SetBeforeLog(BattleLog_Evade __instance, BattleActionModel actorAction)
+    private static void SetBeforeLog(
+        OneCoinLog_Attack __instance, 
+        BattleActionModel defenseAction,
+        int battleLogID,
+        int attackerInstanceID,
+        int runLogInstanceID,
+        ref BattleLog_Evade __result)
     {
-        CustomEncounterHook.LOG.LogInfo("BEFORE START");
-        __instance._beforeStatus = new StatusLog_Attack(actorAction);
+        CustomEncounterHook.LOG.LogInfo($"Skill {__instance._oneSkillPowerData.skillId} has evade {__result}");
     }
+
 
 }
