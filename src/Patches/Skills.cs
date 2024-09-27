@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cpp2IL.Core;
 using CustomEncounter.SkillAbility;
 using HarmonyLib;
 using Il2CppSystem;
@@ -37,6 +38,7 @@ public class Skills : Il2CppSystem.Object
             CustomEncounterHook.LOG.LogInfo($"Defense {defenseAction._skill.GetID()}, is used {defenseAction._isDone}");
             if (!defenseAction._isDone)
             {
+                var attackSkillData = attackerAction._skill._skillData;
                 newDefense = new BattleActionModel(defenseAction)
                 {
                     _isDone = false,
@@ -45,15 +47,24 @@ public class Skills : Il2CppSystem.Object
                     _actionInstanceID = defenseAction._actionInstanceID, // needed to make coin UI show up
                     // by default it is Singleton<StageController>.Instance._stageModel._actionInstanceIDGiver++;
                     
-                    _skill = new SkillModel(attackerAction._skill)
+                    _skill = new SkillModel(defenseAction._skill)
                     {
+                        // _coinList = attackerAction._skill._coinList,
                         _skillData =
                         {
-                            canDuel = false,
-                            level = defenseAction._skill._skillData.level,
-                            _defenseType = (int) DEFENSE_TYPE.COUNTER,
-                            _skillMotion = defenseAction._skill._skillData._skillMotion,
-                            _targetType = (int) SKILL_TARGET_TYPE.FRONT,
+                            id = attackSkillData.id,
+                            skillIconID = attackSkillData.skillIconID,
+                            skillName = attackSkillData.skillName,
+                            coinDataList = attackSkillData.coinDataList,
+                            abilityScriptList = attackSkillData.abilityScriptList,
+                            _attributeType = attackSkillData._attributeType,
+                            _atkType = attackSkillData._atkType,
+                            // canDuel = false,
+                            // level = defenseAction._skill._skillData.level,
+                            // viewType = defenseAction._skill._skillData.viewType,
+                            // _defenseType = (int) DEFENSE_TYPE.COUNTER,
+                            // _skillMotion = defenseAction._skill._skillData._skillMotion,
+                            // _targetType = (int) SKILL_TARGET_TYPE.FRONT,
                         }
                     }
                 };
