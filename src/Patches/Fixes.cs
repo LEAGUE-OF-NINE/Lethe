@@ -35,6 +35,20 @@ public class Fixes : Il2CppSystem.Object
         // stub, to catch errors
     }
    
+    [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.StartBehaviourAction))]
+    [HarmonyPrefix]
+    private static void StartBehaviourAction()
+    {
+        // stub, to catch errors
+    }
+   
+    [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.PrintBehaviourActionLog))]
+    [HarmonyPostfix]
+    private static void PrintBehaviourActionLog(string str)
+    {
+        if (CustomEncounterHook.LOG != null) CustomEncounterHook.LOG.LogInfo(str);
+    }
+   
     [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]
     [HarmonyPrefix]
     private static void PreInitStage(StageController __instance, bool isCleared, bool isSandbox)
