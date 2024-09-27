@@ -2,10 +2,12 @@ using System;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
+using CustomEncounter.SkillAbility;
 using HarmonyLib;
 using Il2CppSystem.IO;
 using Il2CppSystem.Security.Cryptography;
 using UnhollowerBaseLib;
+using UnhollowerRuntimeLib;
 using UnityEngine;
 
 namespace CustomEncounter;
@@ -69,10 +71,13 @@ public class CustomEncounterMod : BasePlugin
 
         try
         {
-            // Setup harmony hooks
             CustomEncounterHook.Setup(Log);
             Harmony harmony = new(NAME);
             
+            // Register abilities
+            ClassInjector.RegisterTypeInIl2Cpp<SkillAbilityEvadeThenUseSkill>();
+
+            // Setup harmony hooks
             Patches.CustomAssistant.Setup(harmony);
             Patches.Data.Setup(harmony);
             Patches.Fixes.Setup(harmony);
