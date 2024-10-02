@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Net;
+using System.Text;
+using System.Threading;
 using BepInEx;
+using BepInEx.IL2CPP.Utils;
 using BepInEx.Logging;
 using Il2CppSystem.IO;
 using UnhollowerRuntimeLib;
@@ -53,12 +57,35 @@ public class CustomEncounterHook : MonoBehaviour
         GameObject obj = new("CustomEncounterHook");
         DontDestroyOnLoad(obj);
         obj.hideFlags |= HideFlags.HideAndDontSave;
-        obj.AddComponent<CustomEncounterHook>();
+        var hook = obj.AddComponent<CustomEncounterHook>();
 
         CustomAppearanceDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
         CustomSpriteDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_sprites"));
         CustomLocaleDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_locale"));
         CustomAssistantDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_assistant"));
+
+        // hook.StartCoroutine(httpCoroutine());
+        var thread = new Thread(httpCoroutine);
+        thread.Start();
+    }
+
+    private static void httpCoroutine()
+    {
+        using var listener = new HttpListener();
+        listener.Prefixes.Add("http://localhost:49829/");
+
+        listener.Start();
+        LOG.LogInfo("Starting HTTP server at 49829...");
+        
+        while (true)
+        {
+            var ctx = listener.GetContext();
+            LOG.LogInfo($"Request: {ctx.Request.HttpMethod} {ctx.Request.Url}");
+            using var resp = ctx.Response;
+            resp.StatusCode = (int) HttpStatusCode.OK;
+            var body = Encoding.ASCII.GetBytes("IM A ROCKSTAR I MADE ROCK TRASH");
+            resp.OutputStream.Write(body, 0, body.Length);
+        }
     }
 
 
