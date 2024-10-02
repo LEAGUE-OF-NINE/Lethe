@@ -37,9 +37,12 @@ public class Fixes : Il2CppSystem.Object
    
     [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.StartBehaviourAction))]
     [HarmonyPrefix]
-    private static void StartBehaviourAction()
+    private static void StartBehaviourAction(BattleUnitView __instance, BattleActionLog actionLog)
     {
-        // stub, to catch errors
+        CustomEncounterHook.LOG.LogInfo("behaviourActionViewer == null: " + (__instance._behaviourActionViewer == null));
+        CustomEncounterHook.LOG.LogInfo("curAppearance == null: " + (__instance._curAppearance == null));
+        CustomEncounterHook.LOG.LogInfo("appearance == null: " + (__instance.Appearance == null));
+        CustomEncounterHook.LOG.LogInfo("actionLog.GetSystemLog() == null: " + (actionLog.GetSystemLog() == null));
     }
    
     [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]

@@ -75,7 +75,7 @@ public class CustomEncounterMod : BasePlugin
             Harmony harmony = new(NAME);
             
             // Register abilities
-            ClassInjector.RegisterTypeInIl2Cpp<SkillAbilityEvadeThenUseSkill>();
+            // ClassInjector.RegisterTypeInIl2Cpp<SkillAbilityEvadeThenUseSkill>();
 
             // Setup harmony hooks
             Patches.CustomAssistant.Setup(harmony);
@@ -85,7 +85,7 @@ public class CustomEncounterMod : BasePlugin
             Patches.Server.Setup(harmony);
             Patches.Skin.Setup(harmony);
             Patches.Texture.Setup(harmony);
-            Patches.Skills.Setup(harmony);
+            // Patches.Skills.Setup(harmony);
 
             EncounterHelper.Log = Log;
             if (!File.Exists(EncounterConfig)) File.Create(EncounterConfig).Close();
