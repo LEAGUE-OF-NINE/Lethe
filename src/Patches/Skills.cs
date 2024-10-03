@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CustomEncounter.SkillAbility;
 using HarmonyLib;
 using UnhollowerRuntimeLib;
 
@@ -13,7 +14,7 @@ public class Skills : Il2CppSystem.Object
     {
         ClassInjector.RegisterTypeInIl2Cpp<Skills>();
         harmony.PatchAll(typeof(Skills));
-        // typeOverrides["SkillAbility_EvadeThenUseSkill"] = UnhollowerRuntimeLib.Il2CppType.Of<SkillAbilityEvadeThenUseSkill>();
+        typeOverrides["SkillAbility_EvadeThenUseSkill"] = UnhollowerRuntimeLib.Il2CppType.Of<SkillAbilityEvadeThenUseSkill>();
     }
 
     [HarmonyPatch(typeof(BattleActionModelManager), nameof(BattleActionModelManager.GetDefenseAction))]
@@ -50,13 +51,13 @@ public class Skills : Il2CppSystem.Object
     }
 
 
-    // [HarmonyPatch(typeof(Il2CppSystem.Type), nameof(Il2CppSystem.Type.GetType), typeof(string))]
-    // [HarmonyPrefix]
-    // private static bool PatchGetType(string typeName, ref Il2CppSystem.Type __result)
-    // {
-    //     if (!typeOverrides.TryGetValue(typeName, out __result)) return true;
-    //     CustomEncounterHook.LOG.LogInfo($"Using custom type {typeName}");
-    //     return false;
-    // }
+    [HarmonyPatch(typeof(Il2CppSystem.Type), nameof(Il2CppSystem.Type.GetType), typeof(string))]
+    [HarmonyPrefix]
+    private static bool PatchGetType(string typeName, ref Il2CppSystem.Type __result)
+    {
+        if (!typeOverrides.TryGetValue(typeName, out __result)) return true;
+        CustomEncounterHook.LOG.LogInfo($"Using custom type {typeName}");
+        return false;
+    }
 
 }
