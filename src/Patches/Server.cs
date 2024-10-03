@@ -1,14 +1,15 @@
 using HarmonyLib;
+using Il2CppSystem.Text;
 using Server;
 using ServerConfig;
 using Steamworks;
 using UnhollowerRuntimeLib;
+using UnityEngine;
 
 namespace CustomEncounter.Patches;
 
 public class Server : Il2CppSystem.Object
 {
-    
     public static void Setup(Harmony harmony)
     {
         ClassInjector.RegisterTypeInIl2Cpp<Server>();
@@ -29,7 +30,7 @@ public class Server : Il2CppSystem.Object
     {
         __result = new AuthTicket
         {
-            Data = CustomEncounterMod.Identity
+            Data = Encoding.ASCII.GetBytes(CustomEncounterHook.AccountJwt())
         };
 
         return false;

@@ -23,7 +23,6 @@ public class CustomEncounterMod : BasePlugin
     public static string EncounterConfig = Path.Combine(Paths.ConfigPath, "encounter.json");
 
     public static ConfigEntry<string> ConfigServer;
-    public static byte[] Identity = new byte[0];
     public static Action<string, Action> LogFatalError { get; set; }
     public static Action<string> LogError { get; set; }
     public static Action<string> LogWarning { get; set; }
@@ -53,24 +52,11 @@ public class CustomEncounterMod : BasePlugin
         else
             Log.LogInfo("Using private server: " + ConfigServer.Value);
 
-        // get APPDATA DirectoryInfo
-        var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var keyFile = Path.Combine(appdata, "LimbusPrivateServer.key");
-        if (!File.Exists(keyFile))
-        {
-            // Fill file with random 32 bytes cryptographic
-            var csp = new RNGCryptoServiceProvider();
-            var fileStream = File.Create(keyFile);
-            var buf = new byte[32];
-            csp.GetBytes(buf);
-            fileStream.Write(new Il2CppStructArray<byte>(buf));
-            fileStream.Close();
-        }
-
-        Identity = File.ReadAllBytes(keyFile);
+        Application.OpenURL(ConfigServer.Value + "/auth/login");
 
         try
         {
+
             CustomEncounterHook.Setup(Log);
             Harmony harmony = new(NAME);
             
@@ -85,7 +71,7 @@ public class CustomEncounterMod : BasePlugin
             Patches.Server.Setup(harmony);
             Patches.Skin.Setup(harmony);
             Patches.Texture.Setup(harmony);
-            Patches.Skills.Setup(harmony);
+            // Patches.Skills.Setup(harmony);
 
             EncounterHelper.Log = Log;
             if (!File.Exists(EncounterConfig)) File.Create(EncounterConfig).Close();
