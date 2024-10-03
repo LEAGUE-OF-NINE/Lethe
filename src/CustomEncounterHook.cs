@@ -107,7 +107,7 @@ public class CustomEncounterHook : MonoBehaviour
             }
             else
             {
-                resp.Headers.Add("Access-Control-Allow-Origin", "https://limbuspriv.windtfw.com");
+                resp.Headers.Add("Access-Control-Allow-Origin", "https://limbus.windtfw.com");
             }
 
             if (req.HttpMethod == "OPTIONS")
