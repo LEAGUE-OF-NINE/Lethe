@@ -83,7 +83,7 @@ public class CustomEncounterHook : MonoBehaviour
     private static void HttpCoroutine()
     {
         using var listener = new HttpListener();
-        listener.Prefixes.Add("http://127.0.0.1:49829/");
+        listener.Prefixes.Add("http://localhost:49829/");
 
         try
         {
