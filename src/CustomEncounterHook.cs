@@ -83,10 +83,19 @@ public class CustomEncounterHook : MonoBehaviour
     private static void HttpCoroutine()
     {
         using var listener = new HttpListener();
-        listener.Prefixes.Add("http://localhost:49829/");
+        listener.Prefixes.Add("http://127.0.0.1:49829/");
 
-        listener.Start();
-        LOG.LogInfo("Starting HTTP server at 49829...");
+        try
+        {
+            LOG.LogInfo("Starting HTTP server at 49829...");
+            listener.Start();
+            LOG.LogInfo("Started HTTP server at 49829...");
+        }
+        catch (Exception ex)
+        {
+            LOG.LogError("Failed to start HTTP server at 49829: " + ex.Message);
+            return;
+        }
         
         while (true)
         {
