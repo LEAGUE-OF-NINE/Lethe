@@ -64,6 +64,7 @@ public class CustomEncounterMod : BasePlugin
             ClassInjector.RegisterTypeInIl2Cpp<SkillAbilityEvadeThenUseSkill>();
 
             // Setup harmony hooks
+            newEvadeThenUseSkill.Setup(harmony);
             Patches.CustomAssistant.Setup(harmony);
             Patches.Data.Setup(harmony);
             Patches.Fixes.Setup(harmony);
