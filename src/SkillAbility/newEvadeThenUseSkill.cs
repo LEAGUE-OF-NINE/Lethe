@@ -66,4 +66,13 @@ namespace CustomEncounter
             }
         }
     }
+
+    internal class newBuffStackAdderNCorpOnStartBattle : MonoBehaviour
+    {
+        public static void Setup(Harmony harmony)
+        {
+            ClassInjector.RegisterTypeInIl2Cpp<newBuffStackAdderNCorpOnStartBattle>();
+            harmony.PatchAll(typeof(newBuffStackAdderNCorpOnStartBattle));
+        }
+    }
 }
