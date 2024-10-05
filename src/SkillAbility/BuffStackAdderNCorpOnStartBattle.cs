@@ -10,7 +10,7 @@ using UnityEngine;
 //I have no fucking idea what I'm doing!!!!! raaagh!!!!!
 namespace CustomEncounter.SkillAbility;
 
-public class SkillAbility_BuffStackAdderNCorpOnStartBattle : global : SkillAbility
+public class SkillAbility_BuffStackAdderNCorpOnStartBattle : global::SkillAbility
 {
   private int _BUFF_STACK_ADDER;
 
@@ -36,13 +36,19 @@ public class SkillAbility_BuffStackAdderNCorpOnStartBattle : global : SkillAbili
     }
   };
 
-  protected bool CheckReinforced(UNIT_FACTION faction) {
-    if predicate == 0
+  protected bool CheckReinforced(UNIT_FACTION faction) 
+  {
+    Predicate<BattleUnitModel> predicate = null;
+
+    if (faction == UNIT_FACTION.N_CORP_FNATIC) // Assuming you want to check faction here
     {
-      (Predicate<BattleUnitModel>) (x => x.IncludedInAssociation(UNIT_KEYWORD.UNIT_KEYWORD.N_CORP_FNATIC));
+        predicate = x => x.IncludedInAssociation(UNIT_KEYWORD.UNIT_KEYWORD.N_CORP_FNATIC);
     }
+
     List<BattleUnitModel> battleUnitModelList;
     List<BattleUnitModel> all = (List<BattleUnitModel>) ((List<>) battleUnitModelList).FindAll((Predicate<>) predicate);
+
+    return all.Count > 0;
   }
 
   public override void Init(SkillModel skill, string scriptName, int idx, BuffStaticData info = null)
