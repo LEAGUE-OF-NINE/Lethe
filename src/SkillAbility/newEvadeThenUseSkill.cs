@@ -75,4 +75,22 @@ namespace CustomEncounter
             harmony.PatchAll(typeof(newBuffStackAdderNCorpOnStartBattle));
         }
     }
+
+    internal class newFailedEvadeThenUseSkill : MonoBehaviour
+    {
+        public static void Setup(Harmony harmony)
+        {
+            ClassInjector.RegisterTypeInIl2Cpp<newFailedEvadeThenUseSkill>();
+            harmony.PatchAll(typeof(newFailedEvadeThenUseSkill));
+        }
+    }
+
+    internal class newOnEvadeThenUseSkill : MonoBehaviour
+    {
+        public static void Setup(Harmony harmony)
+        {
+            ClassInjector.RegisterTypeInIl2Cpp<newOnEvadeThenUseSkill>();
+            harmony.PatchAll(typeof(newOnEvadeThenUseSkill));
+        }
+    }
 }
