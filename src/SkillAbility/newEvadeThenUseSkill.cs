@@ -7,7 +7,7 @@ using HarmonyLib;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 
-namespace CustomEncounter.SkillAbility
+namespace CustomEncounter
 {
     internal class newEvadeThenUseSkill : MonoBehaviour
     {
@@ -16,40 +16,54 @@ namespace CustomEncounter.SkillAbility
             ClassInjector.RegisterTypeInIl2Cpp<newEvadeThenUseSkill>();
             harmony.PatchAll(typeof(newEvadeThenUseSkill));
         }
-        
+
         //evade then use skill
-        [HarmonyPatch(typeof(BattleActionModel), nameof(BattleActionModel.OnTryEvade))]
+        [HarmonyPatch(typeof(BattleUnitModel), nameof(BattleUnitModel.OnSucceedEvade))]
         [HarmonyPostfix]
-        private static void OnEvade(BattleActionModel __instance, BattleActionModel attackerAction, BATTLE_EVENT_TIMING timing)
+        private static void OnEvade(BattleUnitModel __instance, BattleActionModel evadeAction, BattleActionModel attackAction, BATTLE_EVENT_TIMING timing)
         {
-            //temporary action
-            var model = __instance._model;
-            var actionSlot = model._actionSlotDetail;
-            var sinActionModel = actionSlot.CreateSinActionModel(true);
-            actionSlot.AddSinActionModelToSlot(sinActionModel);
+            foreach (var ability in evadeAction._skill.GetSkillAbilityScript())
+            {
+                var scriptName = ability.scriptName;
+                if (scriptName.Contains("EvadeThenUseSkill_"))
+                {
+                    //temporary action
+                    var model = __instance;
+                    var actionSlot = model._actionSlotDetail;
+                    var sinActionModel = actionSlot.CreateSinActionModel(true);
+                    actionSlot.AddSinActionModelToSlot(sinActionModel);
 
-            //funny action stuff
-            var sinModel = new UnitSinModel(1050805, model, sinActionModel, false);
-            var battleActionModel = new BattleActionModel(sinModel, model, sinActionModel, -1);
-            battleActionModel._targetDataDetail.ReadyOriginTargeting(battleActionModel);
-            model.CutInDefenseActionForcely(battleActionModel, true);
-            var enemyBattleAction = attackerAction;
-            battleActionModel.ChangeMainTargetSinAction(enemyBattleAction._sinAction, enemyBattleAction, true);
+                    var skillID = Convert.ToInt32(scriptName.Replace("EvadeThenUseSkill_", ""));
+                    var unitView = SingletonBehavior<BattleObjectManager>.Instance.GetView(model);
+                    var unitDataModel = model._unitDataModel;
 
-        }
+                    //funny action stuff
+                    var sinModel = new UnitSinModel(skillID, model, sinActionModel, false);
+                    var battleActionModel = new BattleActionModel(sinModel, model, sinActionModel, -1);
+                    battleActionModel._targetDataDetail.ReadyOriginTargeting(battleActionModel);
+                    model.CutInDefenseActionForcely(battleActionModel, true);
+                    var enemyBattleAction = attackAction;
+                    battleActionModel.ChangeMainTargetSinAction(enemyBattleAction._sinAction, enemyBattleAction, true);
 
-        //add BattleSkillViewer so it works
-        //add every skill there is
-        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.Start))]
-        [HarmonyPostfix]
-        private static void InitSkills(BattleUnitView __instance)
-        {
-            CustomEncounterHook.LOG.LogWarning("when the weather outside is rizzy, and the gyatt is so skibidi");
-            var list = new Il2CppSystem.Collections.Generic.List<SkillModel>();
-                var newSkillModel = new SkillModel(Singleton<StaticDataManager>.Instance._skillList.GetData(1050805), 45, 4);
-                list.Add(newSkillModel);
+                    //change skill and sinModel?
+                    battleActionModel._skill = new SkillModel(Singleton<StaticDataManager>.Instance._skillList.GetData(skillID), unitDataModel.Level, unitDataModel.SyncLevel)
+                    {
+                        _skillData =  {
+                            _defenseType = (int)DEFENSE_TYPE.COUNTER,
+                            canDuel = false,
+                            _targetType = (int)SKILL_TARGET_TYPE.FRONT,
+                            _skillMotion = (int)MOTION_DETAIL.S3
+                        }
+                    };
+                    sinModel._skillId = skillID;
 
-            __instance.Init_Skills(list, false);
+
+                    //add BattleSkillViewer
+                    var skillViewer = new BattleSkillViewer(unitView, skillID.ToString(), battleActionModel._skill);
+                    unitView._battleSkillViewers.TryAdd(skillID.ToString(), skillViewer);
+                    break;
+                }
+            }
         }
     }
 }
