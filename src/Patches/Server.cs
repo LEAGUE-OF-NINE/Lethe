@@ -15,7 +15,7 @@ public class Server : Il2CppSystem.Object
         ClassInjector.RegisterTypeInIl2Cpp<Server>();
         harmony.PatchAll(typeof(Server));
     }
-   
+
     [HarmonyPatch(typeof(ServerSelector), nameof(ServerSelector.GetServerURL))]
     [HarmonyPostfix]
     private static void ServerSelector_GetServerURL(ServerSelector __instance, ref string __result)
@@ -42,23 +42,33 @@ public class Server : Il2CppSystem.Object
     {
         __instance._errorCount = 0;
     }
-   
+
     [HarmonyPatch(typeof(UserDataManager), nameof(UserDataManager.UpdateData))]
     [HarmonyPostfix]
     private static void UpdateData(UserDataManager __instance, UpdatedFormat updated)
     {
         var unlockedPersonalities = __instance._personalities._personalityList._list;
-        unlockedPersonalities.Clear();
         foreach (var personalityStaticData in Singleton<StaticDataManager>.Instance.PersonalityStaticDataList.list)
         {
-            var personality = new Personality(personalityStaticData.ID)
+            bool exists = false;
+            foreach (var unlockedPersonality in unlockedPersonalities)
             {
-                _gacksung = 4,
-                _level = 45,
-                _acquireTime = new DateUtil()
-            };
-            unlockedPersonalities.Add(personality);
+                if (unlockedPersonality.ID == personalityStaticData.ID)
+                {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists)
+            {
+                var personality = new Personality(personalityStaticData.ID)
+                {
+                    _gacksung = 4,
+                    _level = 45,
+                    _acquireTime = new DateUtil()
+                };
+                unlockedPersonalities.Add(personality);
+            }
         }
     }
-
 }
