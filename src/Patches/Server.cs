@@ -57,16 +57,14 @@ public class Server : Il2CppSystem.Object
 
         foreach (var personalityStaticData in Singleton<StaticDataManager>.Instance.PersonalityStaticDataList.list)
         {
-            if (!unlockedPersonalityIds.Contains(personalityStaticData.ID))
+            if (unlockedPersonalityIds.Contains(personalityStaticData.ID)) continue;
+            var personality = new Personality(personalityStaticData.ID)
             {
-                var personality = new Personality(personalityStaticData.ID)
-                {
-                    _gacksung = 4,
-                    _level = 45,
-                    _acquireTime = new DateUtil()
-                };
-                unlockedPersonalities.Add(personality);
-            }
+                _gacksung = 4,
+                _level = 45,
+                _acquireTime = new DateUtil()
+            };
+            unlockedPersonalities.Add(personality);
         }
     }
 }
