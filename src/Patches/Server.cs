@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using HarmonyLib;
 using Il2CppSystem.Text;
 using Server;
@@ -48,18 +49,15 @@ public class Server : Il2CppSystem.Object
     private static void UpdateData(UserDataManager __instance, UpdatedFormat updated)
     {
         var unlockedPersonalities = __instance._personalities._personalityList._list;
+        var unlockedPersonalityIds = new HashSet<int>();
+        foreach (var unlockedPersonality in unlockedPersonalities)
+        {
+            unlockedPersonalityIds.Add(unlockedPersonality.ID);
+        }
+
         foreach (var personalityStaticData in Singleton<StaticDataManager>.Instance.PersonalityStaticDataList.list)
         {
-            bool exists = false;
-            foreach (var unlockedPersonality in unlockedPersonalities)
-            {
-                if (unlockedPersonality.ID == personalityStaticData.ID)
-                {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists)
+            if (!unlockedPersonalityIds.Contains(personalityStaticData.ID))
             {
                 var personality = new Personality(personalityStaticData.ID)
                 {
