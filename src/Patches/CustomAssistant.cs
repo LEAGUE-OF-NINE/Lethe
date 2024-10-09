@@ -48,7 +48,7 @@ public class CustomAssistant : Il2CppSystem.Object
 
         var order = sortedParticipants.Count;
         CustomEncounterHook.LOG.LogInfo("Scanning custom assistant data");
-        foreach (var file in Directory.GetFiles(CustomEncounterHook.CustomAssistantDir.FullPath, "*.json"))
+        foreach (var file in Directory.GetFiles(CustomEncounterHook.CustomAssistantDir.FullName, "*.json"))
             try
             {
                 var assistantJson = JSONNode.Parse(File.ReadAllText(file));

@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Linq;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
 using BepInEx;
-using BepInEx.IL2CPP.Utils;
 using BepInEx.Logging;
-using Il2CppSystem.IO;
+using Il2CppSystem.Collections.Generic;
 using SimpleJSON;
 using UnhollowerRuntimeLib;
 using UnityEngine;
-using StreamReader = System.IO.StreamReader;
+using Object = Il2CppSystem.Object;
 
 namespace CustomEncounter;
 
@@ -21,6 +20,9 @@ public class CustomEncounterHook : MonoBehaviour
 
     public static DirectoryInfo CustomAppearanceDir, CustomSpriteDir, CustomLocaleDir, CustomAssistantDir;
     private static string _tokenPath;
+    private static HttpListener _listener;
+
+    private static readonly List<Object> _gcPrevent = new();
 
     public CustomEncounterHook(IntPtr ptr) : base(ptr)
     {
@@ -60,69 +62,72 @@ public class CustomEncounterHook : MonoBehaviour
     internal static void Setup(ManualLogSource log)
     {
         ClassInjector.RegisterTypeInIl2Cpp<CustomEncounterHook>();
-        
+
         LOG = log;
 
         GameObject obj = new("CustomEncounterHook");
         DontDestroyOnLoad(obj);
         obj.hideFlags |= HideFlags.HideAndDontSave;
         var hook = obj.AddComponent<CustomEncounterHook>();
+        _gcPrevent.Add(hook);
 
         CustomAppearanceDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));
         CustomSpriteDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_sprites"));
         CustomLocaleDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_locale"));
         CustomAssistantDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_assistant"));
-       
+
         var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         _tokenPath = Path.Combine(appdata, "LimbusPrivateServer.jwt");
+
+        _listener = new HttpListener();
 
         var thread = new Thread(HttpCoroutine);
         thread.Start();
     }
 
+    public static void StopHttp()
+    {
+        _listener.Stop();
+    }
+
     private static void HttpCoroutine()
     {
-        using var listener = new HttpListener();
-        listener.Prefixes.Add("http://localhost:49829/");
+        _listener.Prefixes.Add("http://localhost:49829/");
 
         try
         {
             LOG.LogInfo("Starting HTTP server at 49829...");
-            listener.Start();
+            _listener.Start();
             LOG.LogInfo("Started HTTP server at 49829...");
+            ServerLoop();
         }
         catch (Exception ex)
         {
             LOG.LogError("Failed to start HTTP server at 49829: " + ex.Message);
-            return;
         }
-        
-        while (true)
+    }
+
+    private static void ServerLoop()
+    {
+        while (_listener.IsListening)
         {
-            var ctx = listener.GetContext();
+            var ctx = _listener.GetContext();
             LOG.LogInfo($"Request: {ctx.Request.HttpMethod} {ctx.Request.Url.LocalPath}");
             var req = ctx.Request;
             using var resp = ctx.Response;
-            resp.StatusCode = (int) HttpStatusCode.OK;
-            
+            resp.StatusCode = (int)HttpStatusCode.OK;
+
             resp.Headers.Add("Content-Type", "application/json");
             resp.Headers.Add("Access-Control-Allow-Methods", "*");
             resp.Headers.Add("Access-Control-Allow-Headers", "*");
             resp.Headers.Add("Vary", "Origin");
             var origin = req.Headers.Get("Origin");
             if (origin != null && origin.StartsWith("http://localhost:"))
-            {
                 resp.Headers.Add("Access-Control-Allow-Origin", origin);
-            }
             else
-            {
                 resp.Headers.Add("Access-Control-Allow-Origin", "https://limbus.windtfw.com");
-            }
 
-            if (req.HttpMethod == "OPTIONS")
-            {
-                continue;
-            }
+            if (req.HttpMethod == "OPTIONS") continue;
 
             try
             {
@@ -138,7 +143,7 @@ public class CustomEncounterHook : MonoBehaviour
             }
             catch
             {
-                 resp.StatusCode = 500;
+                resp.StatusCode = 500;
             }
         }
     }

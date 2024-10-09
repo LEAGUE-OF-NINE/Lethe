@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BepInEx;
 using HarmonyLib;
 using Il2CppSystem.IO;
@@ -12,6 +13,8 @@ namespace CustomEncounter.Patches;
 
 public class Login : Il2CppSystem.Object
 {
+
+    public static Dictionary<string, List<string>> StaticData = new();
     
     public static void Setup(Harmony harmony)
     {
@@ -31,19 +34,16 @@ public class Login : Il2CppSystem.Object
     private static void LoadStaticDataFromJsonFile(StaticDataManager __instance, string dataClass,
         ref Il2CppSystem.Collections.Generic.List<JSONNode> nodeList)
     {
-        CustomEncounterHook.LOG.LogInfo($"Dumping {dataClass}");
-        var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "limbus_data", dataClass));
-        var i = 0;
+        CustomEncounterHook.LOG.LogInfo($"Saving {dataClass}");
+        StaticData[dataClass] = new List<string>();
         foreach (var jsonNode in nodeList)
         {
-            File.WriteAllText(Path.Combine(root.FullName, $"{i}.json"), jsonNode.ToString(2));
-            i++;
+            StaticData[dataClass].Add(jsonNode.ToString(2));
         }
-
 
         var customDataList = new JSONArray();
 
-        root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_data", dataClass));
+        var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_data", dataClass));
         foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
             try
             {

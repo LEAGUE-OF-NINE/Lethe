@@ -1,6 +1,9 @@
 using System;
+using System.IO;
+using System.Threading;
+using BepInEx;
 using HarmonyLib;
-using Il2CppSystem.IO;
+using LibCpp2IL;
 using MainUI;
 using SimpleJSON;
 using UnhollowerRuntimeLib;
@@ -35,7 +38,6 @@ public class Data : Il2CppSystem.Object
 
         return true;
     }
-
 
     public static void LoadCustomLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list)
         where T : LocalizeTextData, new()
@@ -112,11 +114,37 @@ public class Data : Il2CppSystem.Object
     [HarmonyPostfix]
     private static void PostMainUILoad()
     {
-        if (!_localizeDataLoaded)
+        if (_localizeDataLoaded) return;
+        _localizeDataLoaded = true;
+        LoadCustomLocale(Singleton<TextDataManager>.Instance, GlobalGameManager.Instance.Lang);
+        CustomEncounterHook.LOG.LogInfo($"Stopping HTTP listener");
+        CustomEncounterHook.StopHttp();
+        CustomEncounterHook.LOG.LogInfo($"Dumping static data");
+        new Thread(StoreStaticData).Start();
+    }
+
+    private static void StoreStaticData()
+    {
+        foreach (var (dataClass, nodeList) in Login.StaticData)
         {
-            LoadCustomLocale(Singleton<TextDataManager>.Instance, GlobalGameManager.Instance.Lang);
-            _localizeDataLoaded = true;
+            CustomEncounterHook.LOG.LogInfo($"Dumping {dataClass}");
+
+            try
+            {
+                var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "limbus_data", dataClass));
+                var i = 0;
+                foreach (var jsonNode in nodeList)
+                {
+                    File.WriteAllText(Path.Combine(root.FullName, $"{i}.json"), jsonNode);
+                    i++;
+                }
+            }
+            catch (Exception ex)
+            {
+                CustomEncounterHook.LOG.LogError(ex);
+            }
         }
+        
     }
 
 
