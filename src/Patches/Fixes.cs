@@ -1,4 +1,5 @@
 using HarmonyLib;
+using MainUI;
 using UnhollowerRuntimeLib;
 
 namespace CustomEncounter.Patches;
@@ -66,6 +67,5 @@ public class Fixes : Il2CppSystem.Object
         if (__result != null) return;
         __result = __instance.list.ToArray()[0];
     }
-
 
 }

@@ -31,6 +31,9 @@ public class Data : Il2CppSystem.Object
             case 1 when CustomEncounterHook.Encounter != null:
                 __result = CustomEncounterHook.Encounter;
                 return false;
+            case 10101 when CustomEncounterHook.Encounter != null:
+                __result = CustomEncounterHook.Encounter;
+                return false;
             case -1:
                 id = 1;
                 break;
