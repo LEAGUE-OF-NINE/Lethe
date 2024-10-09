@@ -52,6 +52,12 @@ public class CustomEncounterHook : MonoBehaviour
                 LOG.LogError("Error loading custom fight: " + ex.Message);
             }
         }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            Singleton<StaticDataManager>.Instance._isDataLoaded = false;
+            GlobalGameManager.Instance.LoadUserDataAndSetScene(SCENE_STATE.Main);
+        }
     }
 
     public static string AccountJwt()
