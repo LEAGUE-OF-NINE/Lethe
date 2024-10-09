@@ -58,5 +58,14 @@ public class Fixes : Il2CppSystem.Object
     {
         CustomEncounterHook.LOG.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
     }
+   
+    [HarmonyPatch(typeof(SeasonInfoStaticDataList), nameof(SeasonInfoStaticDataList.GetNowSeasonInfo))]
+    [HarmonyPostfix]
+    private static void PostGetNowSeasonInfo(SeasonInfoStaticDataList __instance, ref SeasonInfoStaticData __result)
+    {
+        if (__result != null) return;
+        __result = __instance.list.ToArray()[0];
+    }
+
 
 }

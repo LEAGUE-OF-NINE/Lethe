@@ -98,7 +98,19 @@ public class CustomEncounterHook : MonoBehaviour
 
     private static void HttpCoroutine()
     {
-        _listener.Prefixes.Add("http://localhost:49829/");
+        while (true)
+        {
+            try
+            {
+                _listener.Prefixes.Add("http://localhost:49829/");
+                break;
+            }
+            catch (Exception ex)
+            {
+                LOG.LogError($"Error starting HTTP server {ex}");
+                Thread.Sleep(1000);
+            }
+        }
 
         try
         {
