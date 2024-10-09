@@ -50,7 +50,7 @@ public class Login : Il2CppSystem.Object
                 CustomEncounterHook.LOG.LogInfo($"Loading {file}");
                 var node = JSONNode.Parse(File.ReadAllText(file));
                 customDataList.Add(node);
-                nodeList.Add(node);
+                nodeList.Insert(0, node);
             }
             catch (Exception ex)
             {
