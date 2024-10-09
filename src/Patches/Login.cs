@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using BepInEx;
 using HarmonyLib;
+using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.IO;
 using Server;
 using ServerConfig;
@@ -14,7 +14,7 @@ namespace CustomEncounter.Patches;
 public class Login : Il2CppSystem.Object
 {
 
-    public static Dictionary<string, List<string>> StaticData = new();
+    public static System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> StaticData = new();
     
     public static void Setup(Harmony harmony)
     {
@@ -31,11 +31,11 @@ public class Login : Il2CppSystem.Object
    
     [HarmonyPatch(typeof(StaticDataManager), nameof(StaticDataManager.LoadStaticDataFromJsonFile))]
     [HarmonyPrefix]
-    private static void LoadStaticDataFromJsonFile(StaticDataManager __instance, string dataClass,
+    private static void PreLoadStaticDataFromJsonFile(StaticDataManager __instance, string dataClass,
         ref Il2CppSystem.Collections.Generic.List<JSONNode> nodeList)
     {
         CustomEncounterHook.LOG.LogInfo($"Saving {dataClass}");
-        StaticData[dataClass] = new List<string>();
+        StaticData[dataClass] = new System.Collections.Generic.List<string>();
         foreach (var jsonNode in nodeList)
         {
             StaticData[dataClass].Add(jsonNode.ToString(2));
@@ -50,7 +50,7 @@ public class Login : Il2CppSystem.Object
                 CustomEncounterHook.LOG.LogInfo($"Loading {file}");
                 var node = JSONNode.Parse(File.ReadAllText(file));
                 customDataList.Add(node);
-                nodeList.Add(node);
+                nodeList.Insert(0, node);
             }
             catch (Exception ex)
             {
