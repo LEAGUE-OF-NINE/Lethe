@@ -61,7 +61,7 @@ public class Server : Il2CppSystem.Object
             var personality = new Personality(personalityStaticData.ID)
             {
                 _gacksung = 4,
-                _level = 45,
+                _level = 50,
                 _acquireTime = new DateUtil()
             };
             unlockedPersonalities.Add(personality);
