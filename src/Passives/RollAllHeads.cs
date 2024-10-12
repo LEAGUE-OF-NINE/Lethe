@@ -25,7 +25,7 @@ namespace CustomEncounter.Passives
         [HarmonyPrefix]
         private static void RollCoin(CoinModel __instance,float prob, BattleActionModel action) {
             var id = action._model._originID;
-            if (Singleton<StaticDataManager>.Instance._personalityList.GetData(id).passiveSet.PassiveIdList.Contains(59373351))
+            if (Singleton<StaticDataManager>.Instance._personalityList.GetData(id).PassiveSetInfo.PassiveIdList.Contains(59373351))
             {
                 __instance._result = COIN_RESULT.HEAD;
             }
