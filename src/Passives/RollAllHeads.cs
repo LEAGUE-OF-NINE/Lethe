@@ -25,18 +25,19 @@ namespace CustomEncounter.Passives
         [HarmonyPrefix]
         private static void RollCoin(CoinModel __instance, float prob, BattleActionModel action)
         {
-            try
-            {
+                //welcome back yanderedev :(
                 var id = action._model._originID;
-                if (Singleton<StaticDataManager>.Instance._personalityList.GetData(id).PassiveSetInfo.PassiveIdList.Contains(59373351))
+                var fml = Singleton<StaticDataManager>.Instance._personalityList.GetData(id);
+                var fml2 = Singleton<StaticDataManager>.Instance._abnormalityUnitList.GetData(id);
+                var fml3 = Singleton<StaticDataManager>.Instance._enemyUnitList.GetData(id);
+                if (fml != null || fml2 != null || fml3 != null)
                 {
-                    __instance._result = COIN_RESULT.HEAD;
+                   if (fml.PassiveSetInfo.PassiveIdList.Contains(59373351) || fml2.PassiveSetInfo.PassiveIdList.Contains(59373351) || fml.PassiveSetInfo.PassiveIdList.Contains(59373351))
+                    {
+                        __instance._result = COIN_RESULT.HEAD;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                //nothing bad ever happens
-            }
+
         }
     }
 }
