@@ -23,11 +23,19 @@ namespace CustomEncounter.Passives
         //try BattleUnitModel.OnStartCoin instead later (im pushing naww)
         [HarmonyPatch(typeof(CoinModel), nameof(CoinModel.Roll))]
         [HarmonyPrefix]
-        private static void RollCoin(CoinModel __instance,float prob, BattleActionModel action) {
-            var id = action._model._originID;
-            if (Singleton<StaticDataManager>.Instance._personalityList.GetData(id).PassiveSetInfo.PassiveIdList.Contains(59373351))
+        private static void RollCoin(CoinModel __instance, float prob, BattleActionModel action)
+        {
+            try
             {
-                __instance._result = COIN_RESULT.HEAD;
+                var id = action._model._originID;
+                if (Singleton<StaticDataManager>.Instance._personalityList.GetData(id).PassiveSetInfo.PassiveIdList.Contains(59373351))
+                {
+                    __instance._result = COIN_RESULT.HEAD;
+                }
+            }
+            catch (Exception e)
+            {
+                //nothing bad ever happens
             }
         }
     }
