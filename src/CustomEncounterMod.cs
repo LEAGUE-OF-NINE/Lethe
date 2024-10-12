@@ -73,6 +73,7 @@ public class CustomEncounterMod : BasePlugin
             Patches.Skin.Setup(harmony);
             Patches.Texture.Setup(harmony);
             Patches.TextAsset.Setup(harmony);
+            Passives.RollAllHeads.Setup(harmony);
             // Patches.Skills.Setup(harmony);
 
             EncounterHelper.Log = Log;
