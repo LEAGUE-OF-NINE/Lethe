@@ -68,7 +68,7 @@ public class Fixes : Il2CppSystem.Object
         __result = __instance.list.ToArray()[0];
     }
 
-    [HarmonyPatch(typeof(AbnormalityAppearance_8166), nameof(AbnormalityAppearance_8166.OnRoundStart_AfterChoice))]
+    [HarmonyPatch(typeof(SD.AbnormalityAppearance_8166), nameof(SD.AbnormalityAppearance_8166.OnRoundStart_AfterChoice))]
     [HarmonyPrefix]
     private static void lol() { }
 }
