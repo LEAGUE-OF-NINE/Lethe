@@ -10,6 +10,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using BepInEx.Logging;
+using Il2CppSystem.Reflection;
 
 namespace CustomEncounter.Patches;
 
@@ -17,6 +18,7 @@ public class Skin : MonoBehaviour
 {
     private static Il2CppSystem.Collections.Generic.List<AssetBundle> loadedAssets = new();
     private static ManualLogSource Log => CustomEncounterHook.LOG;
+    private static Harmony AbnoPatcher = new("AbnoPatcher");
 
     public static void Setup(Harmony harmony)
     {
@@ -43,78 +45,67 @@ public class Skin : MonoBehaviour
     private static void LoadScene(SCENE_STATE state, DelegateEvent onLoadScene)
     {
         Log.LogInfo($"SCENE: {state}");
-        if (state == SCENE_STATE.Battle)
+        switch (state)
         {
-            foreach (var bundlePath in Directory.GetFiles(CustomEncounterHook.CustomAppearanceDir.FullName, "*.bundle"))
+            case SCENE_STATE.Battle:
             {
-                Log.LogInfo($"{bundlePath}");
-                var bundle = AssetBundle.LoadFromFile(bundlePath, 0);
-                loadedAssets.Add(bundle);
-                Log.LogWarning(@$"loaded bundle {bundle.name}!");
+                foreach (var bundlePath in Directory.GetFiles(CustomEncounterHook.CustomAppearanceDir.FullName, "*.bundle"))
+                {
+                    Log.LogInfo($"{bundlePath}");
+                    var bundle = AssetBundle.LoadFromFile(bundlePath, 0);
+                    loadedAssets.Add(bundle);
+                    Log.LogWarning(@$"loaded bundle {bundle.name}!");
 
+                }
+
+                break;
             }
-        }
-        else if (state == SCENE_STATE.Main)
-        {
-            foreach (var bundle in loadedAssets)
+            case SCENE_STATE.Main:
             {
-                bundle.Unload(false);
+                foreach (var bundle in loadedAssets)
+                {
+                    bundle.Unload(false);
 
+                }
+                loadedAssets.Clear();
+                break;
             }
-            loadedAssets.Clear();
         }
     }
-
+    
     //create skin
     [HarmonyPatch(typeof(SDCharacterSkinUtil), nameof(SDCharacterSkinUtil.CreateSkin))]
-    [HarmonyPatch(new Type[] { typeof(BattleUnitView), typeof(BattleUnitModel), typeof(Transform), typeof(DelegateEvent) })]
+    [HarmonyPatch(new []{ typeof(BattleUnitView), typeof(BattleUnitModel), typeof(Transform), typeof(DelegateEvent) })]
     [HarmonyPrefix]
     private static bool CreateSkin(BattleUnitView view, BattleUnitModel unit, Transform parent, DelegateEvent handler, ref CharacterAppearance __result)
     {
-
-        CharacterAppearance characterAppearance;
-        var skinType = SDCharacterSkinUtil._LABEL_ABNORMALITY;
-
+        var skinTypes = new[] { SDCharacterSkinUtil._LABEL_ABNORMALITY, SDCharacterSkinUtil._LABEL_ENEMY, SDCharacterSkinUtil._LABEL_PERSONALITY };
+        Il2CppSystem.ValueTuple<GameObject, DelegateEvent> getSkin = null;
         var appearanceID = unit.GetAppearanceID();
-        //appearanceID = "10306_Donquixote_MiddleFingerAppearance";
         Log.LogInfo($"GETTING [{appearanceID}] for {unit.GetOriginUnitID().ToString()}!");
-
-        //shit but whatever
-        //load abnormality skin
-        var getSkin = AddressableManager.Instance.LoadAssetSync<GameObject>(skinType, appearanceID, parent, null);
-
-        //load enemy skin
-        if (getSkin.Item1 == null && skinType == SDCharacterSkinUtil._LABEL_ABNORMALITY)
+        
+        foreach (var skinType in skinTypes)
         {
-            skinType = SDCharacterSkinUtil._LABEL_ENEMY;
             getSkin = AddressableManager.Instance.LoadAssetSync<GameObject>(skinType, appearanceID, parent, null);
+            if (getSkin?.Item1 != null) break;
         }
 
-        //load personality skin
-        if (getSkin.Item1 == null && skinType == SDCharacterSkinUtil._LABEL_ENEMY)
-        {
-            skinType = SDCharacterSkinUtil._LABEL_PERSONALITY;
-            getSkin = AddressableManager.Instance.LoadAssetSync<GameObject>(skinType, appearanceID, parent, null);
-        }
+        var characterAppearance = getSkin?.Item1?.GetComponent<CharacterAppearance>();
 
-        characterAppearance = getSkin.Item1.GetComponent<CharacterAppearance>();
-        if (characterAppearance != null)
+        if (characterAppearance == null)
         {
-            //view._appearances.Insert(0, characterAppearance);
-            //view._curAppearance = characterAppearance;
-            characterAppearance.Initialize(view);
-            characterAppearance.charInfo.appearanceID = appearanceID;
-            __result = characterAppearance;
-
-            Log.LogInfo($"GOT SKIN {characterAppearance.name}");
-            return false;
-        }
-        else
-        {
-            Log.LogError("APPERANCE NULL");
+            Log.LogError("APPEARANCE NULL");
             return true;
         }
-
+        
+        //view._appearances.Insert(0, characterAppearance);
+        //view._curAppearance = characterAppearance;
+        characterAppearance.Initialize(view);
+        characterAppearance.charInfo.appearanceID = appearanceID;
+        Fixes.FixAbnoAppearanceCrash(characterAppearance.GetIl2CppType().FullName, AbnoPatcher);
+        __result = characterAppearance;
+        Log.LogInfo($"GOT SKIN {characterAppearance.name}");
+        return false;
     }
 
     public static bool PatchLoadAssetSync(string label, string resourceId, Transform parent, string releaseKey, ref Il2CppSystem.ValueTuple<UnityEngine.GameObject, DelegateEvent> __result)
@@ -129,18 +120,16 @@ public class Skin : MonoBehaviour
             {
                 foreach (var asset in bundle.AllAssetNames())
                 {
-                    if (asset.Contains(appearanceID))
-                    {
-                        var loadAsset = bundle.LoadAsset(asset);
-                        var clone = Instantiate(loadAsset, parent.position, parent.rotation, parent).Cast<GameObject>();
-                        Log.LogInfo($"Found custom appearance {appearanceID}");
+                    if (!asset.Contains(appearanceID)) continue;
+                    var loadAsset = bundle.LoadAsset(asset);
+                    var clone = Instantiate(loadAsset, parent.position, parent.rotation, parent).Cast<GameObject>();
+                    Log.LogInfo($"Found custom appearance {appearanceID}");
 
-                        //new result
-                        __result = new();
-                        __result.Item1 = clone;
+                    //new result
+                    __result = new();
+                    __result.Item1 = clone;
 
-                        return false;
-                    }
+                    return false;
                 }
             }
         }
