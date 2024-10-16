@@ -59,12 +59,13 @@ public class Login : Il2CppSystem.Object
 
         try
         {
-            var url = Singleton<ServerSelector>.Instance.GetServerURL() + "/Custom/Upload/" + dataClass;
+            var url = Singleton<ServerSelector>.Instance.GetServerURL() + "/custom/upload/" + dataClass;
             var auth = SingletonBehavior<LoginInfoManager>.Instance.UserAuth.ToServerUserAuthFormat();
-            var body = JSONNode.Parse(JsonUtility.ToJson(auth));
+            var body = new JSONObject();
             var subNode = new JSONObject();
             subNode.Add("list", customDataList);
             body.Add("parameters", subNode);
+            body.Add("userAuth", JSONNode.Parse(JsonUtility.ToJson(auth)));
             var schema = new HttpApiSchema(url, body.ToString(2), new Action<string>(_ => { }), "", false);
             HttpApiRequester.Instance.SendRequest(schema, true);
         }
