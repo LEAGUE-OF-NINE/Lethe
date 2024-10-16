@@ -102,7 +102,11 @@ public class Skin : MonoBehaviour
         //view._curAppearance = characterAppearance;
         characterAppearance.Initialize(view);
         characterAppearance.charInfo.appearanceID = appearanceID;
-        Fixes.FixAbnoAppearanceCrash(characterAppearance.GetIl2CppType().FullName, AbnoPatcher);
+        if (unit._faction == UNIT_FACTION.PLAYER)
+        {
+            Fixes.FixAbnoAppearanceCrash(characterAppearance.GetIl2CppType().FullName, AbnoPatcher);
+        }
+        
         __result = characterAppearance;
         Log.LogInfo($"GOT SKIN {characterAppearance.name}");
         return false;

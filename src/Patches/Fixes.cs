@@ -40,13 +40,12 @@ public class Fixes : Il2CppSystem.Object
         _abnoTypes.Remove(typeName);
         
         var stub = new HarmonyMethod(typeof(Fixes), nameof(Stub));
-        foreach (var methodInfo in type.GetMethods().Where(it => it.IsDeclaredMember()))
+        foreach (var methodInfo in type.GetMethods().Where(it => it.IsDeclaredMember() && !it.Name.StartsWith("get_") && !it.Name.StartsWith("set_")))
         {
-            var isSetAccessor = type.GetProperties().Any(prop => prop.GetSetMethod() == methodInfo);
-            var isGetAccessor = type.GetProperties().Any(prop => prop.GetGetMethod() == methodInfo);
             try
             {
-                if (!isSetAccessor && !isGetAccessor) harmony.Patch(methodInfo, prefix: stub);
+                CustomEncounterHook.LOG.LogInfo($"Patching {type.FullName}#{methodInfo.Name}");
+                harmony.Patch(methodInfo, prefix: stub);
             }
             catch (Exception e)
             {
