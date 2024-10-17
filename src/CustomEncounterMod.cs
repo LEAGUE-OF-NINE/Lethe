@@ -9,6 +9,7 @@ using Il2CppSystem.Security.Cryptography;
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using UnityEngine;
+using Random = System.Random;
 
 namespace CustomEncounter;
 
@@ -52,12 +53,14 @@ public class CustomEncounterMod : BasePlugin
         else
             Log.LogInfo("Using private server: " + ConfigServer.Value);
 
-        Application.OpenURL(ConfigServer.Value + "/auth/login");
+        var rng = new Random();
+        var port = rng.Next(30000, 65500);
+        Application.OpenURL(ConfigServer.Value + $"/auth/login?port={port}");
 
         try
         {
 
-            CustomEncounterHook.Setup(Log);
+            CustomEncounterHook.Setup(Log, port);
             Harmony harmony = new(NAME);
             
             // Register abilities

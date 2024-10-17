@@ -10,6 +10,7 @@ using SimpleJSON;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Object = Il2CppSystem.Object;
+using Random = System.Random;
 
 namespace CustomEncounter;
 
@@ -65,7 +66,7 @@ public class CustomEncounterHook : MonoBehaviour
         return File.Exists(_tokenPath) ? File.ReadAllText(_tokenPath) : "";
     }
 
-    internal static void Setup(ManualLogSource log)
+    internal static void Setup(ManualLogSource log, int port)
     {
         ClassInjector.RegisterTypeInIl2Cpp<CustomEncounterHook>();
 
@@ -87,7 +88,7 @@ public class CustomEncounterHook : MonoBehaviour
 
         _listener = new HttpListener();
 
-        var thread = new Thread(HttpCoroutine);
+        var thread = new Thread(() => HttpCoroutine(port));
         thread.Start();
     }
 
@@ -96,13 +97,13 @@ public class CustomEncounterHook : MonoBehaviour
         _listener.Stop();
     }
 
-    private static void HttpCoroutine()
+    private static void HttpCoroutine(int port)
     {
         while (true)
         {
             try
             {
-                _listener.Prefixes.Add("http://localhost:49829/");
+                _listener.Prefixes.Add($"http://localhost:{port}/");
                 break;
             }
             catch (Exception ex)
@@ -114,14 +115,14 @@ public class CustomEncounterHook : MonoBehaviour
 
         try
         {
-            LOG.LogInfo("Starting HTTP server at 49829...");
+            LOG.LogInfo($"Starting HTTP server at {port}...");
             _listener.Start();
-            LOG.LogInfo("Started HTTP server at 49829...");
+            LOG.LogInfo($"Started HTTP server at {port}...");
             ServerLoop();
         }
         catch (Exception ex)
         {
-            LOG.LogError("Failed to start HTTP server at 49829: " + ex.Message);
+            LOG.LogError($"Failed to start HTTP server at {port}: " + ex.Message);
         }
     }
 
