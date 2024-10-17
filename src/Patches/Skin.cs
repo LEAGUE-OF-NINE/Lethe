@@ -80,7 +80,7 @@ public class Skin : MonoBehaviour
     [HarmonyPrefix]
     private static bool CreateSkin(BattleUnitView view, BattleUnitModel unit, Transform parent, DelegateEvent handler, ref CharacterAppearance __result)
     {
-        __result = CreateSkinForModel(view, parent);
+        __result = CreateSkinForModel(view, view._unitModel.GetAppearanceID(), parent);
         return false;
     }
 
@@ -89,16 +89,15 @@ public class Skin : MonoBehaviour
     [HarmonyPrefix]
     private static bool CreateSkin2(BattleUnitView view, string appearanceID, Transform parent, DelegateEvent handle, ref CharacterAppearance __result)
     {
-        __result = CreateSkinForModel(view, parent);
+        __result = CreateSkinForModel(view, appearanceID, parent);
         return false;
     }
 
-    private static CharacterAppearance CreateSkinForModel(BattleUnitView view, Transform parent)
+    private static CharacterAppearance CreateSkinForModel(BattleUnitView view, string appearanceID, Transform parent)
     {
         var skinTypes = new[] { SDCharacterSkinUtil._LABEL_ABNORMALITY, SDCharacterSkinUtil._LABEL_ENEMY, SDCharacterSkinUtil._LABEL_PERSONALITY };
         Il2CppSystem.ValueTuple<GameObject, DelegateEvent> getSkin = null;
         var unit = view._unitModel;
-        var appearanceID = unit.GetAppearanceID();
         Log.LogInfo($"GETTING [{appearanceID}] for {unit.GetOriginUnitID().ToString()}!");
 
         foreach (var skinType in skinTypes)
