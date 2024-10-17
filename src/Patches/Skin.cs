@@ -3,15 +3,9 @@ using Addressable;
 using HarmonyLib;
 using Il2CppSystem.IO;
 using SD;
-using System.Linq;
-using Il2CppSystem.Collections.Generic;
 using UnhollowerRuntimeLib;
 using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.ProBuilder;
 using BepInEx.Logging;
-using Il2CppSystem.Reflection;
-using Mono.Unix.Native;
 
 namespace CustomEncounter.Patches;
 

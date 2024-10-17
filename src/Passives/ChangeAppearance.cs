@@ -1,12 +1,7 @@
-﻿using CustomEncounter.Passives;
-using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HarmonyLib;
 using UnhollowerRuntimeLib;
 using UnityEngine;
+using Utils;
 
 namespace CustomEncounter.Passives
 {
@@ -30,32 +25,23 @@ namespace CustomEncounter.Passives
                 var actor = log.GetCharacterInfo(behavior._instanceID); //get actor
                 var skill = Singleton<StaticDataManager>.Instance._skillList.GetData(skillID);
                 //CustomEncounterHook.Log.LogWarning($"COIN TOSS {skillID}");
-                if (behavior._instanceID == actor.instanceID && __instance._instanceID == actor.instanceID) //man idk anymore
+                if (behavior._instanceID != actor.instanceID || __instance._instanceID != actor.instanceID) continue; //man idk anymore
+                foreach (var abilitydata in skill.GetAbilityScript(gacksungLv))
                 {
-                    foreach (var abilitydata in skill.GetAbilityScript(gacksungLv))
-                    {
-                        var scriptName = abilitydata.scriptName;
-                        if (scriptName.Contains("ChangeAppearance_"))
-                        {
-                            var appearanceId = scriptName.Replace("ChangeAppearance_", "");
-                            //CustomEncounterHook.Log.LogWarning($"CHANGE APPEARANCE {appearanceId}");
-                            __instance.ChangeAppearance(appearanceId, true);
-                        }
-
-                    }
+                    var scriptName = abilitydata.scriptName;
+                    if (!scriptName.Contains("ChangeAppearance_")) continue;
+                    var appearanceId = scriptName.Replace("ChangeAppearance_", "");
+                    //CustomEncounterHook.Log.LogWarning($"CHANGE APPEARANCE {appearanceId}");
+                    __instance.ChangeAppearance(appearanceId, true);
                 }
             }
-
-
-
-
         }
 
         [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitModel.OnRoundEnd))]
         [HarmonyPostfix]
         private static void OnRoundEnd(BattleUnitView __instance)
         {
-            var name = __instance._appearances[0].name;
+            var name = __instance._appearances.GetFirstElement().name;
             var appearanceId = name.Replace("(Clone)", "");
             __instance.ChangeAppearance(appearanceId, true);
             //there is honestly a better way to do this but i wanna sleep
