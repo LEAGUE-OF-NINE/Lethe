@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using UnityEngine.ProBuilder;
 using BepInEx.Logging;
 using Il2CppSystem.Reflection;
+using Mono.Unix.Native;
 
 namespace CustomEncounter.Patches;
 
@@ -79,11 +80,27 @@ public class Skin : MonoBehaviour
     [HarmonyPrefix]
     private static bool CreateSkin(BattleUnitView view, BattleUnitModel unit, Transform parent, DelegateEvent handler, ref CharacterAppearance __result)
     {
+        __result = CreateSkinForModel(view, parent);
+        return false;
+    }
+
+    [HarmonyPatch(typeof(SDCharacterSkinUtil), nameof(SDCharacterSkinUtil.CreateSkin))]
+    [HarmonyPatch(new Type[] { typeof(BattleUnitView), typeof(string), typeof(Transform), typeof(DelegateEvent) })]
+    [HarmonyPrefix]
+    private static bool CreateSkin2(BattleUnitView view, string appearanceID, Transform parent, DelegateEvent handle, ref CharacterAppearance __result)
+    {
+        __result = CreateSkinForModel(view, parent);
+        return false;
+    }
+
+    private static CharacterAppearance CreateSkinForModel(BattleUnitView view, Transform parent)
+    {
         var skinTypes = new[] { SDCharacterSkinUtil._LABEL_ABNORMALITY, SDCharacterSkinUtil._LABEL_ENEMY, SDCharacterSkinUtil._LABEL_PERSONALITY };
         Il2CppSystem.ValueTuple<GameObject, DelegateEvent> getSkin = null;
+        var unit = view._unitModel;
         var appearanceID = unit.GetAppearanceID();
         Log.LogInfo($"GETTING [{appearanceID}] for {unit.GetOriginUnitID().ToString()}!");
-        
+
         foreach (var skinType in skinTypes)
         {
             getSkin = AddressableManager.Instance.LoadAssetSync<GameObject>(skinType, appearanceID, parent, null);
@@ -95,9 +112,9 @@ public class Skin : MonoBehaviour
         if (characterAppearance == null)
         {
             Log.LogError("APPEARANCE NULL");
-            return true;
+            return null;
         }
-        
+
         //view._appearances.Insert(0, characterAppearance);
         //view._curAppearance = characterAppearance;
         characterAppearance.Initialize(view);
@@ -106,10 +123,8 @@ public class Skin : MonoBehaviour
         {
             Fixes.FixAbnoAppearanceCrash(characterAppearance.GetIl2CppType().FullName, AbnoPatcher);
         }
-        
-        __result = characterAppearance;
         Log.LogInfo($"GOT SKIN {characterAppearance.name}");
-        return false;
+        return characterAppearance;
     }
 
     public static bool PatchLoadAssetSync(string label, string resourceId, Transform parent, string releaseKey, ref Il2CppSystem.ValueTuple<UnityEngine.GameObject, DelegateEvent> __result)
