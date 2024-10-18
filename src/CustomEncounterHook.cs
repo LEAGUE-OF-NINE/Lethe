@@ -10,7 +10,6 @@ using SimpleJSON;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Object = Il2CppSystem.Object;
-using Random = System.Random;
 
 namespace CustomEncounter;
 
@@ -178,8 +177,11 @@ public class CustomEncounterHook : MonoBehaviour
         var buf = new byte[8192];
         var read = req.InputStream.Read(buf, 0, buf.Length);
         var json = Encoding.UTF8.GetString(buf, 0, read);
-
-        var token = JSON.Parse(json)["token"].Value;
+        var obj = JSON.Parse(json);
+        _gcPrevent.Add(obj);
+        obj = obj["token"];
+        _gcPrevent.Add(obj);
+        var token = obj.Value;
         System.IO.File.WriteAllText(_tokenPath, token);
     }
 }
