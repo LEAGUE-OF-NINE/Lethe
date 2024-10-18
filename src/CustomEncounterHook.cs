@@ -1,16 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.IO;
 using System.Net;
-using System.Text;
-using System.Threading;
 using BepInEx;
+using BepInEx.IL2CPP.Utils;
 using BepInEx.Logging;
 using Il2CppSystem.Collections.Generic;
 using SimpleJSON;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Object = Il2CppSystem.Object;
-using Random = System.Random;
 
 namespace CustomEncounter;
 
@@ -88,8 +87,7 @@ public class CustomEncounterHook : MonoBehaviour
 
         _listener = new HttpListener();
 
-        var thread = new Thread(() => HttpCoroutine(port));
-        thread.Start();
+        hook.StartCoroutine(HttpCoroutine(port));
     }
 
     public static void StopHttp()
@@ -97,24 +95,11 @@ public class CustomEncounterHook : MonoBehaviour
         _listener.Stop();
     }
 
-    private static void HttpCoroutine(int port)
+    private static IEnumerator HttpCoroutine(int port)
     {
-        while (true)
-        {
-            try
-            {
-                _listener.Prefixes.Add($"http://localhost:{port}/");
-                break;
-            }
-            catch (Exception ex)
-            {
-                LOG.LogError($"Error starting HTTP server {ex}");
-                Thread.Sleep(1000);
-            }
-        }
-
         try
         {
+            _listener.Prefixes.Add($"http://localhost:{port}/");
             LOG.LogInfo($"Starting HTTP server at {port}...");
             _listener.Start();
             LOG.LogInfo($"Started HTTP server at {port}...");
@@ -124,6 +109,8 @@ public class CustomEncounterHook : MonoBehaviour
         {
             LOG.LogError($"Failed to start HTTP server at {port}: " + ex.Message);
         }
+
+        yield return null;
     }
 
     private static void ServerLoop()
@@ -154,7 +141,7 @@ public class CustomEncounterHook : MonoBehaviour
                 {
                     case "/auth/login":
                         AuthLogin(req, resp);
-                        break;
+                        return;
                     default:
                         resp.StatusCode = 404;
                         break;
@@ -175,10 +162,8 @@ public class CustomEncounterHook : MonoBehaviour
             return;
         }
 
-        var buf = new byte[8192];
-        var read = req.InputStream.Read(buf, 0, buf.Length);
-        var json = Encoding.UTF8.GetString(buf, 0, read);
-
+        using var reader = new StreamReader(req.InputStream);
+        var json = reader.ReadToEnd();
         var token = JSON.Parse(json)["token"].Value;
         System.IO.File.WriteAllText(_tokenPath, token);
     }
