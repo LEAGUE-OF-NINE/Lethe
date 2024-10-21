@@ -110,6 +110,7 @@ public class Skin : MonoBehaviour
 
         //view._appearances.Insert(0, characterAppearance);
         //view._curAppearance = characterAppearance;
+        characterAppearance.name = appearanceID;
         characterAppearance.Initialize(view);
         characterAppearance.charInfo.appearanceID = appearanceID;
         if (unit._faction == UNIT_FACTION.PLAYER)
