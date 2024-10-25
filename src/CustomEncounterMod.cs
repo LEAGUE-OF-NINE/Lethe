@@ -4,6 +4,7 @@ using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using CustomEncounter.SkillAbility;
 using HarmonyLib;
+using Il2CppDumper;
 using Il2CppSystem.IO;
 using Il2CppSystem.Security.Cryptography;
 using UnhollowerBaseLib;
@@ -59,6 +60,12 @@ public class CustomEncounterMod : BasePlugin
 
         try
         {
+            //temp fix
+            var toggleCRC = Config.Bind("LaunchSettings",
+                                        "CRCtoggle",
+                                        false,
+                                        "Toggle CRC checks from the game. It's recommended that it's disabled when downloading updates.");
+
 
             CustomEncounterHook.Setup(Log, port);
             Harmony harmony = new(NAME);
@@ -74,10 +81,11 @@ public class CustomEncounterMod : BasePlugin
             Patches.Login.Setup(harmony);
             Patches.Server.Setup(harmony);
             Patches.Skin.Setup(harmony);
-            Patches.Texture.Setup(harmony);
-            Patches.TextAsset.Setup(harmony);
+            Patches.Texture.Setup(harmony);            
             Passives.RollAllHeads.Setup(harmony);
             Passives.ChangeAppearance.Setup(harmony);
+            if (toggleCRC.Value) Patches.TextAsset.Setup(harmony);
+
             // Patches.Skills.Setup(harmony);
 
             EncounterHelper.Log = Log;
