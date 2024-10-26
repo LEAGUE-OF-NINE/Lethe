@@ -52,20 +52,21 @@ public class Skin : MonoBehaviour
                     Log.LogWarning(@$"loaded bundle {bundle.name}!");
 
                 }
-
-                break;
-            }
-            case SCENE_STATE.Main:
-            {
-                foreach (var bundle in loadedAssets)
-                {
-                    bundle.Unload(false);
-
-                }
-                loadedAssets.Clear();
                 break;
             }
         }
+    }
+
+    [HarmonyPatch(typeof(StageController), nameof(StageController.EndStage))]
+    [HarmonyPostfix]
+    private static void UnloadBundles()
+    {
+        foreach (var bundle in loadedAssets)
+        {
+            bundle.Unload(false);
+
+        }
+        loadedAssets.Clear();
     }
     
     //create skin
