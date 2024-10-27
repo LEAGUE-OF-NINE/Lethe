@@ -54,19 +54,18 @@ public class Skin : MonoBehaviour
                 }
                 break;
             }
+            case not SCENE_STATE.Battle:            
+            {
+              foreach (var bundle in loadedAssets)
+              {
+                        CustomEncounterHook.LOG.LogWarning($"unloading {bundle.name}");
+                        bundle.Unload(false);
+              }
+                loadedAssets.Clear();
+                break;
+            }
+        
         }
-    }
-
-    [HarmonyPatch(typeof(StageController), nameof(StageController.EndStage))]
-    [HarmonyPostfix]
-    private static void UnloadBundles()
-    {
-        foreach (var bundle in loadedAssets)
-        {
-            bundle.Unload(false);
-
-        }
-        loadedAssets.Clear();
     }
     
     //create skin
