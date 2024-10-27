@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading;
 using BepInEx;
 using HarmonyLib;
-using LibCpp2IL;
 using MainUI;
 using SimpleJSON;
 using UnhollowerRuntimeLib;
@@ -28,11 +27,11 @@ public class Data : Il2CppSystem.Object
     {
         switch (id)
         {
-            case 1 when CustomEncounterHook.Encounter != null:
-                __result = CustomEncounterHook.Encounter;
-                return false;
-            case 10101 when CustomEncounterHook.Encounter != null:
-                __result = CustomEncounterHook.Encounter;
+            case 6006583:
+                var json = File.ReadAllText(CustomEncounterMod.EncounterConfig);                
+                var read = JsonUtility.FromJson<StageStaticData>(json);
+                read.story.exit = null;
+                __result = read;
                 return false;
             case -1:
                 id = 1;
@@ -71,7 +70,7 @@ public class Data : Il2CppSystem.Object
         }
     }
 
-    private static void LoadCustomLocale(TextDataManager __instance, LOCALIZE_LANGUAGE lang)
+    public static void LoadCustomLocale(TextDataManager __instance, LOCALIZE_LANGUAGE lang)
     {
         var root = Directory.CreateDirectory(Path.Combine(CustomEncounterHook.CustomLocaleDir.FullName, lang.ToString()));
         LoadCustomLocale(root, "uiList", __instance._uiList);
@@ -150,5 +149,21 @@ public class Data : Il2CppSystem.Object
         
     }
 
+    [HarmonyPatch(typeof(PartStaticDataList), nameof(PartStaticDataList.Init))]
+    [HarmonyPostfix]
+    public static void AddPlayground()
+    {
+        //damn i dont care anymore
+        var subchapterJSON = @"{""id"":6969,""illustSprName"":"""",""sprName"":""chapter0"",""subChapterNumber"":""1"",""mapSizeRow"":0,""mapSizeColoumn"":0,""region"":""p"",""unlockCondition"":{""mainChapterId"":0,""subChapterId"":0,""nodeId"":0,""unlockCode"":101},""stageNodeList"":[{""nodeId"":696901,""stageId"":6006583,""posx"":0,""posy"":0,""nodeIllustIdString"":"""",""unlockCondition"":{""mainChapterId"":0,""subChapterId"":0,""nodeId"":0,""unlockCode"":101,""possession"":{""type"":"""",""id"":0,""num"":0,""tags"":[]}},""upper"":0,""stageNodeType"":""NORMAL""}],""nextMainchapterid"":101,""nextSubchapterid"":102,""lastnodeid"":0,""nodeIconPath"":""""}";
+        var subchapterUIJSON = @"{""chapterId"":91,""subchapterId"":6969,""nodeId"":696901,""storyIdInTheaterData"":0,""isUnlockByUnlockCode"":false,""unlockCode"":101,""relatedData"":{""chapterId"":0,""subchapterId"":0,""nodeId"":0},""uiConfig"":{""customChapterText"":""1"",""chapterTagIconType"":""BATTLE"",""region"":""p"",""mapAreaId"":101,""timeLine"":""PLAYGROUND"",""illustId"":""""},""type"":""STAGE_NODE""}";
 
+
+        var subchapter = JsonUtility.FromJson<SubChapterData>(subchapterJSON);
+        var subchapterUI = JsonUtility.FromJson<SubchapterUIDataInPart>(subchapterUIJSON);
+
+        StaticDataManager.Instance._partList.GetPart(1).subchapterList.Insert(0, subchapter);
+        StaticDataManager.Instance._partList.GetPart(1).subchapterUIList.Insert(0,subchapterUI);
+        
+        CustomEncounterHook.LOG.LogWarning($"ADDED PLAYGROUND");
+    }    
 }

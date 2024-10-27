@@ -16,7 +16,6 @@ namespace CustomEncounter;
 public class CustomEncounterHook : MonoBehaviour
 {
     public static ManualLogSource LOG;
-    public static StageStaticData Encounter;
 
     public static DirectoryInfo CustomAppearanceDir, CustomSpriteDir, CustomLocaleDir, CustomAssistantDir;
     private static string _tokenPath;
@@ -36,27 +35,11 @@ public class CustomEncounterHook : MonoBehaviour
             EncounterHelper.SaveEncounters();
             EncounterHelper.SaveIdentities();
         }
-
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            LOG.LogInfo("Entering custom fight");
-            try
-            {
-                var json = File.ReadAllText(CustomEncounterMod.EncounterConfig);
-                LOG.LogInfo("Fight data:\n" + json);
-                Encounter = JsonUtility.FromJson<StageStaticData>(json);
-                LOG.LogInfo("Success, please go to excavation 1 to start the fight.");
-            }
-            catch (Exception ex)
-            {
-                LOG.LogError("Error loading custom fight: " + ex.Message);
-            }
-        }
-        
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             Singleton<StaticDataManager>.Instance._isDataLoaded = false;
             GlobalGameManager.Instance.LoadUserDataAndSetScene(SCENE_STATE.Main);
+            Patches.Data.LoadCustomLocale(Singleton<TextDataManager>.Instance, GlobalGameManager.Instance.Lang);
         }
     }
 
