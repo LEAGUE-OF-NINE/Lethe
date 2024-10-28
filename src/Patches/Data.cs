@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using BepInEx;
 using HarmonyLib;
+using LibCpp2IL;
 using MainUI;
 using SimpleJSON;
 using UnhollowerRuntimeLib;
