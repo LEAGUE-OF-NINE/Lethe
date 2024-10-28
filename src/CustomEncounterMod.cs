@@ -85,7 +85,7 @@ public class CustomEncounterMod : BasePlugin
             Passives.RollAllHeads.Setup(harmony);
             Passives.ChangeAppearance.Setup(harmony);
             if (toggleCRC.Value) Patches.TextAsset.Setup(harmony);
-            Patches.Skills.Setup(harmony);
+            SuperClash.Setup(harmony);
 
             EncounterHelper.Log = Log;
             if (!File.Exists(EncounterConfig)) File.Create(EncounterConfig).Close();
