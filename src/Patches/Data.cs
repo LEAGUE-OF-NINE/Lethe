@@ -157,7 +157,7 @@ public class Data : Il2CppSystem.Object
             var stageInfo = GlobalGameManager.Instance.CurrentStage.NormalNodeInfo;
             stageInfo.currentChapterID = 101;
             stageInfo.currentPartID = 1;
-            if (StaticDataManager.Instance._storyBattleStageList.GetStage(stageInfo.currentStageID) == null) stageInfo.currentStageID = 10106; 
+            if (StaticDataManager.Instance.GetStage(stageInfo.currentStageID) == null) stageInfo.currentStageID = 10106; 
             else stageInfo.currentStageID = StageController.Instance._stageModel._classInfo.id;
             stageInfo.currentStageClearState = CLEARNODE_STATE.NOTCLEAR;
         }
