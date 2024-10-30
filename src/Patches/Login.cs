@@ -16,8 +16,11 @@ public class Login : Il2CppSystem.Object
 
     public static System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> StaticData = new();
     
-    public static void Setup(Harmony harmony)
+    private static bool _wipeRestrictParticipateData;
+    
+    public static void Setup(Harmony harmony, bool wipeRestrictParticipateData)
     {
+        _wipeRestrictParticipateData = wipeRestrictParticipateData;
         ClassInjector.RegisterTypeInIl2Cpp<Login>();
         harmony.PatchAll(typeof(Login));
     }
@@ -34,6 +37,13 @@ public class Login : Il2CppSystem.Object
     private static void PreLoadStaticDataFromJsonFile(StaticDataManager __instance, string dataClass,
         ref Il2CppSystem.Collections.Generic.List<JSONNode> nodeList)
     {
+        if (_wipeRestrictParticipateData && dataClass.Contains("restrict-participation"))
+        {
+            CustomEncounterHook.LOG.LogInfo($"Wiping data in {dataClass}");
+            nodeList.Clear();
+            return;
+        }
+        
         CustomEncounterHook.LOG.LogInfo($"Saving {dataClass}");
         StaticData[dataClass] = new System.Collections.Generic.List<string>();
         foreach (var jsonNode in nodeList)

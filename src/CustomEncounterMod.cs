@@ -65,6 +65,12 @@ public class CustomEncounterMod : BasePlugin
                                         "CRCtoggle",
                                         false,
                                         "Toggle CRC checks from the game. It's recommended that it's disabled when downloading updates.");
+           
+            var toggleRestrictParticipate = Config.Bind("GameSettings",
+                                        "NoRestrictParticipate",
+                                        true,
+                                        "Toggle the game from restricting sinner participation in some fights, which might fix some story dungeon issues.");
+
 
 
             CustomEncounterHook.Setup(Log, port);
@@ -78,7 +84,7 @@ public class CustomEncounterMod : BasePlugin
             Patches.CustomAssistant.Setup(harmony);
             Patches.Data.Setup(harmony);
             Patches.Fixes.Setup(harmony);
-            Patches.Login.Setup(harmony);
+            Patches.Login.Setup(harmony, toggleRestrictParticipate.Value);
             Patches.Server.Setup(harmony);
             Patches.Skin.Setup(harmony);
             Patches.Texture.Setup(harmony);            
