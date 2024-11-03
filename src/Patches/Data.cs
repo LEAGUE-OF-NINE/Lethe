@@ -5,6 +5,7 @@ using BepInEx;
 using HarmonyLib;
 using LibCpp2IL;
 using MainUI;
+using Server;
 using SimpleJSON;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -149,6 +150,26 @@ public class Data : Il2CppSystem.Object
         }
         
     }
+
+            [HarmonyPatch(typeof(StageController), nameof(StageController.StartStage))]
+        [HarmonyPostfix]
+        private static void StageChangeNodeID()
+        {
+            var stageInfo = GlobalGameManager.Instance.CurrentStage.NormalNodeInfo;
+            stageInfo.currentChapterID = 101;
+            stageInfo.currentPartID = 1;
+            if (StaticDataManager.Instance.GetStage(stageInfo.currentStageID) == null) stageInfo.currentStageID = 10106; 
+            else stageInfo.currentStageID = StageController.Instance._stageModel._classInfo.id;
+            stageInfo.currentStageClearState = CLEARNODE_STATE.NOTCLEAR;
+        }
+
+        [HarmonyPatch(typeof(UserStageNodeStateData), nameof(UserStageNodeStateData.GetClearNodeState))]
+        [HarmonyPatch(new[] { typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPrefix]
+        private static void GetClearNodeState(ref CLEARNODE_STATE __result, int mainchapterid, int subchaperid, int nodeid)
+        {
+            if (nodeid == 696901) __result = CLEARNODE_STATE.NOTCLEAR;
+        }
 
     [HarmonyPatch(typeof(PartStaticDataList), nameof(PartStaticDataList.Init))]
     [HarmonyPostfix]

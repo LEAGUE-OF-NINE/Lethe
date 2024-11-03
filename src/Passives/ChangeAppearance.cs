@@ -10,7 +10,7 @@ namespace CustomEncounter.Passives
 
         public static void Setup(Harmony harmony)
         {
-            ClassInjector.RegisterTypeInIl2Cpp<RollAllHeads>();
+            ClassInjector.RegisterTypeInIl2Cpp<ChangeAppearance>();
             harmony.PatchAll(typeof(ChangeAppearance));
         }
 

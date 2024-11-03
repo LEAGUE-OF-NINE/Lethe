@@ -31,4 +31,23 @@ public class Skills : Il2CppSystem.Object
         }
     }
 
+    [HarmonyPatch(typeof(StageBuffManager), nameof(StageBuffManager.CheckBloodDinnerOnInitStage))]
+    [HarmonyPrefix]
+    private static void PatchDetectBloodfeast(StageBuffManager __instance)
+    {
+        var participants = Singleton<StageController>.Instance._stageModel._formationInfo.GetParticipants();
+        foreach (var playerUnitData in participants)
+        {
+            var passiveTable = Singleton<StaticDataManager>.Instance._personalityPassiveList;
+            var passive = passiveTable.GetBattlePassiveIDList(playerUnitData.personalityId, playerUnitData.PersonalityLevel);
+            if (!passive.Contains(9999907)) continue;
+            // constant sampled from UE
+            CustomEncounterHook.LOG.LogInfo("Bloodfeast passive detected, activating");
+            __instance.AddCandidateToKeyword(BUFF_UNIQUE_KEYWORD.BloodDinner, 921490743);
+            __instance.AddStageBuff(BUFF_UNIQUE_KEYWORD.BloodDinner);
+            return;
+        }
+    }
+
+
 }
