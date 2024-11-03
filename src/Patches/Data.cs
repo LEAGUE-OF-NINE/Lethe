@@ -8,6 +8,7 @@ using MainUI;
 using SimpleJSON;
 using UnhollowerRuntimeLib;
 using UnityEngine;
+using Server;
 
 namespace CustomEncounter.Patches;
 
