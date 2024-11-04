@@ -66,7 +66,11 @@ namespace CustomEncounter.SkillAbility
                     }
 
                     //change appearance on attack
-                    var coin = skill.GetCoins(gacksungLv)[coinIdx];
+                    SkillCoinData coin = skill.GetCoins(gacksungLv)[^1];
+                    if (coinIdx >= 0 && coinIdx < skill.GetCoins(gacksungLv).Count)
+                    {
+                        coin = skill.GetCoins(gacksungLv)[coinIdx];
+                    }
                     if (coin != null && isDuel == false)
                     {
                         //Plugin.Log.LogWarning($"DETECT COIN USE FOR UNIT!");

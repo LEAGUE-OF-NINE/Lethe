@@ -32,12 +32,17 @@ namespace CustomEncounter.SkillAbility
             else return;
 
             //my hopes are held by glue
-            if (!motiondetail.ToString().StartsWith("S") && !motiondetail.ToString().StartsWith("P")) return;
+            if (!motiondetail.ToString().StartsWith("S") && !motiondetail.ToString().StartsWith("Parrying_") && __instance._battleUnitView._currentDuelViewer != null) return;
            
             foreach (var behavior in log.GetAllBehaviourLog_Start()) //get all battle log behaviour
             {
                 var skillID = behavior._skillID;
-                var coinIdx = __instance._battleUnitView._battleSkillViewers[skillID.ToString()]._curCoinIndex;
+                int coinIdx;
+                if (__instance._battleUnitView.GetSkillViewer(skillID) != null)
+                {
+                    coinIdx = __instance._battleUnitView.GetSkillViewer(skillID).curCoinIndex;
+                }
+                else return;
                 var gacksungLv = behavior._gaksungLevel;
                 var actor = log.GetCharacterInfo(behavior._instanceID); //get actor
                 var skill = Singleton<StaticDataManager>.Instance._skillList.GetData(skillID);
