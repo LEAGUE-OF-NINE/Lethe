@@ -50,7 +50,6 @@ namespace CustomEncounter.SkillAbility
                     if (coinIdx >= 0 && coinIdx < skill.GetCoins(gacksungLv).Count)
                     {
                         coin = skill.GetCoins(gacksungLv)[coinIdx];
-                        Plugin.Log.LogInfo($" ok {coin}");
                     }
 
                     foreach (var abilitydata in coin.abilityScriptList)
