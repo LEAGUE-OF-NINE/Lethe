@@ -32,7 +32,7 @@ namespace CustomEncounter.SkillAbility
             else return;
 
             //my hopes are held by glue
-            if (!motiondetail.ToString().StartsWith("S")) return;
+            if (!motiondetail.ToString().StartsWith("S") && !motiondetail.ToString().StartsWith("P")) return;
            
             foreach (var behavior in log.GetAllBehaviourLog_Start()) //get all battle log behaviour
             {
