@@ -46,7 +46,12 @@ namespace CustomEncounter.SkillAbility
                 if (behavior._instanceID == actor.instanceID && __instance._battleUnitView._instanceID == actor.instanceID) //man idk anymore
                 {
                     //change skill motion
-                    var coin = skill.GetCoins(gacksungLv)[coinIdx];
+                    SkillCoinData coin = skill.GetCoins(gacksungLv)[^1];
+                    if (coinIdx >= 0 && coinIdx < skill.GetCoins(gacksungLv).Count)
+                    {
+                        coin = skill.GetCoins(gacksungLv)[coinIdx];
+                        Plugin.Log.LogInfo($" ok {coin}");
+                    }
 
                     foreach (var abilitydata in coin.abilityScriptList)
                     {
