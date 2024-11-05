@@ -32,8 +32,9 @@ namespace CustomEncounter.SkillAbility
             else return;
 
             //my hopes are held by glue
-            if (!motiondetail.ToString().StartsWith("S") && !motiondetail.ToString().StartsWith("Parrying_") && __instance._battleUnitView._currentDuelViewer != null) return;
-           
+            var motionstr = motiondetail.ToString();
+            if (!motionstr.StartsWith("S") && motionstr != "Parrying") return;
+            if (__instance._battleUnitView._currentDuelViewer != null || __instance._battleUnitView.CurrentActionLog == null) return;
             foreach (var behavior in log.GetAllBehaviourLog_Start()) //get all battle log behaviour
             {
                 var skillID = behavior._skillID;
