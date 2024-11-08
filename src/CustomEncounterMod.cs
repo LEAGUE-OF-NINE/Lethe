@@ -75,6 +75,8 @@ public class CustomEncounterMod : BasePlugin
 
             // Setup harmony hooks
             NewEvadeThenUseSkill.Setup(harmony);
+            ChangeCounterOnConditional.Setup(harmony);
+            ChangeSkillOnConditional.Setup(harmony);
             Patches.CustomAssistant.Setup(harmony);
             Patches.Data.Setup(harmony);
             Patches.Fixes.Setup(harmony);
