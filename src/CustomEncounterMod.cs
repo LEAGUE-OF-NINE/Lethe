@@ -69,19 +69,21 @@ public class CustomEncounterMod : BasePlugin
 
             CustomEncounterHook.Setup(Log, port);
             Harmony harmony = new(NAME);
-            
+
             // Register abilities
             ClassInjector.RegisterTypeInIl2Cpp<SkillAbilityEvadeThenUseSkill>();
 
             // Setup harmony hooks
             NewEvadeThenUseSkill.Setup(harmony);
+            ChangeCounterOnConditional.Setup(harmony);
+            ChangeSkillOnConditional.Setup(harmony);
             Patches.CustomAssistant.Setup(harmony);
             Patches.Data.Setup(harmony);
             Patches.Fixes.Setup(harmony);
             Patches.Login.Setup(harmony);
             Patches.Server.Setup(harmony);
             Patches.Skin.Setup(harmony);
-            Patches.Texture.Setup(harmony);            
+            Patches.Texture.Setup(harmony);
             Passives.RollAllHeads.Setup(harmony);
             ChangeAppearance.Setup(harmony);
             ChangeSkillMotion.Setup(harmony);
