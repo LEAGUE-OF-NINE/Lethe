@@ -18,8 +18,8 @@ namespace CustomEncounter;
 public class CustomEncounterMod : BasePlugin
 {
     public const string GUID = "carra.CustomEncounter";
-    public const string NAME = "CustomEncounter";
-    public const string VERSION = "0.0.6";
+    public const string NAME = "Lethe";
+    public const string VERSION = "0.0.7";
     public const string AUTHOR = "Carra";
 
     public static string EncounterConfig = Path.Combine(Paths.ConfigPath, "encounter.json");
@@ -77,6 +77,7 @@ public class CustomEncounterMod : BasePlugin
             NewEvadeThenUseSkill.Setup(harmony);
             ChangeCounterOnConditional.Setup(harmony);
             ChangeSkillOnConditional.Setup(harmony);
+            CustomFurioso.Setup(harmony);
             Patches.CustomAssistant.Setup(harmony);
             Patches.Data.Setup(harmony);
             Patches.Fixes.Setup(harmony);

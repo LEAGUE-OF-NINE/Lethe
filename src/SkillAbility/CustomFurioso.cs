@@ -7,12 +7,12 @@ using BepInEx;
 
 namespace CustomEncounter.SkillAbility
 {
-	internal class ChangeSkillOnConditional : MonoBehaviour
+	internal class CustomFurioso : MonoBehaviour
 	{
 		public static void Setup(Harmony harmony)
 		{
-			ClassInjector.RegisterTypeInIl2Cpp<ChangeSkillOnConditional>();
-			harmony.PatchAll(typeof(ChangeSkillOnConditional));
+			ClassInjector.RegisterTypeInIl2Cpp<CustomFurioso>();
+			harmony.PatchAll(typeof(CustomFurioso));
 		}
 
 		[HarmonyPatch(typeof(BattleUnitModel), nameof(BattleUnitModel.OnStartTurn_BeforeLog))]
@@ -22,21 +22,22 @@ namespace CustomEncounter.SkillAbility
 			foreach (var ability in action._skill.GetSkillAbilityScript())
 			{
 				var scriptName = ability.scriptName;
-				if (scriptName.Contains("ChangeSkillOnConditional_"))
+				if (scriptName.Contains("CustomFurioso_"))
 				{
-					CustomEncounterHook.LOG.LogInfo("Registered [ChangeSkillOnConditional_]");
+					CustomEncounterHook.LOG.LogInfo("Registered [CustomFurioso_]");
 					if (ability.buffData == null) continue;
 
-					var newskillID = Convert.ToInt32(scriptName.Replace("ChangeSkillOnConditional_", ""));
+					var newskillID = Convert.ToInt32(scriptName.Replace("CustomFurioso_", ""));
 					var whae = delegate (SkillModel x) { return x.GetID() == newskillID; };
 					var naenae = __instance.GetSkillList().Find(whae);
 
-					var keyword = ability.buffData.buffKeyword;
-					var keyword_status = BUFF_UNIQUE_KEYWORD.Parse<BUFF_UNIQUE_KEYWORD>(keyword);
+					var keyword_status1 = BUFF_UNIQUE_KEYWORD.MDcFaBa;
+					var keyword_status2 = BUFF_UNIQUE_KEYWORD.MDcFaBb;
+					var keyword_status3 = BUFF_UNIQUE_KEYWORD.MDcFaBd;
 
 					var potency_check = ability.buffData.stack;
 					var count_check = ability.buffData.turn;
-					if (__instance.GetActivatedBuffStack(keyword_status) >= potency_check && __instance.GetActivatedBuffTurn(keyword_status) >= count_check)
+					if (__instance.GetActivatedBuffStack(keyword_status1) >= 3 && __instance.GetActivatedBuffStack(keyword_status2) >= 3 && __instance.GetActivatedBuffStack(keyword_status3) >= 3)
 					{
 						action.ChangeSkill(naenae);
 					}

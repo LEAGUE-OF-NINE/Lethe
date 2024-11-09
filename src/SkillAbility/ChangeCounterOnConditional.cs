@@ -36,7 +36,7 @@ namespace CustomEncounter.SkillAbility
 
 					var potency_check = ability.buffData.stack;
 					var count_check = ability.buffData.turn;
-					if (__instance.GetActivatedBuffStack(keyword_status) >= potency_check || __instance.GetActivatedBuffTurn(keyword_status) >= count_check)
+					if (__instance.GetActivatedBuffStack(keyword_status) >= potency_check && __instance.GetActivatedBuffTurn(keyword_status) >= count_check)
 					{
 						action.ChangeSkill(naenae);
 					}

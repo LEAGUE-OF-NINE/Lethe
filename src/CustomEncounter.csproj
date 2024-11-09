@@ -54,6 +54,9 @@
             <Private>false</Private>
         </Reference>
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="CustomStatus\" />
+    </ItemGroup>
 
     <Target Name="CopyFile" AfterTargets="build">
         <Message Text="Copying BIE files..." Importance="high" Condition="'$(Configuration)' == 'BIE'" />
