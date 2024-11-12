@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <PlatformTarget>x64</PlatformTarget>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+        <DebugSymbols>true</DebugSymbols>
+        <LangVersion>10.0</LangVersion>
+        <IsPublishable>True</IsPublishable>
+        <TargetFramework>net472</TargetFramework>
+        <Platforms>x64</Platforms>
+        <Configurations>BIE</Configurations>
+        <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
+        <OutputPath>..\Release</OutputPath>
+        <NoWarn>1701;1702;2211;CA2211;IDE1006;IDE0060</NoWarn>
+        <DebugType>none</DebugType>
+        <Optimize>True</Optimize>
+        <RootNamespace>CustomEncounter</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+      <Compile Remove="CustomStatus\**" />
+      <EmbeddedResource Remove="CustomStatus\**" />
+      <None Remove="CustomStatus\**" />
+    </ItemGroup>
+
+    <!-- ~~~~~ CONFIGURATIONS ~~~~~ -->
+    <ItemGroup>
+        <None Remove="nuget.config" />
+    </ItemGroup>
+
+    <!-- BepinEx -->
+    <PropertyGroup Condition="'$(Configuration)'=='BIE'">
+        <DefineConstants>BIE</DefineConstants>
+        <AssemblyName>$(MSBuildProjectName)_$(Configuration)</AssemblyName>
+    </PropertyGroup>
+
+    <!-- ~~~~~ NUGET ~~~~~ -->
+    <ItemGroup>
+        <PackageReference Include="HarmonyX" Version="2.5.2" IncludeAssets="compile" />
+        <PackageReference Include="Il2CppAssemblyUnhollower.BaseLib" Version="0.4.22" />
+        <PackageReference Include="System.Runtime" Version="4.3.0" IncludeAssets="compile" />
+    </ItemGroup>
+
+    <!-- ~~~~~ ASSEMBLY REFERENCES ~~~~~ -->
+    <!-- BepinEx -->
+    <ItemGroup Condition="'$(Configuration)'=='BIE'">
+        <Reference Include="System.Runtime" />
+        <Reference Include="$(LimbusCompanyFolder)\BepInEx\core\*.dll">
+            <HintPath>%(Identity)</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="$(LimbusCompanyFolder)\BepInEx\unhollowed\*.dll">
+            <HintPath>%(Identity)</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="$(LimbusCompanyFolder)\mono\Managed\*.dll">
+            <HintPath>%(Identity)</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+
+    <Target Name="CopyFile" AfterTargets="build">
+        <Message Text="Copying BIE files..." Importance="high" Condition="'$(Configuration)' == 'BIE'" />
+        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(OutputPath)\BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
+        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(LimbusCompanyFolder)\BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
+    </Target>
+</Project>
