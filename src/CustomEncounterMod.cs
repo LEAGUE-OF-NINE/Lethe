@@ -85,7 +85,6 @@ public class CustomEncounterMod : BasePlugin
             Patches.Server.Setup(harmony);
             Patches.Skin.Setup(harmony);
             Patches.Texture.Setup(harmony);
-            Passives.RollAllHeads.Setup(harmony);
             ChangeAppearance.Setup(harmony);
             ChangeSkillMotion.Setup(harmony);
             if (toggleCRC.Value) Patches.TextAsset.Setup(harmony);

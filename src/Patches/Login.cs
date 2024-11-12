@@ -44,7 +44,7 @@ public class Login : Il2CppSystem.Object
         var customDataList = new JSONArray();
 
         var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_data", dataClass));
-        foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
+        foreach (var file in Directory.GetFiles(root.FullName, "*.json", SearchOption.AllDirectories))
             try
             {
                 CustomEncounterHook.LOG.LogInfo($"Loading {file}");
