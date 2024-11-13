@@ -15,9 +15,9 @@ namespace CustomEncounter.SkillAbility
 			harmony.PatchAll(typeof(ChangeCounterOnConditional));
 		}
 
-		[HarmonyPatch(typeof(BattleUnitModel), nameof(BattleUnitModel.OnBeforeDefense))]
+		[HarmonyPatch(typeof(BattleUnitModel), nameof(BattleUnitModel.OnStartTurn_AfterLog))]
 		[HarmonyPostfix]
-		private static void OnDefense(BattleActionModel action, BattleUnitModel __instance)
+		private static void OnStartTurn_AfterLog(BattleActionModel action, BattleUnitModel __instance)
 		{
 			foreach (var ability in action._skill.GetSkillAbilityScript())
 			{

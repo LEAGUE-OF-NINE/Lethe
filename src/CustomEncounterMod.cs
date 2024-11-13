@@ -78,6 +78,7 @@ public class CustomEncounterMod : BasePlugin
             ChangeCounterOnConditional.Setup(harmony);
             ChangeSkillOnConditional.Setup(harmony);
             CustomFurioso.Setup(harmony);
+            GiveBuffOnUseFactionCheck.Setup(harmony);
             Patches.CustomAssistant.Setup(harmony);
             Patches.Data.Setup(harmony);
             Patches.Fixes.Setup(harmony);
