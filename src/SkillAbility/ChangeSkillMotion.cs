@@ -7,6 +7,7 @@ using HarmonyLib;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using SD;
+using Utils;
 
 namespace CustomEncounter.SkillAbility
 {
@@ -52,10 +53,10 @@ namespace CustomEncounter.SkillAbility
                 if (behavior._instanceID == actor.instanceID && __instance._battleUnitView._instanceID == actor.instanceID) //man idk anymore
                 {
                     //change skill motion
-                    SkillCoinData coin = skill.GetCoins(gacksungLv)[^1];
+                    SkillCoinData coin = skill.GetCoins(gacksungLv).GetLastElement();
                     if (coinIdx >= 0 && coinIdx < skill.GetCoins(gacksungLv).Count)
                     {
-                        coin = skill.GetCoins(gacksungLv)[coinIdx];
+                        coin = skill.GetCoins(gacksungLv).ToArray()[coinIdx];
                     }
 
                     foreach (var abilitydata in coin.abilityScriptList)
