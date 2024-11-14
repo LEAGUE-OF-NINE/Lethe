@@ -30,6 +30,7 @@ namespace CustomEncounter.SkillAbility
 					if (ability.buffData == null) continue;
 
 					// removes the first part of our script name and only takes the faction name.
+					// then filters through buff data and collects all the data we need
 					var factionname = scriptName.Replace("GiveBuffOnUseFactionCheck_", "");
 					CustomEncounterHook.LOG.LogInfo("Cut off pre parsed faction is" + factionname);
 					var parsed_association = UNIT_KEYWORD.Parse<UNIT_KEYWORD>(factionname);
@@ -38,15 +39,17 @@ namespace CustomEncounter.SkillAbility
 					var keyword = ability.buffData.buffKeyword;
 					var keyword_status = BUFF_UNIQUE_KEYWORD.Parse<BUFF_UNIQUE_KEYWORD>(keyword);
 
-
 					var potency_check = ability.buffData.stack;
 					var count_check = ability.buffData.turn;
 					var active_round = ability.buffData.activeRound;
 
+					// checks through every living unit onthe battle, and if they're both alive AND player controlled, proceed
 					foreach (BattleUnitModel model in BattleObjectManager.Instance.GetAliveList(true, UNIT_FACTION.PLAYER) )
 					{
+						// just more debug text
 						var current_unit_tracker = model.AssociationList;
 						CustomEncounterHook.LOG.LogInfo("Association list contains" + current_unit_tracker);
+						// if the alive and player controlled character also belongs to the right association/faction/whatever the fuck, apply a status effect.
 						if (model.AssociationList.Contains(parsed_association))
 						{
 							CustomEncounterHook.LOG.LogInfo("Found the right faction");
