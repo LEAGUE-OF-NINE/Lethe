@@ -66,10 +66,10 @@ namespace CustomEncounter.SkillAbility
                     }
 
                     //change appearance on attack
-                    SkillCoinData coin = skill.GetCoins(gacksungLv)[^1];
+                    SkillCoinData coin = skill.GetCoins(gacksungLv).GetLastElement();
                     if (coinIdx >= 0 && coinIdx < skill.GetCoins(gacksungLv).Count)
                     {
-                        coin = skill.GetCoins(gacksungLv)[coinIdx];
+                        coin = skill.GetCoins(gacksungLv).ToArray()[coinIdx];
                     }
                     if (coin != null && isDuel == false)
                     {
@@ -99,7 +99,7 @@ namespace CustomEncounter.SkillAbility
         [HarmonyPostfix]
         private static void OnRoundEnd(BattleUnitView __instance)
         {
-            var name = __instance._appearances[0].name;
+            var name = __instance._appearances.GetFirstElement().name;
             var appearanceId = name.Replace("(Clone)", "");
             __instance.ChangeAppearance(appearanceId, true);
             //there is honestly a better way to do this

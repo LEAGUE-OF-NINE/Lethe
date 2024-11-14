@@ -32,7 +32,12 @@ namespace CustomEncounter.SkillAbility
 					var naenae = __instance.GetSkillList().Find(whae);
 
 					var keyword = ability.buffData.buffKeyword;
-					var keyword_status = BUFF_UNIQUE_KEYWORD.Parse<BUFF_UNIQUE_KEYWORD>(keyword);
+					BUFF_UNIQUE_KEYWORD keyword_status;
+					if (!Enum.TryParse(keyword, out keyword_status))
+					{
+						CustomEncounterHook.LOG.LogError($"Invalid status: {keyword}");
+						continue;
+					}
 
 					var potency_check = ability.buffData.stack;
 					var count_check = ability.buffData.turn;
