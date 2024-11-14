@@ -4,13 +4,13 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using BepInEx;
-using BepInEx.IL2CPP.Utils;
 using BepInEx.Logging;
 using Il2CppSystem.Collections.Generic;
 using SimpleJSON;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Object = Il2CppSystem.Object;
+using BepInEx.Unity.IL2CPP.Utils;
 
 namespace CustomEncounter;
 

@@ -1,13 +1,10 @@
 using System;
 using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.IL2CPP;
+using BepInEx.Unity.IL2CPP;
 using CustomEncounter.SkillAbility;
 using HarmonyLib;
-using Il2CppDumper;
 using Il2CppSystem.IO;
-using Il2CppSystem.Security.Cryptography;
-using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Random = System.Random;
@@ -19,7 +16,7 @@ public class CustomEncounterMod : BasePlugin
 {
     public const string GUID = "carra.CustomEncounter";
     public const string NAME = "Lethe";
-    public const string VERSION = "0.0.7";
+    public const string VERSION = "0.0.71";
     public const string AUTHOR = "Carra";
 
     public static string EncounterConfig = Path.Combine(Paths.ConfigPath, "encounter.json");

@@ -40,12 +40,12 @@
     <!-- ~~~~~ ASSEMBLY REFERENCES ~~~~~ -->
     <!-- BepinEx -->
     <ItemGroup Condition="'$(Configuration)'=='BIE'">
-        <Reference Include="System.Runtime" />
-        <Reference Include="$(LimbusCompanyFolder)\BepInEx\core\*.dll">
-            <HintPath>%(Identity)</HintPath>
-            <Private>false</Private>
-        </Reference>
-        <Reference Include="$(LimbusCompanyFolder)\BepInEx\unhollowed\*.dll">
+       <Reference Include="System.Runtime" />
+       <Reference Include="$(LimbusCompanyFolder)\BepInEx\core\*.dll">
+        <HintPath>%(Identity)</HintPath>
+        <Private>false</Private>
+       </Reference>
+        <Reference Include="$(LimbusCompanyFolder)\BepInEx\interop\*.dll">
             <HintPath>%(Identity)</HintPath>
             <Private>false</Private>
         </Reference>
