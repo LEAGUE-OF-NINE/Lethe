@@ -48,7 +48,7 @@ public class Data : Il2CppSystem.Object
     {
         LetheHooks.LOG.LogInfo("Checking for custom locale: " + name);
         root = Directory.CreateDirectory(Path.Combine(root.FullName, name));
-        foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
+        foreach (var file in Directory.GetFiles(root.FullName, "*.json", SearchOption.AllDirectories))
         {
             var localeJson = JSONNode.Parse(File.ReadAllText(file));
             LetheHooks.LOG.LogInfo("Loading custom locale: " + file);
