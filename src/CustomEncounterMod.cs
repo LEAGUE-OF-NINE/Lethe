@@ -47,10 +47,10 @@ public class CustomEncounterMod : BasePlugin
             Debug.LogError(log);
         };
 
-        ConfigServer = Config.Bind("General", "ServerURL", "https://limbuspriv.windtfw.com",
+        ConfigServer = Config.Bind("General", "ServerRoot", "https://api.lethelc.site/",
             "The URL of the private server (e.g. http://127.0.0.1:8080), leave blank to use defaults.");
         if (string.IsNullOrEmpty(ConfigServer.Value))
-            LogWarning("ServerURL is empty, using the default server!!!");
+            LogWarning("ServerRoot is empty, using the default server!!!");
         else
             Log.LogInfo("Using private server: " + ConfigServer.Value);
 

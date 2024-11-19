@@ -115,7 +115,7 @@ public class CustomEncounterHook : MonoBehaviour
             if (origin != null && origin.StartsWith("http://localhost:"))
                 resp.Headers.Add("Access-Control-Allow-Origin", origin);
             else
-                resp.Headers.Add("Access-Control-Allow-Origin", "https://limbus.windtfw.com");
+                resp.Headers.Add("Access-Control-Allow-Origin", "https://lethelc.site");
 
             if (req.HttpMethod == "OPTIONS") continue;
 
