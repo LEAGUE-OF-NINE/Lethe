@@ -2,7 +2,7 @@ using System;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
-using CustomEncounter.SkillAbility;
+using Lethe.SkillAbility;
 using HarmonyLib;
 using Il2CppDumper;
 using Il2CppSystem.IO;
@@ -12,14 +12,14 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using Random = System.Random;
 
-namespace CustomEncounter;
+namespace Lethe;
 
 [BepInPlugin(GUID, NAME, VERSION)]
-public class CustomEncounterMod : BasePlugin
+public class LetheMain : BasePlugin
 {
-    public const string GUID = "carra.CustomEncounter";
+    public const string GUID = $"{AUTHOR}.{NAME}";
     public const string NAME = "Lethe";
-    public const string VERSION = "0.0.7";
+    public const string VERSION = "1.0.0";
     public const string AUTHOR = "Carra";
 
     public static string EncounterConfig = Path.Combine(Paths.ConfigPath, "encounter.json");
@@ -67,7 +67,7 @@ public class CustomEncounterMod : BasePlugin
                                         "Toggle CRC checks from the game. It's recommended that it's disabled when downloading updates.");
 
 
-            CustomEncounterHook.Setup(Log, port);
+            LetheHooks.Setup(Log, port);
             Harmony harmony = new(NAME);
 
             // Register abilities

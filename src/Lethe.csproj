@@ -17,18 +17,13 @@
         <NoWarn>1701;1702;2211;CA2211;IDE1006;IDE0060</NoWarn>
         <DebugType>none</DebugType>
         <Optimize>True</Optimize>
-        <RootNamespace>CustomEncounter</RootNamespace>
+        <RootNamespace>Lethe</RootNamespace>
     </PropertyGroup>
 
     <!-- ~~~~~ CONFIGURATIONS ~~~~~ -->
     <ItemGroup>
         <None Remove="nuget.config" />
     </ItemGroup>
-    <!-- BepinEx -->
-    <PropertyGroup Condition="'$(Configuration)'=='BIE'">
-        <DefineConstants>BIE</DefineConstants>
-        <AssemblyName>$(MSBuildProjectName)_$(Configuration)</AssemblyName>
-    </PropertyGroup>
 
     <!-- ~~~~~ NUGET ~~~~~ -->
     <ItemGroup>

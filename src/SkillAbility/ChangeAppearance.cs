@@ -3,7 +3,7 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using Utils;
 
-namespace CustomEncounter.SkillAbility
+namespace Lethe.SkillAbility
 {
     internal class ChangeAppearance : MonoBehaviour
     {

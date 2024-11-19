@@ -7,12 +7,12 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using BepInEx.Logging;
 
-namespace CustomEncounter.Patches;
+namespace Lethe.Patches;
 
 public class Skin : MonoBehaviour
 {
     private static Il2CppSystem.Collections.Generic.List<AssetBundle> loadedAssets = new();
-    private static ManualLogSource Log => CustomEncounterHook.LOG;
+    private static ManualLogSource Log => LetheHooks.LOG;
     private static Harmony AbnoPatcher = new("AbnoPatcher");
 
     public static void Setup(Harmony harmony)
@@ -44,7 +44,7 @@ public class Skin : MonoBehaviour
         {
             case SCENE_STATE.Battle:
             {
-                foreach (var bundlePath in Directory.GetFiles(CustomEncounterHook.CustomAppearanceDir.FullName, "*.bundle"))
+                foreach (var bundlePath in Directory.GetFiles(LetheHooks.CustomAppearanceDir.FullName, "*.bundle"))
                 {
                     Log.LogInfo($"{bundlePath}");
                     var bundle = AssetBundle.LoadFromFile(bundlePath, 0);
@@ -58,7 +58,7 @@ public class Skin : MonoBehaviour
             {
               foreach (var bundle in loadedAssets)
               {
-                        CustomEncounterHook.LOG.LogWarning($"unloading {bundle.name}");
+                        LetheHooks.LOG.LogWarning($"unloading {bundle.name}");
                         bundle.Unload(false);
               }
                 loadedAssets.Clear();

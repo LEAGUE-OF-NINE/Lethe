@@ -5,7 +5,7 @@ using Il2CppSystem.IO;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 
-namespace CustomEncounter.Patches;
+namespace Lethe.Patches;
 
 public class Texture : Il2CppSystem.Object
 {
@@ -29,7 +29,7 @@ public class Texture : Il2CppSystem.Object
 
         try
         {
-            var path = Path.Combine(CustomEncounterHook.CustomSpriteDir.FullName, fileName + ".png");
+            var path = Path.Combine(LetheHooks.CustomSpriteDir.FullName, fileName + ".png");
             if (!File.Exists(path))
             {
                 SpriteExist[fileName] = false;
@@ -46,7 +46,7 @@ public class Texture : Il2CppSystem.Object
         }
         catch (Exception ex)
         {
-            CustomEncounterHook.LOG.LogError("Error loading sprite " + fileName + ": " + ex);
+            LetheHooks.LOG.LogError("Error loading sprite " + fileName + ": " + ex);
             return null;
         }
     }

@@ -7,7 +7,7 @@ using Steamworks;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 
-namespace CustomEncounter.Patches;
+namespace Lethe.Patches;
 
 public class Server : Il2CppSystem.Object
 {
@@ -21,7 +21,7 @@ public class Server : Il2CppSystem.Object
     [HarmonyPostfix]
     private static void ServerSelector_GetServerURL(ServerSelector __instance, ref string __result)
     {
-        var serverURL = CustomEncounterMod.ConfigServer.Value;
+        var serverURL = LetheMain.ConfigServer.Value;
         if (!string.IsNullOrEmpty(serverURL)) __result = serverURL;
     }
 
@@ -31,7 +31,7 @@ public class Server : Il2CppSystem.Object
     {
         __result = new AuthTicket
         {
-            Data = Encoding.ASCII.GetBytes(CustomEncounterHook.AccountJwt())
+            Data = Encoding.ASCII.GetBytes(LetheHooks.AccountJwt())
         };
 
         return false;

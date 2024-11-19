@@ -5,7 +5,7 @@ using HarmonyLib;
 using MainUI;
 using UnhollowerRuntimeLib;
 
-namespace CustomEncounter.Patches;
+namespace Lethe.Patches;
 
 public class Fixes : Il2CppSystem.Object
 {
@@ -23,7 +23,7 @@ public class Fixes : Il2CppSystem.Object
             {
                 if (type.FullName == null) continue;
                 _abnoTypes.Add(type.FullName, type);
-                CustomEncounterHook.LOG.LogInfo($"Found abno type {type.FullName}");
+                LetheHooks.LOG.LogInfo($"Found abno type {type.FullName}");
             }
         }
     }
@@ -32,11 +32,11 @@ public class Fixes : Il2CppSystem.Object
     {
         if (!_abnoTypes.TryGetValue(typeName, out var type))
         {
-            CustomEncounterHook.LOG.LogInfo($"Appearance {typeName} does not need patching");
+            LetheHooks.LOG.LogInfo($"Appearance {typeName} does not need patching");
             return;
         }
         
-        CustomEncounterHook.LOG.LogInfo($"Patching abno type {typeName} to prevent softlock");
+        LetheHooks.LOG.LogInfo($"Patching abno type {typeName} to prevent softlock");
         _abnoTypes.Remove(typeName);
         
         var stub = new HarmonyMethod(typeof(Fixes), nameof(Stub));
@@ -44,12 +44,12 @@ public class Fixes : Il2CppSystem.Object
         {
             try
             {
-                CustomEncounterHook.LOG.LogInfo($"Patching {type.FullName}#{methodInfo.Name}");
+                LetheHooks.LOG.LogInfo($"Patching {type.FullName}#{methodInfo.Name}");
                 harmony.Patch(methodInfo, prefix: stub);
             }
             catch (Exception e)
             {
-                CustomEncounterHook.LOG.LogInfo($"Failed to patch {type.FullName}#{methodInfo.Name} {e}");
+                LetheHooks.LOG.LogInfo($"Failed to patch {type.FullName}#{methodInfo.Name} {e}");
             }
         }
     }
@@ -74,24 +74,24 @@ public class Fixes : Il2CppSystem.Object
     [HarmonyPrefix]
     private static void StartBehaviourAction(BattleUnitView __instance, BattleActionLog actionLog)
     {
-        CustomEncounterHook.LOG.LogInfo("behaviourActionViewer == null: " + (__instance._behaviourActionViewer == null));
-        CustomEncounterHook.LOG.LogInfo("curAppearance == null: " + (__instance._curAppearance == null));
-        CustomEncounterHook.LOG.LogInfo("appearance == null: " + (__instance.Appearance == null));
-        CustomEncounterHook.LOG.LogInfo("actionLog.GetSystemLog() == null: " + (actionLog.GetSystemLog() == null));
+        LetheHooks.LOG.LogInfo("behaviourActionViewer == null: " + (__instance._behaviourActionViewer == null));
+        LetheHooks.LOG.LogInfo("curAppearance == null: " + (__instance._curAppearance == null));
+        LetheHooks.LOG.LogInfo("appearance == null: " + (__instance.Appearance == null));
+        LetheHooks.LOG.LogInfo("actionLog.GetSystemLog() == null: " + (actionLog.GetSystemLog() == null));
     }
    
     [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]
     [HarmonyPrefix]
     private static void PreInitStage(StageController __instance, bool isCleared, bool isSandbox)
     {
-        CustomEncounterHook.LOG.LogInfo("Pre-InitStage " + isCleared + " " + isSandbox);
+        LetheHooks.LOG.LogInfo("Pre-InitStage " + isCleared + " " + isSandbox);
     }
 
     [HarmonyPatch(typeof(StageController), nameof(StageController.InitStage))]
     [HarmonyPostfix]
     private static void PostInitStage(StageController __instance, bool isCleared, bool isSandbox)
     {
-        CustomEncounterHook.LOG.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
+        LetheHooks.LOG.LogInfo("Post-InitStage " + isCleared + " " + isSandbox);
     }
    
     [HarmonyPatch(typeof(SeasonInfoStaticDataList), nameof(SeasonInfoStaticDataList.GetNowSeasonInfo))]

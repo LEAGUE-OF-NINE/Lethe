@@ -5,7 +5,7 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using BepInEx;
 
-namespace CustomEncounter.SkillAbility
+namespace Lethe.SkillAbility
 {
     internal class ChangeCounterOnConditional : MonoBehaviour
     {
@@ -24,7 +24,7 @@ namespace CustomEncounter.SkillAbility
 				var scriptName = ability.scriptName;
 				if (scriptName.Contains("ChangeCounterOnConditional_"))
 				{
-					CustomEncounterHook.LOG.LogInfo("Registered [ChangeCounterOnConditional_]");
+					LetheHooks.LOG.LogInfo("Registered [ChangeCounterOnConditional_]");
 					if (ability.buffData == null) continue;
 
 					var newskillID = Convert.ToInt32(scriptName.Replace("ChangeCounterOnConditional_", ""));
@@ -35,7 +35,7 @@ namespace CustomEncounter.SkillAbility
 					BUFF_UNIQUE_KEYWORD keyword_status;
 					if (!Enum.TryParse(keyword, out keyword_status))
 					{
-						CustomEncounterHook.LOG.LogError($"Invalid status: {keyword}");
+						LetheHooks.LOG.LogError($"Invalid status: {keyword}");
 						continue;
 					}
 

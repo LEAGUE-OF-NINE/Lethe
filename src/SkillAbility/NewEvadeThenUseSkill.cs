@@ -3,7 +3,7 @@ using HarmonyLib;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 
-namespace CustomEncounter.SkillAbility
+namespace Lethe.SkillAbility
 {
     internal class NewEvadeThenUseSkill : MonoBehaviour
     {

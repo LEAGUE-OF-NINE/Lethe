@@ -10,7 +10,7 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using Server;
 
-namespace CustomEncounter.Patches;
+namespace Lethe.Patches;
 
 public class Data : Il2CppSystem.Object
 {
@@ -30,7 +30,7 @@ public class Data : Il2CppSystem.Object
         switch (id)
         {
             case 6006583:
-                var json = File.ReadAllText(CustomEncounterMod.EncounterConfig);                
+                var json = File.ReadAllText(LetheMain.EncounterConfig);                
                 var read = JsonUtility.FromJson<StageStaticData>(json);
                 read.story.exit = null;
                 __result = read;
@@ -46,12 +46,12 @@ public class Data : Il2CppSystem.Object
     public static void LoadCustomLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list)
         where T : LocalizeTextData, new()
     {
-        CustomEncounterHook.LOG.LogInfo("Checking for custom locale: " + name);
+        LetheHooks.LOG.LogInfo("Checking for custom locale: " + name);
         root = Directory.CreateDirectory(Path.Combine(root.FullName, name));
         foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
         {
             var localeJson = JSONNode.Parse(File.ReadAllText(file));
-            CustomEncounterHook.LOG.LogInfo("Loading custom locale: " + file);
+            LetheHooks.LOG.LogInfo("Loading custom locale: " + file);
             foreach (var keyValuePair in localeJson)
             {
                 var valueJson = keyValuePair.value.ToString(2);
@@ -61,12 +61,12 @@ public class Data : Il2CppSystem.Object
                     var value = JsonUtility.FromJson<T>(valueJson);
                     if (value == null) throw new NullReferenceException("json parse result is null");
                     list._dic[keyValuePair.key] = value;
-                    CustomEncounterHook.LOG.LogInfo("Loaded custom locale for " + keyValuePair.key);
+                    LetheHooks.LOG.LogInfo("Loaded custom locale for " + keyValuePair.key);
                 }
                 catch (Exception ex)
                 {
-                    CustomEncounterHook.LOG.LogError("Cannot load custom locale for " + keyValuePair.key + ", reason: " + ex);
-                    CustomEncounterHook.LOG.LogError(valueJson);
+                    LetheHooks.LOG.LogError("Cannot load custom locale for " + keyValuePair.key + ", reason: " + ex);
+                    LetheHooks.LOG.LogError(valueJson);
                 }
             }
         }
@@ -74,7 +74,7 @@ public class Data : Il2CppSystem.Object
 
     public static void LoadCustomLocale(TextDataManager __instance, LOCALIZE_LANGUAGE lang)
     {
-        var root = Directory.CreateDirectory(Path.Combine(CustomEncounterHook.CustomLocaleDir.FullName, lang.ToString()));
+        var root = Directory.CreateDirectory(Path.Combine(LetheHooks.CustomLocaleDir.FullName, lang.ToString()));
         LoadCustomLocale(root, "uiList", __instance._uiList);
         LoadCustomLocale(root, "characterList", __instance._characterList);
         LoadCustomLocale(root, "personalityList", __instance._personalityList);
@@ -121,9 +121,9 @@ public class Data : Il2CppSystem.Object
         if (_localizeDataLoaded) return;
         _localizeDataLoaded = true;
         LoadCustomLocale(Singleton<TextDataManager>.Instance, GlobalGameManager.Instance.Lang);
-        CustomEncounterHook.LOG.LogInfo($"Stopping HTTP listener");
-        CustomEncounterHook.StopHttp();
-        CustomEncounterHook.LOG.LogInfo($"Dumping static data");
+        LetheHooks.LOG.LogInfo($"Stopping HTTP listener");
+        LetheHooks.StopHttp();
+        LetheHooks.LOG.LogInfo($"Dumping static data");
         new Thread(StoreStaticData).Start();
     }
 
@@ -131,7 +131,7 @@ public class Data : Il2CppSystem.Object
     {
         foreach (var (dataClass, nodeList) in Login.StaticData)
         {
-            CustomEncounterHook.LOG.LogInfo($"Dumping {dataClass}");
+            LetheHooks.LOG.LogInfo($"Dumping {dataClass}");
 
             try
             {
@@ -145,7 +145,7 @@ public class Data : Il2CppSystem.Object
             }
             catch (Exception ex)
             {
-                CustomEncounterHook.LOG.LogError(ex);
+                LetheHooks.LOG.LogError(ex);
             }
         }
         
@@ -186,6 +186,6 @@ public class Data : Il2CppSystem.Object
         StaticDataManager.Instance._partList.GetPart(1).subchapterList.Insert(0, subchapter);
         StaticDataManager.Instance._partList.GetPart(1).subchapterUIList.Insert(0,subchapterUI);
         
-        CustomEncounterHook.LOG.LogWarning($"ADDED PLAYGROUND");
+        LetheHooks.LOG.LogWarning($"ADDED PLAYGROUND");
     }    
 }

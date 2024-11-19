@@ -1,4 +1,4 @@
-namespace CustomEncounter;
+namespace Lethe;
 
 public class EncounterData
 {

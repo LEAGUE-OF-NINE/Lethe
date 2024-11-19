@@ -5,7 +5,7 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using BepInEx;
 
-namespace CustomEncounter.SkillAbility
+namespace Lethe.SkillAbility
 {
 	internal class CustomFurioso : MonoBehaviour
 	{
@@ -24,7 +24,7 @@ namespace CustomEncounter.SkillAbility
 				var scriptName = ability.scriptName;
 				if (scriptName.Contains("CustomFurioso_"))
 				{
-					CustomEncounterHook.LOG.LogInfo("Registered [CustomFurioso_]");
+					LetheHooks.LOG.LogInfo("Registered [CustomFurioso_]");
 					if (ability.buffData == null) continue;
 
 					var newskillID = Convert.ToInt32(scriptName.Replace("CustomFurioso_", ""));

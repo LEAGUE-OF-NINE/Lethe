@@ -9,7 +9,7 @@ using UnityEngine;
 using SD;
 using Utils;
 
-namespace CustomEncounter.SkillAbility
+namespace Lethe.SkillAbility
 {
     internal class ChangeSkillMotion : MonoBehaviour
     {

@@ -3,7 +3,7 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using Utils;
 
-namespace CustomEncounter.Passives
+namespace Lethe.Passives
 {
     internal class ChangeAppearance : MonoBehaviour
     {

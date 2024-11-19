@@ -7,7 +7,7 @@ using UnhollowerRuntimeLib;
 using FileInfo = System.IO.FileInfo;
 using PatchInfo = TextAssetPatch.PatchInfo;
 
-namespace CustomEncounter.Patches;
+namespace Lethe.Patches;
 
 public class TextAsset : Il2CppSystem.Object
 {
@@ -19,7 +19,7 @@ public class TextAsset : Il2CppSystem.Object
         foreach (var declaredMethod in AccessTools.GetDeclaredMethods(typeof(TextAssetPatchInfoManager)))
             if (declaredMethod.Name.StartsWith("Calculate"))
             {
-                CustomEncounterHook.LOG.LogInfo($"Patching {declaredMethod.Name}");
+                LetheHooks.LOG.LogInfo($"Patching {declaredMethod.Name}");
                 harmony.Patch(declaredMethod, prefix: new HarmonyMethod(AccessTools.Method(typeof(TextAsset), nameof(PatchCalculation))));
             }
     }

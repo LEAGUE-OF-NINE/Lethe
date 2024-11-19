@@ -7,7 +7,7 @@ using SimpleJSON;
 using UnhollowerBaseLib;
 using Utils;
 
-namespace CustomEncounter.Patches;
+namespace Lethe.Patches;
 
 public class CustomAssistant : Il2CppSystem.Object
 {
@@ -47,8 +47,8 @@ public class CustomAssistant : Il2CppSystem.Object
         CustomPersonalityRegistry.Clear();
 
         var order = sortedParticipants.Count;
-        CustomEncounterHook.LOG.LogInfo("Scanning custom assistant data");
-        foreach (var file in Directory.GetFiles(CustomEncounterHook.CustomAssistantDir.FullName, "*.json"))
+        LetheHooks.LOG.LogInfo("Scanning custom assistant data");
+        foreach (var file in Directory.GetFiles(LetheHooks.CustomAssistantDir.FullName, "*.json"))
             try
             {
                 var assistantJson = JSONNode.Parse(File.ReadAllText(file));
@@ -58,7 +58,7 @@ public class CustomAssistant : Il2CppSystem.Object
                 personalityStaticDataList.Init(assistantJsonList);
                 foreach (var personalityStaticData in personalityStaticDataList.list)
                 {
-                    CustomEncounterHook.LOG.LogInfo($"Adding assistant at {order} Owner: {personalityStaticData.ID}");
+                    LetheHooks.LOG.LogInfo($"Adding assistant at {order} Owner: {personalityStaticData.ID}");
                     var personality = new CustomPersonality(11001, 45, 4, 0, false)
                     {
                         _classInfo = personalityStaticData,
@@ -72,7 +72,7 @@ public class CustomAssistant : Il2CppSystem.Object
             }
             catch (Exception ex)
             {
-                CustomEncounterHook.LOG.LogError($"Error parsing assistant data {file}: {ex.GetType()}: {ex.Message}");
+                LetheHooks.LOG.LogError($"Error parsing assistant data {file}: {ex.GetType()}: {ex.Message}");
             }
     }
 }

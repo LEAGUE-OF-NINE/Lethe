@@ -12,9 +12,9 @@ using UnhollowerRuntimeLib;
 using UnityEngine;
 using Object = Il2CppSystem.Object;
 
-namespace CustomEncounter;
+namespace Lethe;
 
-public class CustomEncounterHook : MonoBehaviour
+public class LetheHooks : MonoBehaviour
 {
     public static ManualLogSource LOG;
 
@@ -24,7 +24,7 @@ public class CustomEncounterHook : MonoBehaviour
 
     private static readonly List<Object> _gcPrevent = new();
 
-    public CustomEncounterHook(IntPtr ptr) : base(ptr)
+    public LetheHooks(IntPtr ptr) : base(ptr)
     {
     }
 
@@ -51,14 +51,14 @@ public class CustomEncounterHook : MonoBehaviour
 
     internal static void Setup(ManualLogSource log, int port)
     {
-        ClassInjector.RegisterTypeInIl2Cpp<CustomEncounterHook>();
+        ClassInjector.RegisterTypeInIl2Cpp<LetheHooks>();
 
         LOG = log;
 
         GameObject obj = new("CustomEncounterHook");
         DontDestroyOnLoad(obj);
         obj.hideFlags |= HideFlags.HideAndDontSave;
-        var hook = obj.AddComponent<CustomEncounterHook>();
+        var hook = obj.AddComponent<LetheHooks>();
         _gcPrevent.Add(hook);
 
         CustomAppearanceDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_appearance"));

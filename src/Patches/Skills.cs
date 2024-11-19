@@ -1,7 +1,7 @@
 using HarmonyLib;
 using UnhollowerRuntimeLib;
 
-namespace CustomEncounter.Patches;
+namespace Lethe.Patches;
 
 public class Skills : Il2CppSystem.Object
 {
@@ -42,7 +42,7 @@ public class Skills : Il2CppSystem.Object
             var passive = passiveTable.GetBattlePassiveIDList(playerUnitData.personalityId, playerUnitData.PersonalityLevel);
             if (!passive.Contains(9999907)) continue;
             // constant sampled from UE
-            CustomEncounterHook.LOG.LogInfo("Bloodfeast passive detected, activating");
+            LetheHooks.LOG.LogInfo("Bloodfeast passive detected, activating");
             __instance.AddCandidateToKeyword(BUFF_UNIQUE_KEYWORD.BloodDinner, 921490743);
             __instance.AddStageBuff(BUFF_UNIQUE_KEYWORD.BloodDinner);
             return;

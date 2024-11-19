@@ -9,7 +9,7 @@ using SimpleJSON;
 using UnityEngine;
 using Object = Il2CppSystem.Object;
 
-namespace CustomEncounter;
+namespace Lethe;
 
 public static class EncounterHelper
 {

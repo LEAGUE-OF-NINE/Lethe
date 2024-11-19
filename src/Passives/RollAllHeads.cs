@@ -7,7 +7,7 @@ using UnityEngine;
 using HarmonyLib;
 using UnhollowerRuntimeLib;
 
-namespace CustomEncounter.Passives
+namespace Lethe.Passives
 {
     internal class RollAllHeads : MonoBehaviour
     {

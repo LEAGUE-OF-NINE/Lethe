@@ -1,7 +1,7 @@
 using System;
 using UnhollowerRuntimeLib;
 
-namespace CustomEncounter.SkillAbility;
+namespace Lethe.SkillAbility;
 
 public class SkillAbilityEvadeThenUseSkill : global::SkillAbility
 {
@@ -13,7 +13,7 @@ public class SkillAbilityEvadeThenUseSkill : global::SkillAbility
     public override void Init(SkillModel skill, string scriptName, int idx, BuffReferenceData info = null)
     {
         base.Init(skill, scriptName, idx, info);
-        CustomEncounterHook.LOG.LogInfo("Registered [SkillAbility_EvadeThenUseSkill]");
+        LetheHooks.LOG.LogInfo("Registered [SkillAbility_EvadeThenUseSkill]");
     }
 
     public override void OnFailedEvade(BattleActionModel attackerAction, BattleActionModel evadeAction, BATTLE_EVENT_TIMING timing)
@@ -28,7 +28,7 @@ public class SkillAbilityEvadeThenUseSkill : global::SkillAbility
 
     private void OnEvade(BattleActionModel attackerAction, BattleActionModel evadeAction, BATTLE_EVENT_TIMING timing)
     {
-        CustomEncounterHook.LOG.LogInfo("[SkillAbility_EvadeThenUseSkill] OnEvade");
+        LetheHooks.LOG.LogInfo("[SkillAbility_EvadeThenUseSkill] OnEvade");
     }
     
 }

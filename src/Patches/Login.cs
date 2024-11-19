@@ -9,7 +9,7 @@ using SimpleJSON;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 
-namespace CustomEncounter.Patches;
+namespace Lethe.Patches;
 
 public class Login : Il2CppSystem.Object
 {
@@ -26,7 +26,7 @@ public class Login : Il2CppSystem.Object
     [HarmonyPostfix]
     private static void SetLoginInfo(LoginSceneManager __instance)
     {
-        __instance.tmp_loginAccount.text = "CustomEncounter v" + CustomEncounterMod.VERSION;
+        __instance.tmp_loginAccount.text = "Lethe v" + LetheMain.VERSION;
     }
    
     [HarmonyPatch(typeof(StaticDataManager), nameof(StaticDataManager.LoadStaticDataFromJsonFile))]
@@ -34,7 +34,7 @@ public class Login : Il2CppSystem.Object
     private static void PreLoadStaticDataFromJsonFile(StaticDataManager __instance, string dataClass,
         ref Il2CppSystem.Collections.Generic.List<JSONNode> nodeList)
     {
-        CustomEncounterHook.LOG.LogInfo($"Saving {dataClass}");
+        LetheHooks.LOG.LogInfo($"Saving {dataClass}");
         StaticData[dataClass] = new System.Collections.Generic.List<string>();
         foreach (var jsonNode in nodeList)
         {
@@ -47,14 +47,14 @@ public class Login : Il2CppSystem.Object
         foreach (var file in Directory.GetFiles(root.FullName, "*.json"))
             try
             {
-                CustomEncounterHook.LOG.LogInfo($"Loading {file}");
+                LetheHooks.LOG.LogInfo($"Loading {file}");
                 var node = JSONNode.Parse(File.ReadAllText(file));
                 customDataList.Add(node);
                 nodeList.Insert(0, node);
             }
             catch (Exception ex)
             {
-                CustomEncounterHook.LOG.LogError($"Error parsing {file}: {ex.GetType()} {ex.Message}");
+                LetheHooks.LOG.LogError($"Error parsing {file}: {ex.GetType()} {ex.Message}");
             }
 
         try
@@ -71,7 +71,7 @@ public class Login : Il2CppSystem.Object
         }
         catch (Exception ex)
         {
-            CustomEncounterHook.LOG.LogError($"Error uploading {dataClass}: {ex.GetType()} {ex.Message}");
+            LetheHooks.LOG.LogError($"Error uploading {dataClass}: {ex.GetType()} {ex.Message}");
         }
     }
 
