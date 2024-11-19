@@ -112,10 +112,8 @@ public class CustomEncounterHook : MonoBehaviour
             resp.Headers.Add("Access-Control-Allow-Headers", "*");
             resp.Headers.Add("Vary", "Origin");
             var origin = req.Headers.Get("Origin");
-            if (origin != null && origin.StartsWith("http://localhost:"))
+            if (origin != null)
                 resp.Headers.Add("Access-Control-Allow-Origin", origin);
-            else
-                resp.Headers.Add("Access-Control-Allow-Origin", "https://lethelc.site");
 
             if (req.HttpMethod == "OPTIONS") continue;
 
