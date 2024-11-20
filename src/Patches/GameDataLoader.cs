@@ -162,25 +162,29 @@ namespace LimbusSandbox.Patches
         {
             Plugin.Log.LogInfo("Checking for custom locale: " + name);
             root = Path.Combine(root, name);
-            foreach (var file in Directory.GetFiles(root, "*.json"))
+            //im feeling lazy rn
+            if (Directory.Exists(root))
             {
-                var localeJson = JSONNode.Parse(File.ReadAllText(file));
-                Plugin.Log.LogInfo("Loading custom locale: " + file);
-                foreach (var keyValuePair in localeJson)
+                foreach (var file in Directory.GetFiles(root, "*.json"))
                 {
-                    var valueJson = keyValuePair.value.ToString(2);
+                    var localeJson = JSONNode.Parse(File.ReadAllText(file));
+                    Plugin.Log.LogInfo("Loading custom locale: " + file);
+                    foreach (var keyValuePair in localeJson)
+                    {
+                        var valueJson = keyValuePair.value.ToString(2);
 
-                    try
-                    {
-                        var value = JsonUtility.FromJson<T>(valueJson);
-                        if (value == null) throw new NullReferenceException("json parse result is null");
-                        list._dic[keyValuePair.key] = value;
-                        Plugin.Log.LogInfo("Loaded custom locale for " + keyValuePair.key);
-                    }
-                    catch (Exception ex)
-                    {
-                        Plugin.Log.LogError("Cannot load custom locale for " + keyValuePair.key + ", reason: " + ex);
-                        Plugin.Log.LogError(valueJson);
+                        try
+                        {
+                            var value = JsonUtility.FromJson<T>(valueJson);
+                            if (value == null) throw new NullReferenceException("json parse result is null");
+                            list._dic[keyValuePair.key] = value;
+                            Plugin.Log.LogInfo("Loaded custom locale for " + keyValuePair.key);
+                        }
+                        catch (Exception ex)
+                        {
+                            Plugin.Log.LogError("Cannot load custom locale for " + keyValuePair.key + ", reason: " + ex);
+                            Plugin.Log.LogError(valueJson);
+                        }
                     }
                 }
             }
