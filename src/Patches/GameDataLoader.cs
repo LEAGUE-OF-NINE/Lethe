@@ -192,7 +192,7 @@ namespace LimbusSandbox.Patches
 
             foreach (var path in Directory.GetDirectories(Plugin.__testpath))
             {
-                var root = Path.Combine(path, lang.ToString());
+                var root = Path.Combine(path, "Locale", lang.ToString());
                 if (Directory.Exists(root))
                 {
                     LoadCustomLocale(root, "uiList", __instance._uiList);
