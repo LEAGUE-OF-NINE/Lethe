@@ -17,12 +17,15 @@
     <NoWarn>1701;1702;2211;CA2211;IDE1006;IDE0060</NoWarn>
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <RootNamespace>CustomEncounter</RootNamespace>
+    <RootNamespace>LimbusSandbox</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="EncounterData.cs" />
+    <Compile Remove="EncounterHelper.cs" />
+  </ItemGroup>
   
   <!-- ~~~~~ CONFIGURATIONS ~~~~~ -->
   <ItemGroup>
-    <None Remove="Directory.Build.props" />
     <None Remove="nuget.config" />
   </ItemGroup>
   <!-- BepinEx -->
@@ -41,16 +44,16 @@
   <!-- ~~~~~ ASSEMBLY REFERENCES ~~~~~ -->
   <!-- BepinEx -->
   <ItemGroup Condition="'$(Configuration)'=='BIE'">
-     <Reference Include="System.Runtime"/>
-     <Reference Include="$(LimbusCompanyFolder)\BepInEx\core\*.dll">
+     <Reference Include="System.Runtime" />
+     <Reference Include="$(LimbusCompanyFolder)\#577\BepInEx\core\*.dll">
        <HintPath>%(Identity)</HintPath>
        <Private>false</Private>
      </Reference>
-     <Reference Include="$(LimbusCompanyFolder)\BepInEx\unhollowed\*.dll">
+     <Reference Include="$(LimbusCompanyFolder)\#577\BepInEx\unhollowed\*.dll">
        <HintPath>%(Identity)</HintPath>
        <Private>false</Private>
      </Reference>
-     <Reference Include="$(LimbusCompanyFolder)\mono\Managed\*.dll">
+     <Reference Include="$(LimbusCompanyFolder)\#577\mono\Managed\*.dll">
        <HintPath>%(Identity)</HintPath>
        <Private>false</Private>
      </Reference>
