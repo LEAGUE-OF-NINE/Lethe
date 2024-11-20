@@ -160,7 +160,7 @@ namespace LimbusSandbox.Patches
         public static void LoadCustomLocale<T>(string root, string name, JsonDataList<T> list)
     where T : LocalizeTextData, new()
         {
-            Plugin.Log.LogInfo("Checking for custom locale: " + name);
+            //Plugin.Log.LogInfo("Checking for custom locale: " + name);
             root = Path.Combine(root, name);
             //im feeling lazy rn
             if (Directory.Exists(root))
@@ -168,7 +168,7 @@ namespace LimbusSandbox.Patches
                 foreach (var file in Directory.GetFiles(root, "*.json"))
                 {
                     var localeJson = JSONNode.Parse(File.ReadAllText(file));
-                    Plugin.Log.LogInfo("Loading custom locale: " + file);
+                    Plugin.Log.LogWarning("Loading custom locale: " + file);
                     foreach (var keyValuePair in localeJson)
                     {
                         var valueJson = keyValuePair.value.ToString(2);
@@ -178,7 +178,7 @@ namespace LimbusSandbox.Patches
                             var value = JsonUtility.FromJson<T>(valueJson);
                             if (value == null) throw new NullReferenceException("json parse result is null");
                             list._dic[keyValuePair.key] = value;
-                            Plugin.Log.LogInfo("Loaded custom locale for " + keyValuePair.key);
+                            //Plugin.Log.LogInfo("Loaded custom locale for " + keyValuePair.key);
                         }
                         catch (Exception ex)
                         {
@@ -199,6 +199,7 @@ namespace LimbusSandbox.Patches
                 var root = Path.Combine(path, "Locale", lang.ToString());
                 if (Directory.Exists(root))
                 {
+                    Plugin.Log.LogWarning($"CHECKING LOCALE {root}");
                     LoadCustomLocale(root, "uiList", __instance._uiList);
                     LoadCustomLocale(root, "characterList", __instance._characterList);
                     LoadCustomLocale(root, "personalityList", __instance._personalityList);
