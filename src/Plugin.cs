@@ -59,6 +59,7 @@ namespace LimbusSandbox
             CustomDuelViewer.Setup(harmony);
             ChangeAppearance.Setup(harmony);
             ChangeSkillMotion.Setup(harmony);
+            experimental_locale_load.Setup(harmony);
 
             //fixes
             AppearancePatch.Setup(harmony);
