@@ -49,11 +49,13 @@ namespace LimbusSandbox.Patches
 
             var list = TextDataManager.Instance._personalityVoiceText.GetDataList(id.ToString())?.dataList;
             if (list == null) return;
-            foreach (var bruh in list)
+            Func<TextData_PersonalityVoice, bool> func = (x) => { return soundID == x.id; };
+            var find = list.Find(func);
+            if (find != null)
             {
-                if (bruh.id != soundID) continue;
-                view._uiManager.ShowDialog(new BattleUI.Dialog.BattleDialogLine(bruh.dlg, ""));
+                view._uiManager.ShowDialog(new BattleUI.Dialog.BattleDialogLine(find.dlg, ""));
             }
+            else return;
         }
 
         [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.SetPlayVoice))]
