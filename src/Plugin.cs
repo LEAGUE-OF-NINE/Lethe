@@ -10,6 +10,7 @@ using System.IO;
 using UnityEngine;
 using System.Collections.Generic;
 using LimbusSandbox.Passives;
+using LimbusSandbox.ps2;
 
 namespace LimbusSandbox
 {
@@ -40,7 +41,7 @@ namespace LimbusSandbox
             var harmony = new Harmony(NAME);
             //yes
             SandboxLoader.Setup(harmony);
-
+            ps_cs.Setup(harmony);
             //patches
             Configuration.TryGetEntry<bool>(new ConfigDefinition("LaunchSettings", "usePrivateServer"), out var ps);
             if (ps.Value) PrivateServer.Setup(harmony);
