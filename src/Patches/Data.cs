@@ -48,7 +48,7 @@ public class Data : Il2CppSystem.Object
     {
         LetheHooks.LOG.LogInfo("Checking for custom locale: " + name);
         Directory.CreateDirectory(Path.Combine(LetheMain.templatePath.FullPath, "custom_limbus_locale", GlobalGameManager.Instance.Lang.ToString(), name));
-        root = Directory.CreateDirectory(Path.Combine(root.FullName, name));
+        root = Directory.CreateDirectory(Path.Combine(root.FullName, "custom_limbus_locale", GlobalGameManager.Instance.Lang.ToString(), name));
         foreach (var file in Directory.GetFiles(root.FullName, "*.json", SearchOption.AllDirectories))
         {
             var localeJson = JSONNode.Parse(File.ReadAllText(file));
@@ -78,7 +78,7 @@ public class Data : Il2CppSystem.Object
         var __lang = lang.ToString();
         foreach (var modPath in Directory.GetDirectories(LetheMain.modsPath.FullPath))
         {
-            var expected = Path.Combine(LetheMain.modsPath.FullPath, "custom_limbus_locale", __lang);
+            var expected = Path.Combine(modPath, "custom_limbus_locale", __lang);
             if (!Directory.Exists(expected)) continue;
             var root = Directory.CreateDirectory(modPath);
             LoadCustomLocale(root, "uiList", __instance._uiList);
