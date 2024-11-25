@@ -43,22 +43,33 @@ public class Login : Il2CppSystem.Object
 
         var customDataList = new JSONArray();
 
-        var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_data", dataClass));
-        foreach (var file in Directory.GetFiles(root.FullName, "*.json", SearchOption.AllDirectories))
-            try
+
+        var templatePath = Directory.CreateDirectory(Path.Combine(LetheMain.templatePath.FullPath, "custom_limbus_data", dataClass));
+        foreach (var modPath in Directory.GetDirectories(LetheMain.modsPath.FullPath))
+        {
+            var expectedPath = Path.Combine(modPath, "custom_limbus_data", dataClass);
+            if (!Directory.Exists(expectedPath)) continue;
+
+            foreach(var customData in Directory.GetFiles(expectedPath, "*.json", SearchOption.AllDirectories))
             {
-                LetheHooks.LOG.LogInfo($"Loading {file}");
-                var node = JSONNode.Parse(File.ReadAllText(file));
-                customDataList.Add(node);
-                nodeList.Insert(0, node);
-            }
-            catch (Exception ex)
-            {
-                LetheHooks.LOG.LogError($"Error parsing {file}: {ex.GetType()} {ex.Message}");
+                LetheHooks.LOG.LogInfo($"loading file from {customData.Substring(LetheMain.modsPath.FullPath.Length)}");
+                try
+                {
+                    var node = JSONNode.Parse(File.ReadAllText(customData));
+                    customDataList.Add(node);
+                    nodeList.Insert(0, node);
+                }
+                catch (Exception ex)
+                {
+                    LetheHooks.LOG.LogError($"ERROR PARSING FILE {customData}: {ex.GetType()} {ex.Message}");
+                }
             }
 
-        try
-        {
+        }
+
+
+            try
+            {
             var url = Singleton<ServerSelector>.Instance.GetServerURL() + "/custom/upload/" + dataClass;
             var auth = SingletonBehavior<LoginInfoManager>.Instance.UserAuth.ToServerUserAuthFormat();
             var body = new JSONObject();

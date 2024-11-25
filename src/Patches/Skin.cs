@@ -6,6 +6,7 @@ using SD;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using BepInEx.Logging;
+using MainUI;
 
 namespace Lethe.Patches;
 
@@ -44,16 +45,22 @@ public class Skin : MonoBehaviour
         {
             case SCENE_STATE.Battle:
             {
-                foreach (var bundlePath in Directory.GetFiles(LetheHooks.CustomAppearanceDir.FullName, "*.bundle"))
-                {
-                    Log.LogInfo($"{bundlePath}");
-                    var bundle = AssetBundle.LoadFromFile(bundlePath, 0);
-                    loadedAssets.Add(bundle);
-                    Log.LogWarning(@$"loaded bundle {bundle.name}!");
+                    foreach (var modPath in Directory.GetDirectories(LetheMain.modsPath.FullPath))
+                    {
+                        var expectedPath = Path.Combine(modPath, "custom_appearance");
+                        if (!Directory.Exists(expectedPath)) continue;
+
+                        foreach (var bundlePath in Directory.GetFiles(expectedPath, "*.bundle", SearchOption.AllDirectories))
+                        {
+                            Log.LogInfo($"{bundlePath}");
+                            var bundle = AssetBundle.LoadFromFile(bundlePath, 0);
+                            loadedAssets.Add(bundle);
+                            Log.LogWarning(@$"loaded bundle {bundle.name}!");
+                        }
+                    }
+                    break;
 
                 }
-                break;
-            }
             case not SCENE_STATE.Battle:            
             {
               foreach (var bundle in loadedAssets)
@@ -67,7 +74,7 @@ public class Skin : MonoBehaviour
         
         }
     }
-    
+
     //create skin
     [HarmonyPatch(typeof(SDCharacterSkinUtil), nameof(SDCharacterSkinUtil.CreateSkin))]
     [HarmonyPatch(new []{ typeof(BattleUnitView), typeof(BattleUnitModel), typeof(Transform), typeof(DelegateEvent) })]
