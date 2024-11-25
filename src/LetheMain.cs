@@ -101,6 +101,7 @@ public class LetheMain : BasePlugin
             Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_sprites"));
             Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_limbus_locale"));
             Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_assistant"));
+            Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_appearance"));
 
             EncounterHelper.Log = Log;
             if (!File.Exists(EncounterConfig)) File.Create(EncounterConfig).Close();
