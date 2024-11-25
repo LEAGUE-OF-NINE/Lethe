@@ -19,7 +19,7 @@ public class LetheMain : BasePlugin
 {
     public const string GUID = $"{AUTHOR}.{NAME}";
     public const string NAME = "Lethe";
-    public const string VERSION = "1.0.1";
+    public const string VERSION = "1.0.2";
     public const string AUTHOR = "Carra";
 
     public static DirectoryInfo pluginPath = Directory.CreateDirectory(Path.Combine(Paths.PluginPath, $"{NAME}"));
