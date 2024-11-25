@@ -184,6 +184,7 @@ public static class EncounterHelper
             obj[keyValuePair.key] = JSONNode.Parse(JsonUtility.ToJson(keyValuePair.value));
 
         File.WriteAllText(Path.Combine(root.FullPath, $"{name}.json"), obj.ToString(2));
+        Directory.CreateDirectory(Path.Combine(LetheMain.templatePath.FullPath, "custom_limbus_locale", GlobalGameManager.Instance.Lang.ToString(), name));
     }
 
     public static void SaveLocale()

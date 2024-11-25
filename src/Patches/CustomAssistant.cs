@@ -5,6 +5,8 @@ using HarmonyLib;
 using Il2CppSystem.IO;
 using SimpleJSON;
 using UnhollowerBaseLib;
+using UnityEngine.ProBuilder;
+using UnityEngine;
 using Utils;
 
 namespace Lethe.Patches;
@@ -48,31 +50,40 @@ public class CustomAssistant : Il2CppSystem.Object
 
         var order = sortedParticipants.Count;
         LetheHooks.LOG.LogInfo("Scanning custom assistant data");
-        foreach (var file in Directory.GetFiles(LetheHooks.CustomAssistantDir.FullName, "*.json"))
-            try
+        foreach (var modPath in Directory.GetDirectories(LetheMain.modsPath.FullPath))
+        {
+            var expectedPath = Path.Combine(modPath, "custom_assistant");
+            if (!Directory.Exists(expectedPath)) continue;
+
+            foreach (var file in Directory.GetFiles(expectedPath, "*.json", SearchOption.AllDirectories))
             {
-                var assistantJson = JSONNode.Parse(File.ReadAllText(file));
-                var personalityStaticDataList = new PersonalityStaticDataList();
-                var assistantJsonList = new Il2CppSystem.Collections.Generic.List<JSONNode>();
-                assistantJsonList.Add(assistantJson);
-                personalityStaticDataList.Init(assistantJsonList);
-                foreach (var personalityStaticData in personalityStaticDataList.list)
+                try
                 {
-                    LetheHooks.LOG.LogInfo($"Adding assistant at {order} Owner: {personalityStaticData.ID}");
-                    var personality = new CustomPersonality(11001, 45, 4, 0, false)
+                    var assistantJson = JSONNode.Parse(File.ReadAllText(file));
+                    var personalityStaticDataList = new PersonalityStaticDataList();
+                    var assistantJsonList = new Il2CppSystem.Collections.Generic.List<JSONNode>();
+                    assistantJsonList.Add(assistantJson);
+                    personalityStaticDataList.Init(assistantJsonList);
+                    foreach (var personalityStaticData in personalityStaticDataList.list)
                     {
-                        _classInfo = personalityStaticData,
-                        _battleOrder = order++
-                    };
-                    var egos = new[] { new Ego(20101, EGO_OWNED_TYPES.USER) };
-                    var unit = new PlayerUnitData(personality, new Il2CppReferenceArray<Ego>(egos), false);
-                    CustomPersonalityRegistry[personalityStaticData.ID] = personalityStaticData;
-                    sortedParticipants.Add(unit);
+                        LetheHooks.LOG.LogInfo($"Adding assistant at {order} Owner: {personalityStaticData.ID}");
+                        var personality = new CustomPersonality(11001, 45, 4, 0, false)
+                        {
+                            _classInfo = personalityStaticData,
+                            _battleOrder = order++
+                        };
+                        var egos = new[] { new Ego(20101, EGO_OWNED_TYPES.USER) };
+                        var unit = new PlayerUnitData(personality, new Il2CppReferenceArray<Ego>(egos), false);
+                        CustomPersonalityRegistry[personalityStaticData.ID] = personalityStaticData;
+                        sortedParticipants.Add(unit);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LetheHooks.LOG.LogError($"Error parsing assistant data {file}: {ex.GetType()}: {ex.Message}");
                 }
             }
-            catch (Exception ex)
-            {
-                LetheHooks.LOG.LogError($"Error parsing assistant data {file}: {ex.GetType()}: {ex.Message}");
-            }
+        }
+  
     }
 }

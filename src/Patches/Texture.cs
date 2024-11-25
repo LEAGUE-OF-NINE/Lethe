@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using HarmonyLib;
 using Il2CppSystem.IO;
+using MainUI;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 
@@ -12,13 +13,28 @@ public class Texture : Il2CppSystem.Object
 
     private static readonly Dictionary<string, Sprite> Sprites = new();
     private static readonly Dictionary<string, bool> SpriteExist = new();
+    private static List<string> spritePaths = new();
 
     public static void Setup(Harmony harmony)
     {
         ClassInjector.RegisterTypeInIl2Cpp<Texture>();
         harmony.PatchAll(typeof(Texture));
     }
-    
+
+    [HarmonyPatch(typeof(LobbyUIPresenter), nameof(LobbyUIPresenter.Initialize))]
+    [HarmonyPostfix]
+    private static void PostMainUILoad()
+    {
+        spritePaths.Clear();
+        foreach (var modPath in Directory.GetDirectories(LetheMain.modsPath.FullPath))
+        {
+            var expectedPath = Path.Combine(modPath, "custom_sprites");
+            if (!Directory.Exists(expectedPath)) continue;
+
+            foreach (var imgpath in Directory.GetFiles(expectedPath, "*.png", SearchOption.AllDirectories))
+                spritePaths.Add(imgpath);
+        }
+    }
     private static Sprite LoadSpriteFromFile(string fileName)
     {
         if (SpriteExist.TryGetValue(fileName, out var spriteExists) && !spriteExists)
@@ -29,7 +45,7 @@ public class Texture : Il2CppSystem.Object
 
         try
         {
-            var path = Path.Combine(LetheHooks.CustomSpriteDir.FullName, fileName + ".png");
+            var path = spritePaths.Find(x => x.Contains(fileName));
             if (!File.Exists(path))
             {
                 SpriteExist[fileName] = false;

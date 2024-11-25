@@ -23,7 +23,7 @@ public class LetheMain : BasePlugin
     public const string AUTHOR = "Carra";
 
     public static DirectoryInfo pluginPath = Directory.CreateDirectory(Path.Combine(Paths.PluginPath, $"{NAME}"));
-    public static DirectoryInfo vanillaDumpPath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "LimbusData"));
+    public static DirectoryInfo vanillaDumpPath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "dumpedData"));
     public static DirectoryInfo templatePath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "ModTemplate"));
     public static DirectoryInfo modsPath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "mods"));
 
