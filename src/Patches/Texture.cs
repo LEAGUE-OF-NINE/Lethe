@@ -83,7 +83,7 @@ public class Texture : Il2CppSystem.Object
     [HarmonyPrefix]
     private static bool GetSkillSprite(SkillModel __instance, ref Sprite __result)
     {
-        var customSprite = LoadSpriteFromFile("skill_" + __instance.GetID());
+        var customSprite = LoadSpriteFromFile("skill_" + __instance.GetSkillIconID()) ?? LoadSpriteFromFile("skill_" + __instance.GetID());
         if (customSprite == null) return true;
         __result = customSprite;
         return false;

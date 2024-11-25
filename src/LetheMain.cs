@@ -22,7 +22,12 @@ public class LetheMain : BasePlugin
     public const string VERSION = "1.0.1";
     public const string AUTHOR = "Carra";
 
-    public static string EncounterConfig = Path.Combine(Paths.ConfigPath, "encounter.json");
+    public static DirectoryInfo pluginPath = Directory.CreateDirectory(Path.Combine(Paths.PluginPath, $"{NAME}"));
+    public static DirectoryInfo vanillaDumpPath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "LimbusData"));
+    public static DirectoryInfo templatePath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "ModTemplate"));
+    public static DirectoryInfo modsPath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "mods"));
+
+    public static string EncounterConfig = Path.Combine(pluginPath.FullPath, "encounter.json");
 
     public static ConfigEntry<string> ConfigServer;
     public static Action<string, Action> LogFatalError { get; set; }
@@ -90,6 +95,12 @@ public class LetheMain : BasePlugin
             ChangeSkillMotion.Setup(harmony);
             if (toggleCRC.Value) Patches.TextAsset.Setup(harmony);
             Patches.Skills.Setup(harmony);
+
+            //add some folder for the mod template
+            Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_appearance"));
+            Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_sprites"));
+            Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_limbus_locale"));
+            Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_assistant"));
 
             EncounterHelper.Log = Log;
             if (!File.Exists(EncounterConfig)) File.Create(EncounterConfig).Close();

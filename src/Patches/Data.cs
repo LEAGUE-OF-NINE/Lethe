@@ -135,7 +135,7 @@ public class Data : Il2CppSystem.Object
 
             try
             {
-                var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "limbus_data", dataClass));
+                var root = Directory.CreateDirectory(Path.Combine(LetheMain.vanillaDumpPath.FullPath, "limbus_data", dataClass));
                 var i = 0;
                 foreach (var jsonNode in nodeList)
                 {

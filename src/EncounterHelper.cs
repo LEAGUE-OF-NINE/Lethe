@@ -22,7 +22,7 @@ public static class EncounterHelper
 
     public static void SaveToFile(Object data, string root, string name)
     {
-        var path = Path.Combine(Paths.ConfigPath, root, name + ".json");
+        var path = Path.Combine(LetheMain.vanillaDumpPath.FullPath, root, name + ".json");
         Log.LogInfo("Saving encounter to " + path);
         try
         {
@@ -39,13 +39,13 @@ public static class EncounterHelper
     {
         var root = "identities";
         Log.LogInfo("Dumping identities....");
-        Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, root));
+        Directory.CreateDirectory(Path.Combine(LetheMain.vanillaDumpPath.FullPath, root));
         foreach (var personalityStaticData in Singleton<StaticDataManager>.Instance.PersonalityStaticDataList.list)
             SaveToFile(personalityStaticData, root, personalityStaticData.ID.ToString());
 
         root = "skills";
         Log.LogInfo("Dumping skills....");
-        Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, root));
+        Directory.CreateDirectory(Path.Combine(LetheMain.vanillaDumpPath.FullPath, root));
         foreach (var skillStaticData in Singleton<StaticDataManager>.Instance.SkillList.list)
             SaveToFile(skillStaticData, root, skillStaticData.ID.ToString());
     }
@@ -54,7 +54,7 @@ public static class EncounterHelper
     {
         var uiList = TextDataManager.Instance.UIList;
         Log.LogInfo("Dumping encounters to files...");
-        Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "encounters"));
+        Directory.CreateDirectory(Path.Combine(LetheMain.vanillaDumpPath.FullPath, "encounters"));
 
         // Story Data
         foreach (var chapterData in StaticDataManager.Instance.partList.list)
@@ -191,7 +191,7 @@ public static class EncounterHelper
         var textManager = Singleton<TextDataManager>.Instance;
         var lang = GlobalGameManager.Instance.Lang;
         Log.LogInfo("Dumping locale data: " + lang);
-        var root = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "limbus_locale", lang.ToString()));
+        var root = Directory.CreateDirectory(Path.Combine(LetheMain.vanillaDumpPath.FullPath, "limbus_locale", lang.ToString()));
         DumpLocale(root, "uiList", textManager._uiList);
         DumpLocale(root, "characterList", textManager._characterList);
         DumpLocale(root, "personalityList", textManager._personalityList);
