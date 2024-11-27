@@ -130,34 +130,11 @@ namespace LimbusSandbox.SkillAbility
             }
         }
 
-        public static Dictionary<int, string> appearanceRec = new();
-        [HarmonyPatch(typeof(GlobalGameManager), nameof(GlobalGameManager.LoadScene))]
-        [HarmonyPostfix]
-        private static void funky2(SCENE_STATE state)
-        {
-            appearanceRec.Clear();
-        }
-
-        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.OnRoundStart))]
-        [HarmonyPostfix]
-        private static void ok(BattleUnitView __instance)
-        {
-            var instanceID = __instance._instanceID;
-            var name = __instance._curAppearance.name;
-            if (!appearanceRec.ContainsKey(instanceID)) appearanceRec.Add(instanceID, name);
-            else
-            {
-                if (appearanceRec[instanceID] != name) appearanceRec[instanceID] = name;
-            }
-        }
-
-
         [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.OnRoundEnd))]
         [HarmonyPostfix]
         private static void OnRoundEnd(BattleUnitView __instance)
         {
-            var name = appearanceRec[__instance._instanceID];
-            __instance.ChangeAppearance(name, true);
+            __instance.ChangeAppearance(__instance.unitModel.GetAppearanceID(), true);
         }
     }
 }
