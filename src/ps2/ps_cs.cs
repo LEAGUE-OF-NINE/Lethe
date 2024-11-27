@@ -10,6 +10,11 @@ using Server;
 using System.Net;
 using System.IO;
 using UnhollowerBaseLib;
+using BepInEx.IL2CPP.Utils.Collections;
+using MonoMod.Utils;
+using SimpleJSON;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace LimbusSandbox.ps2
 {
@@ -17,12 +22,12 @@ namespace LimbusSandbox.ps2
     {
         private static string SERVER_URL = "http://127.0.0.1:8080/";
         private static SimpleCrypto crypto => HttpApiRequester.Instance.crypto;
-        private static string SECRET_KEY = crypto.SHA512Hash("");
+        private static string SECRET_KEY = new SimpleCrypto().SHA512Hash(SimpleCrypto.SECRET_KEY);
         public static void Setup(Harmony harmony)
         {
             ClassInjector.RegisterTypeInIl2Cpp<ps_cs>();
             harmony.PatchAll(typeof(ps_cs));
-            ServerSetup();
+            var ok = ServerSetup();
             Plugin.Log.LogWarning("SSSSSSSSSSSSSSS");
         }
 
@@ -32,16 +37,32 @@ namespace LimbusSandbox.ps2
             listener.Prefixes.Add(SERVER_URL);
             listener.Start();
             Plugin.Log.LogWarning($"SERVER RUNNING {listener.IsListening}");
-
             while (listener.IsListening)
             {
                 var context = await listener.GetContextAsync();
                 var req = context.Request;
-                Plugin.Log.LogWarning($"RECEIVED {req.Url} {req.HttpMethod} {req.Headers}");
+                Plugin.Log.LogWarning($"RECEIVED {req.Url} {req.HttpMethod} {req.Headers} {req.RemoteEndPoint}");
                 var body = new StreamReader(req.InputStream).ReadToEnd();
                 var time = req.Headers.Get("Content-Encrypted");
-                var decrypted = decrypt(body, time);
-                //Plugin.Log.LogWarning();
+                var decrypted = decrypt(body, time);                
+                Plugin.Log.LogWarning($"decrypted: {decrypted}");
+                Plugin.Log.LogWarning($"encypted: {body}");
+                var absolutePath = req.Url.ToString().Substring(SERVER_URL.Length);
+                Plugin.Log.LogWarning($"absolute path {absolutePath}");
+                /*
+                    var funky = JsonDocument.Parse(decrypted).RootElement;
+                    var bb = new UserAuthData();
+                    var ok = JsonUtility.FromJson<UserAuthFormat>(funky[0].ToString());
+                    Plugin.Log.LogWarning($"{ok.data_version}");
+                */
+
+                if (absolutePath.StartsWith("login"))
+                {
+
+                }
+
+                var response = context.Response;
+
             }
         }
 
@@ -54,10 +75,14 @@ namespace LimbusSandbox.ps2
 
         private static string encrypt(string decrypted, string time)
         {
-            var encrypted = crypto.Encrypt(Encoding.UTF8.GetBytes(decrypted), get_time());
-            var bytes = crypto.BytesToHex(encrypted);
+            var bro = Encoding.UTF8.GetBytes(decrypted);
+            var encrypted = crypto.Encrypt(bro, long.Parse(time)).ToArray();
+            var bytes = ByteArrayToHexString(encrypted);
+            
             return bytes;
         }
+
+        static string ByteArrayToHexString(byte[] byteArray) { StringBuilder hex = new StringBuilder(byteArray.Length * 2); foreach (byte b in byteArray) { hex.AppendFormat("{0:x2}", b); } return hex.ToString(); }
 
         private static long get_time()
         {

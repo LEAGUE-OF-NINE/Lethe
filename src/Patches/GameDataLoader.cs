@@ -89,6 +89,7 @@ namespace LimbusSandbox.Patches
         private static void DumpLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list)
             where T : LocalizeTextData, new()
         {
+            Directory.CreateDirectory(Path.Combine(Plugin.customDataPath, "Locale", GlobalGameManager.Instance.Lang.ToString(), name));
             var obj = new JSONObject();
             foreach (var keyValuePair in list._dic)
                 obj[keyValuePair.key] = JSONNode.Parse(JsonUtility.ToJson(keyValuePair.value));

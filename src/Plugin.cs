@@ -11,6 +11,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using LimbusSandbox.Passives;
 using LimbusSandbox.ps2;
+using LimbusSandbox.Utilities;
 
 namespace LimbusSandbox
 {
@@ -51,6 +52,7 @@ namespace LimbusSandbox
             Configuration.TryGetEntry<bool>(new ConfigDefinition("LaunchSettings", "ToggleCRC"), out var toggleCRC);
             if (toggleCRC.Value) PatchCalculation.Setup(harmony);
             BattleDialogue.Setup(harmony);
+            story_dungeon_autogen_to_main_chapter.Setup(harmony);
 
             //passives
             RollAllHeads.Setup(harmony);
