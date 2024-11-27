@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using SD;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Utils;
@@ -37,14 +38,36 @@ namespace Lethe.Passives
             }
         }
 
-        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitModel.OnRoundEnd))]
+        [HarmonyPatch(typeof(CharacterAppearance), nameof(CharacterAppearance.ChangeMotion))]
+        [HarmonyPostfix]
+        private static void ChangeMotion(MOTION_DETAIL motiondetail, CharacterAppearance __instance)
+        {
+            var data = __instance._battleUnitView._unitModel._unitDataModel._classInfo;
+            var unitview = __instance._battleUnitView;
+            if (data == null) return;
+            if (data.PassiveSetInfo.PassiveIdList.Contains(1984) && unitview.CurrentActionLog == null)
+            {
+                switch (motiondetail)
+                {
+                    case MOTION_DETAIL.Damaged:
+                    case MOTION_DETAIL.Damaged_2:
+                    case MOTION_DETAIL.Damaged_3:
+                    case MOTION_DETAIL.Evade:
+                    case MOTION_DETAIL.Move:
+                    case MOTION_DETAIL.Guard:
+                    case MOTION_DETAIL.Idle:
+                        LetheHooks.LOG.LogWarning($"SWITCH CHANGE APPEARANCE PASSIVE {motiondetail} for {unitview._unitModel.GetOriginUnitID()}");
+                        unitview.ChangeAppearance(data.appearance, true);
+                        break;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.OnRoundEnd))]
         [HarmonyPostfix]
         private static void OnRoundEnd(BattleUnitView __instance)
         {
-            var name = __instance._appearances.GetFirstElement().name;
-            var appearanceId = name.Replace("(Clone)", "");
-            __instance.ChangeAppearance(appearanceId, true);
-            //there is honestly a better way to do this but i wanna sleep
+            __instance.ChangeAppearance(__instance.unitModel.GetAppearanceID(), true);
         }
 
 
