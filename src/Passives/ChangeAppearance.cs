@@ -70,6 +70,5 @@ namespace Lethe.Passives
             __instance.ChangeAppearance(__instance.unitModel.GetAppearanceID(), true);
         }
 
-
     }
 }
