@@ -28,12 +28,6 @@ public class Login : Il2CppSystem.Object
     private static void SetLoginInfo(LoginSceneManager __instance)
     {
         __instance.tmp_loginAccount.text = "Lethe v" + LetheMain.VERSION;
-        var text = GlobalGameManager.Instance._curMemory;
-        text.gameObject.SetActive(true);
-        text.text = "join discord.gg/lethe for private server";
-        text.alignment = TMPro.TextAlignmentOptions.Center;
-        text.gameObject.transform.position = new Vector3(683, 768, 0);
-        text.color = new Color(0, 1, 0);
     }
    
     [HarmonyPatch(typeof(StaticDataManager), nameof(StaticDataManager.LoadStaticDataFromJsonFile))]
