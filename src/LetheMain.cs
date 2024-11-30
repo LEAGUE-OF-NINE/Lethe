@@ -91,6 +91,7 @@ public class LetheMain : BasePlugin
             Patches.Skin.Setup(harmony);
             Patches.Texture.Setup(harmony);
             ChangeAppearance.Setup(harmony);
+            Passives.ChangeAppearance_Passive.Setup(harmony);
             ChangeSkillMotion.Setup(harmony);
             if (toggleCRC.Value) Patches.TextAsset.Setup(harmony);
             Patches.Skills.Setup(harmony);

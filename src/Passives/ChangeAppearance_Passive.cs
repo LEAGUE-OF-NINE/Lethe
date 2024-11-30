@@ -6,13 +6,13 @@ using Utils;
 
 namespace Lethe.Passives
 {
-    internal class ChangeAppearance : MonoBehaviour
+    internal class ChangeAppearance_Passive : MonoBehaviour
     {
 
         public static void Setup(Harmony harmony)
         {
-            ClassInjector.RegisterTypeInIl2Cpp<ChangeAppearance>();
-            harmony.PatchAll(typeof(ChangeAppearance));
+            ClassInjector.RegisterTypeInIl2Cpp<ChangeAppearance_Passive>();
+            harmony.PatchAll(typeof(ChangeAppearance_Passive));
         }
 
         [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.StartCoinToss))]
