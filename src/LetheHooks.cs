@@ -19,7 +19,7 @@ public class LetheHooks : MonoBehaviour
     public static ManualLogSource LOG;
 
     public static DirectoryInfo CustomAppearanceDir, CustomSpriteDir, CustomLocaleDir, CustomAssistantDir;
-    private static string _tokenPath;
+    private static string _token;
     private static HttpListener _listener;
 
     private static readonly List<Object> _gcPrevent = new();
@@ -46,7 +46,7 @@ public class LetheHooks : MonoBehaviour
 
     public static string AccountJwt()
     {
-        return File.Exists(_tokenPath) ? File.ReadAllText(_tokenPath) : "";
+        return _token;
     }
 
     internal static void Setup(ManualLogSource log, int port)
@@ -66,8 +66,16 @@ public class LetheHooks : MonoBehaviour
         CustomLocaleDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_limbus_locale"));
         CustomAssistantDir = Directory.CreateDirectory(Path.Combine(Paths.ConfigPath, "custom_assistant"));
 
-        var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        _tokenPath = Path.Combine(appdata, "LimbusPrivateServer.jwt");
+        // Delete legacy jwt dump file
+        try
+        {
+            var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var tokenPath = Path.Combine(appdata, "LimbusPrivateServer.jwt");
+            File.Delete(tokenPath);
+        }
+        catch
+        {
+        }
 
         _listener = new HttpListener();
 
@@ -146,7 +154,6 @@ public class LetheHooks : MonoBehaviour
 
         using var reader = new StreamReader(req.InputStream);
         var json = reader.ReadToEnd();
-        var token = JSON.Parse(json)["token"].Value;
-        System.IO.File.WriteAllText(_tokenPath, token);
+        _token = JSON.Parse(json)["token"].Value;
     }
 }
