@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using HarmonyLib;
+using LibCpp2IL;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 
