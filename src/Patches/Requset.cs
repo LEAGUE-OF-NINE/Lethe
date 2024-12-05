@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Text;
 using BepInEx.IL2CPP.Utils;
 using HarmonyLib;
@@ -11,23 +10,24 @@ using UnityEngine.Networking;
 
 namespace Lethe.Patches;
 
-public class Encryption : MonoBehaviour
+public class Requset : MonoBehaviour
 {
-   
-    public Encryption(IntPtr ptr) : base(ptr) {}
+    private static Requset _instance;
 
-    private static Encryption _instance;
+    public Requset(IntPtr ptr) : base(ptr)
+    {
+    }
 
-    
+
     public static void Setup(Harmony harmony)
     {
-        ClassInjector.RegisterTypeInIl2Cpp<Encryption>();
-        
+        ClassInjector.RegisterTypeInIl2Cpp<Requset>();
+
         GameObject obj = new("CustomHttpLoop");
         DontDestroyOnLoad(obj);
         obj.hideFlags |= HideFlags.HideAndDontSave;
-        _instance = obj.AddComponent<Encryption>();
-        harmony.PatchAll(typeof(Encryption));
+        _instance = obj.AddComponent<Requset>();
+        harmony.PatchAll(typeof(Requset));
     }
 
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
@@ -48,9 +48,9 @@ public class Encryption : MonoBehaviour
         var www = UnityWebRequest.Post(httpApiSchema.URL, httpApiSchema.RequestJson);
         try
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(httpApiSchema.RequestJson);
+            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.RequestJson);
             www.uploadHandler.Dispose();
-            www.uploadHandler = (UploadHandler) new UploadHandlerRaw(bytes);
+            www.uploadHandler = new UploadHandlerRaw(bytes);
             www.SetRequestHeader("Content-Type", "application/json");
             requester.networkingUI.ActiveConnectingText(true);
             yield return www.SendWebRequest();
@@ -58,7 +58,8 @@ public class Encryption : MonoBehaviour
                 yield return null;
             requester.networkingUI.ActiveConnectingText(false);
             if (isUrgent) yield break;
-            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+            if (www.result == UnityWebRequest.Result.ConnectionError ||
+                www.result == UnityWebRequest.Result.ProtocolError)
             {
                 if (Application.internetReachability == NetworkReachability.NotReachable)
                     requester.OnResponseWithErrorCode(httpApiSchema, -4, false, true, false);
@@ -75,5 +76,4 @@ public class Encryption : MonoBehaviour
             www.Dispose();
         }
     }
-
 }

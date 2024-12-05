@@ -19,7 +19,7 @@ public class LetheMain : BasePlugin
 {
     public const string GUID = $"{AUTHOR}.{NAME}";
     public const string NAME = "Lethe";
-    public const string VERSION = "1.0.3";
+    public const string VERSION = "1.0.4";
     public const string AUTHOR = "Carra";
 
     public static DirectoryInfo pluginPath = Directory.CreateDirectory(Path.Combine(Paths.PluginPath, $"{NAME}"));
@@ -76,7 +76,7 @@ public class LetheMain : BasePlugin
             Harmony harmony = new(NAME);
 
             // Setup harmony hooks
-            Patches.Encryption.Setup(harmony);
+            Patches.Requset.Setup(harmony);
             NewEvadeThenUseSkill.Setup(harmony);
             ChangeCounterOnConditional.Setup(harmony);
             ChangeSkillOnConditional.Setup(harmony);
