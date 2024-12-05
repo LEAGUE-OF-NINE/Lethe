@@ -53,19 +53,21 @@ public class Encryption : MonoBehaviour
             www.uploadHandler = (UploadHandler) new UploadHandlerRaw(bytes);
             www.SetRequestHeader("Content-Type", "application/json");
             requester.networkingUI.ActiveConnectingText(true);
-            yield return (object) www.SendWebRequest();
+            yield return www.SendWebRequest();
+            while (!www.isDone)
+                yield return null;
             requester.networkingUI.ActiveConnectingText(false);
-            if (!isUrgent)
+            if (isUrgent) yield break;
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
             {
-                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    if (Application.internetReachability == NetworkReachability.NotReachable)
-                        requester.OnResponseWithErrorCode(httpApiSchema, -4, false, true, false);
-                    else
-                        requester.OnResponseWithErrorCode(httpApiSchema, 0, false, true, false);
-                }
+                if (Application.internetReachability == NetworkReachability.NotReachable)
+                    requester.OnResponseWithErrorCode(httpApiSchema, -4, false, true, false);
                 else
-                    httpApiSchema.ResponseEvent.Invoke(www.downloadHandler.text);
+                    requester.OnResponseWithErrorCode(httpApiSchema, 0, false, true, false);
+            }
+            else
+            {
+                httpApiSchema.ResponseEvent.Invoke(www.downloadHandler.text);
             }
         }
         finally
