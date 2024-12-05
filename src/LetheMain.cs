@@ -76,7 +76,7 @@ public class LetheMain : BasePlugin
             Harmony harmony = new(NAME);
 
             // Setup harmony hooks
-            Patches.Requset.Setup(harmony);
+            Patches.Request.Setup(harmony);
             NewEvadeThenUseSkill.Setup(harmony);
             ChangeCounterOnConditional.Setup(harmony);
             ChangeSkillOnConditional.Setup(harmony);

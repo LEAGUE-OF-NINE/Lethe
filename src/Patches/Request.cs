@@ -10,24 +10,24 @@ using UnityEngine.Networking;
 
 namespace Lethe.Patches;
 
-public class Requset : MonoBehaviour
+public class Request : MonoBehaviour
 {
-    private static Requset _instance;
+    private static Request _instance;
 
-    public Requset(IntPtr ptr) : base(ptr)
+    public Request(IntPtr ptr) : base(ptr)
     {
     }
 
 
     public static void Setup(Harmony harmony)
     {
-        ClassInjector.RegisterTypeInIl2Cpp<Requset>();
+        ClassInjector.RegisterTypeInIl2Cpp<Request>();
 
         GameObject obj = new("CustomHttpLoop");
         DontDestroyOnLoad(obj);
         obj.hideFlags |= HideFlags.HideAndDontSave;
-        _instance = obj.AddComponent<Requset>();
-        harmony.PatchAll(typeof(Requset));
+        _instance = obj.AddComponent<Request>();
+        harmony.PatchAll(typeof(Request));
     }
 
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
