@@ -75,10 +75,8 @@ public class LetheMain : BasePlugin
             LetheHooks.Setup(Log, port);
             Harmony harmony = new(NAME);
 
-            // Register abilities
-            ClassInjector.RegisterTypeInIl2Cpp<SkillAbilityEvadeThenUseSkill>();
-
             // Setup harmony hooks
+            Patches.Encryption.Setup(harmony);
             NewEvadeThenUseSkill.Setup(harmony);
             ChangeCounterOnConditional.Setup(harmony);
             ChangeSkillOnConditional.Setup(harmony);

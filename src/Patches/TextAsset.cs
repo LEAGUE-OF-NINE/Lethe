@@ -30,6 +30,7 @@ public class TextAsset : Il2CppSystem.Object
         {
             keyValuePair.value._Crc_k__BackingField = 0;
             keyValuePair.value._Hash_k__BackingField = "";
+            keyValuePair.value._Size_k__BackingField = 0;
         }
     }
 
@@ -43,7 +44,7 @@ public class TextAsset : Il2CppSystem.Object
         {
             _Crc_k__BackingField = 0,
             _Hash_k__BackingField = "",
-            _Size_k__BackingField = new FileInfo(filePath).Length
+            _Size_k__BackingField = 0,
         };
         return false;
     }
