@@ -111,8 +111,8 @@ public class Skin : MonoBehaviour
 
         if (characterAppearance == null)
         {
-            Log.LogError("APPEARANCE NULL");
-            return null;
+            Log.LogError("APPEARANCE NOT FOUND, USING BACKUP INSTEAD!");
+            return CreateSkinForModel(view, "10201_Faust_BaseAppearance", parent);
         }
 
         //view._appearances.Insert(0, characterAppearance);

@@ -6,13 +6,13 @@ using Utils;
 
 namespace Lethe.Passives
 {
-    internal class ChangeAppearance : MonoBehaviour
+    internal class ChangeAppearance_Passive : MonoBehaviour
     {
 
         public static void Setup(Harmony harmony)
         {
-            ClassInjector.RegisterTypeInIl2Cpp<ChangeAppearance>();
-            harmony.PatchAll(typeof(ChangeAppearance));
+            ClassInjector.RegisterTypeInIl2Cpp<ChangeAppearance_Passive>();
+            harmony.PatchAll(typeof(ChangeAppearance_Passive));
         }
 
         [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.StartCoinToss))]
@@ -40,7 +40,7 @@ namespace Lethe.Passives
 
         [HarmonyPatch(typeof(CharacterAppearance), nameof(CharacterAppearance.ChangeMotion))]
         [HarmonyPostfix]
-        private static void ChangeMotion(MOTION_DETAIL motiondetail, CharacterAppearance __instance)
+        private static void ChangeMotion(MOTION_DETAIL motiondetail, bool forcely, CharacterAppearance __instance)
         {
             var data = __instance._battleUnitView._unitModel._unitDataModel._classInfo;
             var unitview = __instance._battleUnitView;
@@ -55,7 +55,9 @@ namespace Lethe.Passives
                     case MOTION_DETAIL.Evade:
                     case MOTION_DETAIL.Move:
                     case MOTION_DETAIL.Guard:
+                    case MOTION_DETAIL.Default:
                     case MOTION_DETAIL.Idle:
+                        if (motiondetail == MOTION_DETAIL.Idle && forcely == false) return;
                         LetheHooks.LOG.LogWarning($"SWITCH CHANGE APPEARANCE PASSIVE {motiondetail} for {unitview._unitModel.GetOriginUnitID()}");
                         unitview.ChangeAppearance(data.appearance, true);
                         break;
@@ -63,6 +65,18 @@ namespace Lethe.Passives
             }
         }
 
+        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.End_Cointoss))]
+        [HarmonyPostfix]
+        private static void bruh(BattleUnitView __instance)
+        {
+            var data = __instance.unitModel._unitDataModel._classInfo;
+            if (data == null) return;
+            if (data.PassiveSetInfo.PassiveIdList.Contains(1984))
+            {
+                LetheHooks.LOG.LogWarning($"SWITCH CHANGE APPEARANCE PASSIVE [watesigma] for {__instance._unitModel.GetOriginUnitID()}");
+                __instance.ChangeAppearance(data.appearance, true);
+            }
+        }
         [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.OnRoundEnd))]
         [HarmonyPostfix]
         private static void OnRoundEnd(BattleUnitView __instance)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -13,15 +14,40 @@ namespace Lethe.SkillAbility
             harmony.PatchAll(typeof(NewEvadeThenUseSkill));
         }
 
+        private static Dictionary<int, int> wahoo = new(); //unitmodel instance id, evade count
+        private static Dictionary<int, List<int>> bruh = new(); //unitmodel instance id, actionmodel instance ids
+        [HarmonyPatch(typeof(StageController), nameof(StageController.StartRound))]
+        [HarmonyPostfix]
+        private static void StartRound()
+        {
+            wahoo.Clear();
+            bruh.Clear();
+        }
+
         //evade then use skill
         [HarmonyPatch(typeof(BattleUnitModel), nameof(BattleUnitModel.OnSucceedEvade))]
         [HarmonyPostfix]
         private static void OnEvade(BattleUnitModel __instance, BattleActionModel evadeAction, BattleActionModel attackAction, BATTLE_EVENT_TIMING timing)
         {
+            var instanceID = __instance._instanceID;
+            var attackInstanceID = attackAction.ActionInstanceID;
             foreach (var ability in evadeAction._skill.GetSkillAbilityScript())
             {
                 var scriptName = ability.scriptName;
                 if (!scriptName.Contains("EvadeThenUseSkill_")) continue;
+                wahoo.TryAdd(instanceID, 0);
+                bruh.TryAdd(instanceID, new List<int> { });
+                if (bruh[instanceID].Contains(attackInstanceID)) return;
+                if (ability.buffData != null)
+                    LetheHooks.LOG.LogInfo($"limit: {ability.buffData.limit}, current: {wahoo[instanceID]}");
+                    if (wahoo[instanceID] >= ability.buffData.limit && ability.buffData.limit != 0)
+                    {
+                        LetheHooks.LOG.LogInfo("RETURN EVAADE");
+                        return;
+                    }
+                bruh[instanceID].Add(attackInstanceID);
+                LetheHooks.LOG.LogInfo($"EVADING {scriptName} action id {evadeAction.ActionInstanceID} enemy action id {attackInstanceID}");
+                wahoo[instanceID]++;
                 //temporary action
                 var model = __instance;
                 var actionSlot = model._actionSlotDetail;
