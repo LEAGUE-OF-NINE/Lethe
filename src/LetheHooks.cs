@@ -46,19 +46,10 @@ public class LetheHooks : MonoBehaviour
 
     public void OnApplicationQuit()
     {
-        Application.wantsToQuit += Quit();
-    }
-
-    public Il2CppSystem.Func<bool> Quit()
-    {
-        var synchronousData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "..", "LocalLow", "ProjectMoon", "LimbusCompany","synchronous-data_product.json");
+        var synchronousData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "..", "LocalLow", "ProjectMoon", "LimbusCompany", "synchronous-data_product.json");
         LOG.LogWarning(synchronousData);
         if (File.Exists(synchronousData)) File.Delete(synchronousData);
-        Il2CppSystem.Func<bool> yes = new Func<bool>(bruh);
-        return yes;
     }
-
-    public static bool bruh() { return true; }
 
     public static string AccountJwt()
     {
