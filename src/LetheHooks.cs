@@ -86,7 +86,16 @@ public class LetheHooks : MonoBehaviour
 
         _listener = new HttpListener();
 
-        hook.StartCoroutine(HttpCoroutine(port));
+        var token = Environment.GetEnvironmentVariable("LETHE_TOKEN");
+        Environment.SetEnvironmentVariable("LETHE_TOKEN", null);
+        if (token == null)
+        {
+            hook.StartCoroutine(HttpCoroutine(port));
+        }
+        else
+        {
+            _token = token;
+        }
     }
 
     public static void StopHttp()
