@@ -61,7 +61,6 @@ public class LetheMain : BasePlugin
 
         var rng = new Random();
         var port = rng.Next(30000, 65500);
-        Application.OpenURL(ConfigServer.Value + $"/auth/login?port={port}");
 
         try
         {

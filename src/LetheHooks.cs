@@ -90,6 +90,7 @@ public class LetheHooks : MonoBehaviour
         Environment.SetEnvironmentVariable("LETHE_TOKEN", null);
         if (token == null)
         {
+            Application.OpenURL(LetheMain.ConfigServer.Value + $"/auth/login?port={port}");
             hook.StartCoroutine(HttpCoroutine(port));
         }
         else
