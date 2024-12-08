@@ -56,6 +56,11 @@ public class LetheHooks : MonoBehaviour
         return _token;
     }
 
+    public static bool IsSignedIn()
+    {
+        return !(_token == null || _token.IsNullOrWhiteSpace());
+    }
+
     internal static void Setup(ManualLogSource log, int port)
     {
         ClassInjector.RegisterTypeInIl2Cpp<LetheHooks>();
@@ -106,58 +111,54 @@ public class LetheHooks : MonoBehaviour
 
     private static IEnumerator HttpCoroutine(int port)
     {
-        try
-        {
-            _listener.Prefixes.Add($"http://localhost:{port}/");
-            LOG.LogInfo($"Starting HTTP server at {port}...");
-            _listener.Start();
-            LOG.LogInfo($"Started HTTP server at {port}...");
-            ServerLoop();
-        }
-        catch (Exception ex)
-        {
-            LOG.LogError($"Failed to start HTTP server at {port}: " + ex.Message);
-        }
-
-        yield return null;
-    }
-
-    private static void ServerLoop()
-    {
+        _listener.Prefixes.Add($"http://localhost:{port}/");
+        LOG.LogInfo($"Starting HTTP server at {port}...");
+        _listener.Start();
+        LOG.LogInfo($"Started HTTP server at {port}...");
         while (_listener.IsListening)
         {
-            var ctx = _listener.GetContext();
-            LOG.LogInfo($"Request: {ctx.Request.HttpMethod} {ctx.Request.Url.LocalPath}");
-            var req = ctx.Request;
-            using var resp = ctx.Response;
-            resp.StatusCode = (int)HttpStatusCode.OK;
-
-            resp.Headers.Add("Content-Type", "application/json");
-            resp.Headers.Add("Access-Control-Allow-Methods", "*");
-            resp.Headers.Add("Access-Control-Allow-Headers", "*");
-            resp.Headers.Add("Vary", "Origin");
-            var origin = req.Headers.Get("Origin");
-            if (origin != null)
-                resp.Headers.Add("Access-Control-Allow-Origin", origin);
-
-            if (req.HttpMethod == "OPTIONS") continue;
-
-            try
+            var task = _listener.GetContextAsync();
+            while (!task.IsCompleted)
             {
-                switch (req.Url.LocalPath)
-                {
-                    case "/auth/login":
-                        AuthLogin(req, resp);
-                        return;
-                    default:
-                        resp.StatusCode = 404;
-                        break;
-                }
+                yield return null;
             }
-            catch
+            
+            ServerLoop(task.Result);
+        }
+    }
+
+    private static void ServerLoop(HttpListenerContext ctx)
+    {
+        LOG.LogInfo($"Request: {ctx.Request.HttpMethod} {ctx.Request.Url.LocalPath}");
+        var req = ctx.Request;
+        using var resp = ctx.Response;
+        resp.StatusCode = (int)HttpStatusCode.OK;
+
+        resp.Headers.Add("Content-Type", "application/json");
+        resp.Headers.Add("Access-Control-Allow-Methods", "*");
+        resp.Headers.Add("Access-Control-Allow-Headers", "*");
+        resp.Headers.Add("Vary", "Origin");
+        var origin = req.Headers.Get("Origin");
+        if (origin != null)
+            resp.Headers.Add("Access-Control-Allow-Origin", origin);
+
+        if (req.HttpMethod == "OPTIONS") return;
+
+        try
+        {
+            switch (req.Url.LocalPath)
             {
-                resp.StatusCode = 500;
+                case "/auth/login":
+                    AuthLogin(req, resp);
+                    break;
+                default:
+                    resp.StatusCode = 404;
+                    break;
             }
+        }
+        catch
+        {
+            resp.StatusCode = 500;
         }
     }
 

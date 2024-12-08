@@ -3,9 +3,11 @@ using BepInEx;
 using HarmonyLib;
 using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.IO;
+using Login;
 using Server;
 using ServerConfig;
 using SimpleJSON;
+using Steamworks;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Utils;
@@ -23,11 +25,71 @@ public class Login : Il2CppSystem.Object
         harmony.PatchAll(typeof(Login));
     }
 
+    [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.OnClickGameStartButton))]
+    [HarmonyPrefix]
+    private static bool OnStartGame()
+    {
+        LetheHooks.LOG.LogInfo("Starting game");
+        if (LetheHooks.IsSignedIn())
+        {
+            return true;
+        }
+        
+        GlobalGameManager.Instance.OpenGlobalPopup("Lethe is still trying to sign in from your browser.");
+        return false;
+    }
+
     [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.SetLoginInfo))]
     [HarmonyPostfix]
-    private static void SetLoginInfo(LoginSceneManager __instance)
+    private static void PostSetLoginInfo(LoginSceneManager __instance)
     {
+        __instance.btn_switchAccount.gameObject.SetActive(false);
+        __instance.tmp_version_null.gameObject.SetActive(false);
+        __instance.tmp_version_null.text = "Lethe v" + LetheMain.VERSION;
+        __instance.tmp_loginAccount.gameObject.SetActive(true);
         __instance.tmp_loginAccount.text = "Lethe v" + LetheMain.VERSION;
+        float num = __instance.tmp_loginAccount.preferredWidth + 10f;
+        __instance.tmp_loginAccount.rectTransform.sizeDelta = __instance.tmp_loginAccount.rectTransform.sizeDelta with
+        {
+            x = num
+        };
+    }
+
+    [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.Start))]
+    [HarmonyPrefix]
+    private static void PostLoginSceneStart(LoginSceneManager __instance)
+    {
+        PostSetLoginInfo(__instance);
+    }
+   
+    [HarmonyPatch(typeof(LoginInfoManager), nameof(LoginInfoManager.ProviderLogin_Steam))]
+    [HarmonyPrefix]
+    private static bool PreSignInLimbusSteam()
+    {
+        return false;
+    }
+
+    [HarmonyPatch(typeof(SteamClient), nameof(SteamClient.Init))]
+    [HarmonyPrefix]
+    private static bool PreSteamClientInit()
+    {
+        SteamClient.AppId = 1973530;
+        SteamClient.initialized = true;
+        LetheHooks.LOG.LogInfo("SteamClient init intercepted");
+        return false;
+    }
+   
+    [HarmonyPatch(typeof(ISteamUser), nameof(ISteamUser.GetSteamID))]
+    [HarmonyPrefix]
+    private static bool GetSteamID(ref SteamId __result)
+    {
+        var random = new System.Random();
+        var randomULong = ((ulong)random.Next() << 32) | (uint)random.Next();
+        __result = new SteamId
+        {
+            Value = randomULong
+        };
+        return false;
     }
    
     [HarmonyPatch(typeof(StaticDataManager), nameof(StaticDataManager.LoadStaticDataFromJsonFile))]
@@ -85,10 +147,5 @@ public class Login : Il2CppSystem.Object
             LetheHooks.LOG.LogError($"Error uploading {dataClass}: {ex.GetType()} {ex.Message}");
         }
     }
-
-    //stub for some silly error
-    [HarmonyPatch(typeof(PassiveDetail), nameof(PassiveDetail.OnPartBreaked))]
-    [HarmonyPrefix]
-    private static void sigma() { }
 
 }

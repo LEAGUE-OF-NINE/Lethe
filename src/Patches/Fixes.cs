@@ -103,5 +103,10 @@ public class Fixes : Il2CppSystem.Object
     }
     
     private static void Stub() {}
+   
+    //stub for some silly error
+    [HarmonyPatch(typeof(PassiveDetail), nameof(PassiveDetail.OnPartBreaked))]
+    [HarmonyPrefix]
+    private static void sigma() { }
     
 }
