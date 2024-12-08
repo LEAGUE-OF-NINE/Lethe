@@ -81,7 +81,7 @@ public class Skin : MonoBehaviour
     [HarmonyPrefix]
     private static bool CreateSkin(BattleUnitView view, BattleUnitModel unit, Transform parent, DelegateEvent handler, ref CharacterAppearance __result)
     {
-        __result = CreateSkinForModel(view, view._unitModel.GetAppearanceID(), parent);
+        __result = CreateSkinForModel(view, view._unitModel.GetAppearanceID(), parent); //shouldnt matter unless ur messing around spawning ids with no appearance
         return false;
     }
 
