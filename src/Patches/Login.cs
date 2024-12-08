@@ -17,7 +17,7 @@ namespace Lethe.Patches;
 public class Login : Il2CppSystem.Object
 {
 
-    public static System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> StaticData = new();
+    public static readonly System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> StaticData = new();
     
     public static void Setup(Harmony harmony)
     {

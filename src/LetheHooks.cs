@@ -3,6 +3,8 @@ using System.Collections;
 using System.IO;
 using System.Net;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using BepInEx;
 using BepInEx.IL2CPP.Utils;
 using BepInEx.Logging;
@@ -104,11 +106,6 @@ public class LetheHooks : MonoBehaviour
         }
     }
 
-    public static void StopHttp()
-    {
-        _listener.Stop();
-    }
-
     private static IEnumerator HttpCoroutine(int port)
     {
         _listener.Prefixes.Add($"http://localhost:{port}/");
@@ -144,20 +141,30 @@ public class LetheHooks : MonoBehaviour
 
         if (req.HttpMethod == "OPTIONS") return;
 
+        var path = Regex.Replace(req.Url.LocalPath, "/+", "/");
+        LOG.LogInfo($"Request: {path}");
         try
         {
-            switch (req.Url.LocalPath)
+            if ("/auth/login" == path)
             {
-                case "/auth/login":
-                    AuthLogin(req, resp);
-                    break;
-                default:
-                    resp.StatusCode = 404;
-                    break;
+                AuthLogin(req, resp);
+            }
+            else if (path.StartsWith("/static-data/"))
+            {
+                StaticData(req, resp);
+            }
+            else if (path.StartsWith("/texture/"))
+            {
+                Texture(req, resp);
+            }
+            else
+            {
+                resp.StatusCode = 404;
             }
         }
-        catch
+        catch (Exception ex)
         {
+            LOG.LogInfo($"Exception in {path}: {ex}");
             resp.StatusCode = 500;
         }
     }
@@ -174,4 +181,105 @@ public class LetheHooks : MonoBehaviour
         var json = reader.ReadToEnd();
         _token = JSON.Parse(json)["token"].Value;
     }
+    
+    private static void StaticData(HttpListenerRequest req, HttpListenerResponse resp)
+    {
+        if (req.HttpMethod != "GET")
+        {
+            resp.StatusCode = 405;
+            return;
+        }
+
+        var dataClass = req.Url.LocalPath.Substring("/static-data/".Length);
+        LOG.LogInfo($"Fetching {dataClass}");
+        if (!Patches.Login.StaticData.TryGetValue(dataClass, out var staticData))
+        {
+            resp.StatusCode = 404;
+            return;
+        }
+
+        var json = new JSONArray();
+        foreach (var se in staticData)
+        {
+            json.Add(JSONNode.Parse(se));
+        }
+
+        var body = Encoding.UTF8.GetBytes(json.ToString(2));
+        resp.OutputStream.Write(body, 0, body.Length);
+        resp.OutputStream.Flush();
+    }
+
+    private static void Texture(HttpListenerRequest req, HttpListenerResponse resp)
+    {
+        if (req.HttpMethod != "GET")
+        {
+            resp.StatusCode = 405;
+            return;
+        }
+
+        var path = req.Url.LocalPath.Substring("/texture/".Length).Split("/".ToCharArray(), 2);
+        if (path.Length != 2 || !int.TryParse(path[1], out var id))
+        {
+            resp.StatusCode = 400;
+            return;
+        }
+
+        Sprite sprite = null;
+        switch (path[0])
+        {
+            case "profile":
+                sprite = Singleton<PlayerUnitSpriteList>.Instance.GetNormalProfileSprite(id);
+                break;
+            case "cg":
+                sprite = Singleton<PlayerUnitSpriteList>.Instance.GetCGData(id);
+                break;
+            case "skill":
+                var skill = Singleton<StaticDataManager>.Instance.SkillList.GetData(id);
+                if (skill != null) new SkillModel(skill, 1, 1).GetSkillSprite();
+                break;
+        }
+
+        if (sprite == null)
+        {
+            resp.StatusCode = 404;
+            return;
+        }
+
+        var texture = sprite.texture;
+        // Create a temporary RenderTexture of the same size as the texture
+        var tmp = RenderTexture.GetTemporary( 
+            texture.width,
+            texture.height,
+            0,
+            RenderTextureFormat.Default,
+            RenderTextureReadWrite.Linear);
+
+        // Blit the pixels on texture to the RenderTexture
+        Graphics.Blit(texture, tmp);
+
+        // Backup the currently set RenderTexture
+        RenderTexture previous = RenderTexture.active;
+
+        // Set the current RenderTexture to the temporary one we created
+        RenderTexture.active = tmp;
+
+        // Create a new readable Texture2D to copy the pixels to it
+        Texture2D myTexture2D = new Texture2D(texture.width, texture.height);
+
+        // Copy the pixels from the RenderTexture to the new Texture
+        myTexture2D.ReadPixels(new Rect(0, 0, tmp.width, tmp.height), 0, 0);
+        myTexture2D.Apply();
+        byte[] body = myTexture2D.EncodeToPNG();
+
+        // Reset the active RenderTexture
+        RenderTexture.active = previous;
+
+        // Release the temporary RenderTexture
+        RenderTexture.ReleaseTemporary(tmp);
+       
+        resp.Headers.Set("Content-Type", "image/png");
+        resp.OutputStream.Write(body, 0, body.Length);
+        resp.OutputStream.Flush();
+    }
+    
 }

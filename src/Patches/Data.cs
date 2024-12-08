@@ -128,8 +128,6 @@ public class Data : Il2CppSystem.Object
         if (_localizeDataLoaded) return;
         _localizeDataLoaded = true;
         LoadCustomLocale(Singleton<TextDataManager>.Instance, GlobalGameManager.Instance.Lang);
-        LetheHooks.LOG.LogInfo($"Stopping HTTP listener");
-        LetheHooks.StopHttp();
         LetheHooks.LOG.LogInfo($"Dumping static data");
         new Thread(StoreStaticData).Start();
     }

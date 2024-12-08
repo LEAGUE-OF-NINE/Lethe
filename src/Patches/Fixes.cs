@@ -19,6 +19,7 @@ public class Fixes : Il2CppSystem.Object
 
         foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
         {
+            if ("Assembly-CSharp" != asm.GetName().Name) continue;
             foreach (var type in asm.GetTypes().Where(it => !(it.IsSealed && it.IsAbstract) && it.IsSubclassOf(typeof(AbnormalityAppearance))))
             {
                 if (type.FullName == null) continue;
