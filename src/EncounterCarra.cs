@@ -13,10 +13,12 @@ namespace Lethe;
 public class EncounterCarra
 {
 	public static DirectoryInfo tmpAssetFolder;
+	public static string[] moddedBundles;
 	public static void Patch()
 	{
 		try
 		{
+			CleanUpAtLaunch();
 			// tmp folder for extracting .carraX assets
 			tmpAssetFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(),
 				$"carra_{DateTime.Now.ToString("yyyy-MM-dd-H-m-ss")}"));
@@ -123,6 +125,24 @@ public class EncounterCarra
 				}
 			}
 		}
+	}
+	public static void CleanUpAtLaunch()
+	{
+		foreach (var tmpCarra in Directory.GetDirectories(Path.GetTempPath(), "carra_*", SearchOption.TopDirectoryOnly))
+			Directory.Delete(tmpCarra, true);
+	}
+
+	public static void CleanUpAtClose()
+	{
+		string bundleRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+				"..",
+				"LocalLow",
+				"Unity",
+				"ProjectMoon_LimbusCompany"
+			);
+		LetheHooks.LOG.LogInfo($"Cleaning up assets");
+		foreach (var og in Directory.GetFiles(bundleRoot, "*__original", SearchOption.AllDirectories))
+			File.Move(og, og.Replace("__original", "__data"));
 	}
 }
 
