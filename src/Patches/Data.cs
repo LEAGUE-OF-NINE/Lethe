@@ -73,7 +73,7 @@ public class Data : Il2CppSystem.Object
         }
     }
 
-    public static void LoadCustomLocale(TextDataManager __instance, LOCALIZE_LANGUAGE lang)
+    public static void LoadCustomLocale(LOCALIZE_LANGUAGE lang)
     {
         var __lang = lang.ToString();
         foreach (var modPath in Directory.GetDirectories(LetheMain.modsPath.FullPath))
@@ -81,43 +81,44 @@ public class Data : Il2CppSystem.Object
             var expected = Path.Combine(modPath, "custom_limbus_locale", __lang);
             if (!Directory.Exists(expected)) continue;
             var root = Directory.CreateDirectory(modPath);
-            LoadCustomLocale(root, "uiList", __instance._uiList);
-            LoadCustomLocale(root, "characterList", __instance._characterList);
-            LoadCustomLocale(root, "personalityList", __instance._personalityList);
-            LoadCustomLocale(root, "enemyList", __instance._enemyList);
-            LoadCustomLocale(root, "egoList", __instance._egoList);
-            LoadCustomLocale(root, "skillList", __instance._skillList);
-            LoadCustomLocale(root, "passiveList", __instance._passiveList);
-            LoadCustomLocale(root, "bufList", __instance._bufList);
-            LoadCustomLocale(root, "itemList", __instance._itemList);
-            LoadCustomLocale(root, "keywordList", __instance._keywordList);
-            LoadCustomLocale(root, "skillTagList", __instance._skillTagList);
-            LoadCustomLocale(root, "abnormalityEventList", __instance._abnormalityEventList);
-            LoadCustomLocale(root, "attributeList", __instance._attributeList);
-            LoadCustomLocale(root, "abnormalityCotentData", __instance._abnormalityCotentData);
-            LoadCustomLocale(root, "keywordDictionary", __instance._keywordDictionary);
-            LoadCustomLocale(root, "actionEvents", __instance._actionEvents);
-            LoadCustomLocale(root, "egoGiftData", __instance._egoGiftData);
-            LoadCustomLocale(root, "stageChapter", __instance._stageChapter);
-            LoadCustomLocale(root, "stagePart", __instance._stagePart);
-            LoadCustomLocale(root, "stageNodeText", __instance._stageNodeText);
-            LoadCustomLocale(root, "dungeonNodeText", __instance._dungeonNodeText);
-            LoadCustomLocale(root, "storyDungeonNodeText", __instance._storyDungeonNodeText);
-            LoadCustomLocale(root, "quest", __instance._quest);
-            LoadCustomLocale(root, "dungeonArea", __instance._dungeonArea);
-            LoadCustomLocale(root, "battlePass", __instance._battlePass);
-            LoadCustomLocale(root, "storyTheater", __instance._storyTheater);
-            LoadCustomLocale(root, "announcer", __instance._announcer);
-            LoadCustomLocale(root, "normalBattleResultHint", __instance._normalBattleResultHint);
-            LoadCustomLocale(root, "abBattleResultHint", __instance._abBattleResultHint);
-            LoadCustomLocale(root, "tutorialDesc", __instance._tutorialDesc);
-            LoadCustomLocale(root, "iapProductText", __instance._iapProductText);
-            LoadCustomLocale(root, "illustGetConditionText", __instance._illustGetConditionText);
-            LoadCustomLocale(root, "choiceEventResultDesc", __instance._choiceEventResultDesc);
-            LoadCustomLocale(root, "battlePassMission", __instance._battlePassMission);
-            LoadCustomLocale(root, "gachaTitle", __instance._gachaTitle);
-            LoadCustomLocale(root, "introduceCharacter", __instance._introduceCharacter);
-            LoadCustomLocale(root, "userBanner", __instance._userBanner);
+            var sigma = TextDataManager.Instance;
+            LoadCustomLocale(root, "uiList", sigma._uiList);
+            LoadCustomLocale(root, "characterList", sigma._characterList);
+            LoadCustomLocale(root, "personalityList", sigma._personalityList);
+            LoadCustomLocale(root, "enemyList", sigma._enemyList);
+            LoadCustomLocale(root, "egoList", sigma._egoList);
+            LoadCustomLocale(root, "skillList", sigma._skillList);
+            LoadCustomLocale(root, "passiveList", sigma._passiveList);
+            LoadCustomLocale(root, "bufList", sigma._bufList);
+            LoadCustomLocale(root, "itemList", sigma._itemList);
+            LoadCustomLocale(root, "keywordList", sigma._keywordList);
+            LoadCustomLocale(root, "skillTagList", sigma._skillTagList);
+            LoadCustomLocale(root, "abnormalityEventList", sigma._abnormalityEventList);
+            LoadCustomLocale(root, "attributeList", sigma._attributeList);
+            LoadCustomLocale(root, "abnormalityCotentData", sigma._abnormalityCotentData);
+            LoadCustomLocale(root, "keywordDictionary", sigma._keywordDictionary);
+            LoadCustomLocale(root, "actionEvents", sigma._actionEvents);
+            LoadCustomLocale(root, "egoGiftData", sigma._egoGiftData);
+            LoadCustomLocale(root, "stageChapter", sigma._stageChapter);
+            LoadCustomLocale(root, "stagePart", sigma._stagePart);
+            LoadCustomLocale(root, "stageNodeText", sigma._stageNodeText);
+            LoadCustomLocale(root, "dungeonNodeText", sigma._dungeonNodeText);
+            LoadCustomLocale(root, "storyDungeonNodeText", sigma._storyDungeonNodeText);
+            LoadCustomLocale(root, "quest", sigma._quest);
+            LoadCustomLocale(root, "dungeonArea", sigma._dungeonArea);
+            LoadCustomLocale(root, "battlePass", sigma._battlePass);
+            LoadCustomLocale(root, "storyTheater", sigma._storyTheater);
+            LoadCustomLocale(root, "announcer", sigma._announcer);
+            LoadCustomLocale(root, "normalBattleResultHint", sigma._normalBattleResultHint);
+            LoadCustomLocale(root, "abBattleResultHint", sigma._abBattleResultHint);
+            LoadCustomLocale(root, "tutorialDesc", sigma._tutorialDesc);
+            LoadCustomLocale(root, "iapProductText", sigma._iapProductText);
+            LoadCustomLocale(root, "illustGetConditionText", sigma._illustGetConditionText);
+            LoadCustomLocale(root, "choiceEventResultDesc", sigma._choiceEventResultDesc);
+            LoadCustomLocale(root, "battlePassMission", sigma._battlePassMission);
+            LoadCustomLocale(root, "gachaTitle", sigma._gachaTitle);
+            LoadCustomLocale(root, "introduceCharacter", sigma._introduceCharacter);
+            LoadCustomLocale(root, "userBanner", sigma._userBanner);
         }
     }
 
@@ -127,7 +128,7 @@ public class Data : Il2CppSystem.Object
     {
         if (_localizeDataLoaded) return;
         _localizeDataLoaded = true;
-        LoadCustomLocale(Singleton<TextDataManager>.Instance, GlobalGameManager.Instance.Lang);
+        LoadCustomLocale(GlobalGameManager.Instance.Lang);
         LetheHooks.LOG.LogInfo($"Dumping static data");
         new Thread(StoreStaticData).Start();
     }
