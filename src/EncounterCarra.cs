@@ -14,6 +14,7 @@ public class EncounterCarra
 {
 	public static DirectoryInfo tmpAssetFolder;
 	public static string[] moddedBundles;
+	
 	public static void Patch()
 	{
 		try
@@ -77,6 +78,7 @@ public class EncounterCarra
 					File.Copy(expectedPath, expectedPath.Replace("__data", "__original"), true);
 					LetheHooks.LOG.LogInfo($"Patching {expectedPath}...");
 					File.Copy(expectedPath, Path.Combine(tmpAssetFolder.FullName, "tmp.bytes"), true);
+					LetheHooks.LOG.LogInfo($"Initiating asset tools...");
 					var manager = new AssetsManager();
 					var bundleInst = manager.LoadBundleFile(Path.Combine(tmpAssetFolder.FullName, "tmp.bytes"));
 					var assetInst = manager.LoadAssetsFileFromBundle(bundleInst, 0, true);
@@ -85,7 +87,7 @@ public class EncounterCarra
 					var bundle = bundleInst.file;
 
 					// decompress and patch
-					foreach (string rawData in Directory.GetFiles(bundleInfo.FullName, "", SearchOption.AllDirectories))
+					foreach (string rawData in Directory.GetFiles(bundleInfo.FullName, "*", SearchOption.AllDirectories))
 					{
 						LetheHooks.LOG.LogInfo($"{rawData}");
 						using (var xz = new XZStream(File.OpenRead(rawData)))
