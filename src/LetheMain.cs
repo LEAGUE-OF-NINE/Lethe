@@ -11,6 +11,7 @@ using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Random = System.Random;
+using System.Threading;
 
 namespace Lethe;
 
@@ -19,15 +20,15 @@ public class LetheMain : BasePlugin
 {
     public const string GUID = $"{AUTHOR}.{NAME}";
     public const string NAME = "Lethe";
-    public const string VERSION = "1.0.5";
+    public const string VERSION = "1.0.6";
     public const string AUTHOR = "Carra";
 
     public static DirectoryInfo pluginPath = Directory.CreateDirectory(Path.Combine(Paths.PluginPath, $"{NAME}"));
     public static DirectoryInfo vanillaDumpPath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "dumpedData"));
     public static DirectoryInfo templatePath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "ModTemplate"));
-    public static DirectoryInfo modsPath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "mods"));
+	public static DirectoryInfo modsPath = Directory.CreateDirectory(Path.Combine(pluginPath.FullPath, "mods"));
 
-    public static string EncounterConfig = Path.Combine(pluginPath.FullPath, "encounter.json");
+	public static string EncounterConfig = Path.Combine(pluginPath.FullPath, "encounter.json");
 
     public static ConfigEntry<string> ConfigServer;
     public static Action<string, Action> LogFatalError { get; set; }
@@ -100,6 +101,10 @@ public class LetheMain : BasePlugin
             Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_assistant"));
             Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_appearance"));
 
+            // visual mod
+            VisualMods.Carra.Patch();
+            var soundThread = new Thread(VisualMods.Sound.SoundReplace);
+            soundThread.Start();
             EncounterHelper.Log = Log;
             if (!File.Exists(EncounterConfig)) File.Create(EncounterConfig).Close();
         }

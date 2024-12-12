@@ -51,6 +51,8 @@ public class LetheHooks : MonoBehaviour
         var synchronousData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "..", "LocalLow", "ProjectMoon", "LimbusCompany", "synchronous-data_product.json");
         LOG.LogWarning(synchronousData);
         if (File.Exists(synchronousData)) File.Delete(synchronousData);
+        VisualMods.Carra.CleanUpAtClose();
+        VisualMods.Sound.RestoreSound();
     }
 
     public static string AccountJwt()
