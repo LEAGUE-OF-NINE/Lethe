@@ -75,6 +75,18 @@ public class Skin : MonoBehaviour
         }
     }
 
+    [HarmonyPatch(typeof(StageController, nameof(StageController.EndStage)))]
+    [HarmonyPrefix]
+    private static void unload_bundles_on_stage_end()
+    {
+        foreach (var bundle in loadedAssets)
+        {
+            LetheHooks.LOG.LogWarning($"unloading {bundle.name}");
+            bundle.Unload(false);
+        }
+        loadedAssets.Clear();
+    }
+
     //create skin
     [HarmonyPatch(typeof(SDCharacterSkinUtil), nameof(SDCharacterSkinUtil.CreateSkin))]
     [HarmonyPatch(new []{ typeof(BattleUnitView), typeof(BattleUnitModel), typeof(Transform), typeof(DelegateEvent) })]
