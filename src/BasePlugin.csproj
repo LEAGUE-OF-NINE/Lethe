@@ -17,13 +17,8 @@
         <NoWarn>1701;1702;2211;CA2211;IDE1006;IDE0060</NoWarn>
         <DebugType>none</DebugType>
         <Optimize>True</Optimize>
-        <RootNamespace>CustomEncounter</RootNamespace>
+        <RootNamespace>BaseMod</RootNamespace>
     </PropertyGroup>
-    <ItemGroup>
-      <Compile Remove="CustomStatus\**" />
-      <EmbeddedResource Remove="CustomStatus\**" />
-      <None Remove="CustomStatus\**" />
-    </ItemGroup>
 
     <!-- ~~~~~ CONFIGURATIONS ~~~~~ -->
     <ItemGroup>

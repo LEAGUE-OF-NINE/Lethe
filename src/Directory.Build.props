@@ -1,5 +1,5 @@
 <Project>
     <PropertyGroup>
-        <LimbusCompanyFolder>D:\SteamLibrary\steamapps\common\Limbus Company</LimbusCompanyFolder>
+        <LimbusCompanyFolder>C:\Program Files (x86)\Steam\steamapps\common\Limbus Company</LimbusCompanyFolder>
     </PropertyGroup>
 </Project>
