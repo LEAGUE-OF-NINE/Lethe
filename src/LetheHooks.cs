@@ -42,7 +42,7 @@ public class LetheHooks : MonoBehaviour
         {
             Singleton<StaticDataManager>.Instance._isDataLoaded = false;
             GlobalGameManager.Instance.LoadUserDataAndSetScene(SCENE_STATE.Main);
-            Patches.Data.LoadCustomLocale(Singleton<TextDataManager>.Instance, GlobalGameManager.Instance.Lang);
+            Patches.Data.LoadCustomLocale(GlobalGameManager.Instance.Lang);
         }
     }
 

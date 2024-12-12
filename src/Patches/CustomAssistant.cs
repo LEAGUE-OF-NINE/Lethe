@@ -72,7 +72,7 @@ public class CustomAssistant : Il2CppSystem.Object
                             _classInfo = personalityStaticData,
                             _battleOrder = order++
                         };
-                        var egos = new[] { new Ego(20101, EGO_OWNED_TYPES.USER) };
+                        var egos = new[] { new Ego(20101, 4, EGO_OWNED_TYPES.USER) };
                         var unit = new PlayerUnitData(personality, new Il2CppReferenceArray<Ego>(egos), false);
                         CustomPersonalityRegistry[personalityStaticData.ID] = personalityStaticData;
                         sortedParticipants.Add(unit);

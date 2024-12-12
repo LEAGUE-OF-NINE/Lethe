@@ -86,7 +86,7 @@ public class Server : Il2CppSystem.Object
         foreach (var egoStaticData in Singleton<StaticDataManager>.Instance.EgoList.list)
         {
             if (unlockedEgosIds.Contains(egoStaticData.ID)) continue;
-            var ego = new Ego(egoStaticData.ID, EGO_OWNED_TYPES.USER)
+            var ego = new Ego(egoStaticData.ID, 4, EGO_OWNED_TYPES.USER)
             {
                 _gacksung = 4,
             };

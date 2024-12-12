@@ -189,7 +189,7 @@ public static class EncounterHelper
 
     public static void SaveLocale()
     {
-        var textManager = Singleton<TextDataManager>.Instance;
+        var textManager = TextDataManager.Instance;
         var lang = GlobalGameManager.Instance.Lang;
         Log.LogInfo("Dumping locale data: " + lang);
         var root = Directory.CreateDirectory(Path.Combine(LetheMain.vanillaDumpPath.FullPath, "limbus_locale", lang.ToString()));
