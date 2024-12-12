@@ -26,17 +26,20 @@ public class Carra
 			LetheHooks.LOG.LogInfo($"Patching assets...");
 			bool hasCarra = false;
 
-			foreach (var bundlePath in GetCustomAppearanceFolderList())
+			foreach (var customAppSubfolder in GetCustomAppearanceFolderList())
 			{
-				hasCarra = true;
-				LetheHooks.LOG.LogInfo($"Processing {bundlePath}...");
-				string tmpOutput = Path.Combine(tmpAssetFolder.FullName, new FileInfo(bundlePath).Name);
-				using (ZipArchive archive = ZipFile.Open(bundlePath, ZipArchiveMode.Read))
+				foreach (var bundlePath in Directory.GetFiles(customAppSubfolder, "*.carra*", SearchOption.AllDirectories))
 				{
-					archive.ExtractToDirectory(tmpOutput);
-				}
+					hasCarra = true;
+					LetheHooks.LOG.LogInfo($"Processing {bundlePath}...");
+					string tmpOutput = Path.Combine(tmpAssetFolder.FullName, new FileInfo(bundlePath).Name);
+					using (ZipArchive archive = ZipFile.Open(bundlePath, ZipArchiveMode.Read))
+					{
+						archive.ExtractToDirectory(tmpOutput);
+					}
 
-				AssetsPatch(tmpOutput);
+					AssetsPatch(tmpOutput);
+				}
 			}
 
 			if (!hasCarra) LetheHooks.LOG.LogInfo("No .carra file found.");

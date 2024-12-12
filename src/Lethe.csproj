@@ -57,17 +57,21 @@
     </ItemGroup>
     <ItemGroup>
       <None Update="Libs\AssetsTools.NET.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </None>
       <None Update="Libs\SharpCompress.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </None>
     </ItemGroup>
     
     <Target Name="CopyFile" AfterTargets="build">
         <Message Text="Copying BIE files..." Importance="high" Condition="'$(Configuration)' == 'BIE'" />
         <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(OutputPath)\BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
-        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(LimbusCompanyFolder)\BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
+		<Copy SourceFiles="$(OutputPath)AssetsTools.NET.dll" DestinationFolder="$(OutputPath)\mono\Managed" />
+		<Copy SourceFiles="$(OutputPath)SharpCompress.dll" DestinationFolder="$(OutputPath)\mono\Managed" />
+		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(LimbusCompanyFolder)\BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
+		<Copy SourceFiles="$(OutputPath)\mono\Managed\AssetsTools.NET.dll" DestinationFolder="$(LimbusCompanyFolder)\mono\Managed" />
+		<Copy SourceFiles="$(OutputPath)\mono\Managed\SharpCompress.dll" DestinationFolder="$(LimbusCompanyFolder)\mono\Managed" />
     </Target>
 
 	
