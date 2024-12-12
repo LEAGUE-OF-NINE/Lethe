@@ -365,5 +365,3 @@ FodyWeavers.xsd
 # Ignore Directiory.build.props
 src/Directory.Build.props
 /src/.idea/
-src/Directory.Build.example.props
-/src/Directory.Build.example.props
