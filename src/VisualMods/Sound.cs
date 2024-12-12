@@ -17,7 +17,6 @@ public class Sound
 		string smolBank = SmallestBank();
 		LetheHooks.LOG.LogInfo($"Delete {smolBank}");
 		File.Delete(smolBank);
-		LetheHooks.LOG.LogInfo($"Status file {smolBank}: {File.Exists(smolBank)}");
 		while (!File.Exists(smolBank))
 			Thread.Sleep(10);
 	}
@@ -36,6 +35,11 @@ public class Sound
 					hasBank = true;
 					LetheHooks.LOG.LogInfo($"Replacing {bankPath}");
 					string target = Path.Combine(soundFolder, new FileInfo(bankPath).Name);
+					if (!File.Exists (target))
+					{
+						LetheHooks.LOG.LogInfo($"Can't find {target}, skip replacing...");
+						continue;
+					}	
 					File.Copy(target, $"{target}.bak", true);
 					File.Copy(bankPath, target, true);
 				}catch (Exception ex)
