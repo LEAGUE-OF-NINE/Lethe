@@ -8,9 +8,9 @@ using System.Linq;
 using AssetsTools.NET.Extra;
 using AssetsTools.NET;
 using SharpCompress.Compressors.Xz;
-namespace Lethe;
+namespace Lethe.VisualMods;
 
-public class EncounterCarra
+public class Carra
 {
 	public static DirectoryInfo tmpAssetFolder;
 	public static string[] moddedBundles;
@@ -25,24 +25,18 @@ public class EncounterCarra
 				$"carra_{DateTime.Now.ToString("yyyy-MM-dd-H-m-ss")}"));
 			LetheHooks.LOG.LogInfo($"Patching assets...");
 			bool hasCarra = false;
-			string hardcode = @"F:\SteamLibrary\steamapps\common\Limbus Company\BepInEx\plugins\Lethe\mods";
-			foreach (var modPath in Directory.GetDirectories(hardcode))
+
+			foreach (var bundlePath in GetCustomAppearanceFolderList())
 			{
-				var expectedPath = Path.Combine(modPath, "custom_appearance");
-				if (!Directory.Exists(expectedPath)) continue;
-
-				foreach (var bundlePath in Directory.GetFiles(expectedPath, "*.carra*", SearchOption.AllDirectories))
+				hasCarra = true;
+				LetheHooks.LOG.LogInfo($"Processing {bundlePath}...");
+				string tmpOutput = Path.Combine(tmpAssetFolder.FullName, new FileInfo(bundlePath).Name);
+				using (ZipArchive archive = ZipFile.Open(bundlePath, ZipArchiveMode.Read))
 				{
-					hasCarra = true;
-					LetheHooks.LOG.LogInfo($"Processing {bundlePath}...");
-					string tmpOutput = Path.Combine(tmpAssetFolder.FullName, new FileInfo(bundlePath).Name);
-					using (ZipArchive archive = ZipFile.Open(bundlePath, ZipArchiveMode.Read))
-					{
-						archive.ExtractToDirectory(tmpOutput);
-					}
-
-					AssetsPatch(tmpOutput);
+					archive.ExtractToDirectory(tmpOutput);
 				}
+
+				AssetsPatch(tmpOutput);
 			}
 
 			if (!hasCarra) LetheHooks.LOG.LogInfo("No .carra file found.");
@@ -130,6 +124,7 @@ public class EncounterCarra
 	}
 	public static void CleanUpAtLaunch()
 	{
+		// remove carra_ temp folder from previous launch
 		foreach (var tmpCarra in Directory.GetDirectories(Path.GetTempPath(), "carra_*", SearchOption.TopDirectoryOnly))
 			Directory.Delete(tmpCarra, true);
 	}
@@ -144,7 +139,13 @@ public class EncounterCarra
 			);
 		LetheHooks.LOG.LogInfo($"Cleaning up assets");
 		foreach (var og in Directory.GetFiles(bundleRoot, "*__original", SearchOption.AllDirectories))
-			File.Move(og, og.Replace("__original", "__data"));
+		{
+			LetheHooks.LOG.LogInfo($"Restoring {og} -> {og.Replace("__original", "__data")}");
+			File.Copy(og, og.Replace("__original", "__data"), true);
+			File.Delete(og);
+		}	
 	}
+
+	public static string[] GetCustomAppearanceFolderList() => Directory.GetDirectories(LetheMain.pluginPath.FullPath, "*custom_appearance*", SearchOption.AllDirectories);
 }
 
