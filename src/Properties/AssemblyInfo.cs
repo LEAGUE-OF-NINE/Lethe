@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using BaseMod;
+using LetheV2;
 
 [assembly: AssemblyTitle(main.NAME)]
 [assembly: AssemblyCompany(main.AUTHOR)]

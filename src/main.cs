@@ -5,7 +5,7 @@ using BepInEx.Logging;
 using System.IO;
 using UnityEngine;
 
-namespace BaseMod;
+namespace LetheV2;
 
 [BepInPlugin(GUID, NAME, VERSION)]
 public class main : BasePlugin
@@ -27,6 +27,7 @@ public class main : BasePlugin
     public override void Load()
     {
         Log = base.Log;
+        LoadConfiguration();
     }
 
     public static void LoadConfiguration()
@@ -48,13 +49,13 @@ public class main : BasePlugin
             "The URL of the private server (e.g. http://127.0.0.1:8080), leave blank to use defaults."
         );
 
-        Configuration.Bind
+        /*Configuration.Bind
         (
            "LaunchSettings",
            "usePrivateServer",
            true,
            "risky strats"
-        );
+        );*/
 
         Configuration.Bind
         (
