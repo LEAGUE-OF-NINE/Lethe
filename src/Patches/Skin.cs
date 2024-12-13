@@ -75,9 +75,9 @@ public class Skin : MonoBehaviour
         }
     }
 
-    [HarmonyPatch(typeof(StageController, nameof(StageController.EndStage)))]
+    [HarmonyPatch(typeof(StageController), nameof(StageController.EndStage))]
     [HarmonyPrefix]
-    private static void unload_bundles_on_stage_end()
+    private static void UnloadBundlesOnStageEnd()
     {
         foreach (var bundle in loadedAssets)
         {
