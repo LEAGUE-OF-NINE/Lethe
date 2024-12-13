@@ -32,6 +32,7 @@
         <PackageReference Include="Il2CppAssemblyUnhollower.BaseLib" Version="0.4.22" />
         <PackageReference Include="SharpCompress" Version="0.38.0" />
         <PackageReference Include="System.Runtime" Version="4.3.0" IncludeAssets="compile" />
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34" />
     </ItemGroup>
 
     <!-- ~~~~~ ASSEMBLY REFERENCES ~~~~~ -->
@@ -51,27 +52,29 @@
             <Private>false</Private>
         </Reference>
     </ItemGroup>
+    
     <ItemGroup>
       <Folder Include="CustomStatus\" />
       <Folder Include="Libs\" />
     </ItemGroup>
-    <ItemGroup>
-      <None Update="Libs\AssetsTools.NET.dll">
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      </None>
-      <None Update="Libs\SharpCompress.dll">
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
     
     <Target Name="CopyFile" AfterTargets="build">
+        <Message Text="Repacking libraries..." Importance="high" Condition="'$(Configuration)' == 'BIE'" />
+        <ItemGroup>
+            <InputAssemblies Include="$(OutputPath)$(AssemblyName).dll"/>
+            <InputAssemblies Include="Libs\*.dll"/>
+        </ItemGroup>
+        <ILRepack
+                AllowDuplicateResources="false"
+                DebugInfo="true"
+                Internalize="true"
+                LibraryPath="$(LimbusCompanyFolder)\BepInEx\core\"
+                InputAssemblies="@(InputAssemblies)"
+                OutputFile="$(OutputPath)Merged.dll"
+                Parallel="true"
+                TargetKind="SameAsPrimaryAssembly" />
         <Message Text="Copying BIE files..." Importance="high" Condition="'$(Configuration)' == 'BIE'" />
-        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(OutputPath)\BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
-		<Copy SourceFiles="$(OutputPath)AssetsTools.NET.dll" DestinationFolder="$(OutputPath)\mono\Managed" />
-		<Copy SourceFiles="$(OutputPath)SharpCompress.dll" DestinationFolder="$(OutputPath)\mono\Managed" />
-		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(LimbusCompanyFolder)\BepInEx\plugins" Condition="'$(Configuration)' == 'BIE'" />
-		<Copy SourceFiles="$(OutputPath)\mono\Managed\AssetsTools.NET.dll" DestinationFolder="$(LimbusCompanyFolder)\mono\Managed" />
-		<Copy SourceFiles="$(OutputPath)\mono\Managed\SharpCompress.dll" DestinationFolder="$(LimbusCompanyFolder)\mono\Managed" />
+		<Copy SourceFiles="$(OutputPath)Merged.dll" DestinationFiles="$(LimbusCompanyFolder)\BepInEx\plugins\Lethe.dll" Condition="'$(Configuration)' == 'BIE'" />
     </Target>
 
 	

@@ -134,9 +134,12 @@ public class Carra
 	}
 	public static void CleanUpAtLaunch()
 	{
-		// remove carra_ temp folder from previous launch
-		foreach (var tmpCarra in Directory.GetDirectories(Path.GetTempPath(), "carra_*", SearchOption.TopDirectoryOnly))
-			Directory.Delete(tmpCarra, true);
+		try
+		{
+			// remove carra_ temp folder from previous launch
+			foreach (var tmpCarra in Directory.GetDirectories(Path.GetTempPath(), "carra_*", SearchOption.TopDirectoryOnly))
+				Directory.Delete(tmpCarra, true);
+		} catch {}
 	}
 
 	public static void CleanUpAtClose()
