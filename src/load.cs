@@ -17,7 +17,7 @@ namespace LetheV2
             ClassInjector.RegisterTypeInIl2Cpp<load>();
 
             //load
-            GameObject loader = new GameObject($"{main.NAME} {main.VERSION}");
+            GameObject loader = new GameObject($"{LetheV2Main.NAME} {LetheV2Main.VERSION}");
             DontDestroyOnLoad(loader);
             loader.hideFlags |= HideFlags.HideAndDontSave;
             loader.AddComponent<load>();

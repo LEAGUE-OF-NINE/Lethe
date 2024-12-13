@@ -8,7 +8,7 @@ using UnityEngine;
 namespace LetheV2;
 
 [BepInPlugin(GUID, NAME, VERSION)]
-public class main : BasePlugin
+public class LetheV2Main : BasePlugin
 {
     public const string GUID = AUTHOR + "." + NAME;
     public const string NAME = "lethe_experimental_v2";
