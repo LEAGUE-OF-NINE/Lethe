@@ -74,10 +74,13 @@ public class Carra
 					LetheHooks.LOG.LogInfo($"Backing up {expectedPath}...");
 					File.Copy(expectedPath, expectedPath.Replace("__data", "__original"), true);
 					LetheHooks.LOG.LogInfo($"Patching {expectedPath}...");
-					File.Copy(expectedPath, Path.Combine(tmpAssetFolder.FullName, "tmp.bytes"), true);
+
+					var rnd = new System.Random();
+					string randomName = $"tmp_{rnd.Next(1000, 10000)}.bytes";
+					File.Copy(expectedPath, Path.Combine(tmpAssetFolder.FullName, randomName), true);
 					LetheHooks.LOG.LogInfo($"Initiating asset tools...");
 					var manager = new AssetsManager();
-					var bundleInst = manager.LoadBundleFile(Path.Combine(tmpAssetFolder.FullName, "tmp.bytes"));
+					var bundleInst = manager.LoadBundleFile(Path.Combine(tmpAssetFolder.FullName, randomName));
 					var assetInst = manager.LoadAssetsFileFromBundle(bundleInst, 0, true);
 
 					var asset = assetInst.file;
@@ -86,7 +89,6 @@ public class Carra
 					// decompress and patch
 					foreach (string rawData in Directory.GetFiles(bundleInfo.FullName, "*", SearchOption.AllDirectories))
 					{
-						LetheHooks.LOG.LogInfo($"{rawData}");
 						using (var xz = new XZStream(File.OpenRead(rawData)))
 						using (Stream toFile = new FileStream(rawData + ".raw_asset", FileMode.Create))
 						{
