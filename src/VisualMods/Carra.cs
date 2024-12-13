@@ -74,10 +74,13 @@ public class Carra
 					LetheHooks.LOG.LogInfo($"Backing up {expectedPath}...");
 					File.Copy(expectedPath, expectedPath.Replace("__data", "__original"), true);
 					LetheHooks.LOG.LogInfo($"Patching {expectedPath}...");
-					File.Copy(expectedPath, Path.Combine(tmpAssetFolder.FullName, "tmp.bytes"), true);
+
+					var rnd = new System.Random();
+					string randomName = $"tmp_{rnd.Next(1000, 10000)}.bytes";
+					File.Copy(expectedPath, Path.Combine(tmpAssetFolder.FullName, randomName), true);
 					LetheHooks.LOG.LogInfo($"Initiating asset tools...");
 					var manager = new AssetsManager();
-					var bundleInst = manager.LoadBundleFile(Path.Combine(tmpAssetFolder.FullName, "tmp.bytes"));
+					var bundleInst = manager.LoadBundleFile(Path.Combine(tmpAssetFolder.FullName, randomName));
 					var assetInst = manager.LoadAssetsFileFromBundle(bundleInst, 0, true);
 
 					var asset = assetInst.file;
@@ -86,7 +89,6 @@ public class Carra
 					// decompress and patch
 					foreach (string rawData in Directory.GetFiles(bundleInfo.FullName, "*", SearchOption.AllDirectories))
 					{
-						LetheHooks.LOG.LogInfo($"{rawData}");
 						using (var xz = new XZStream(File.OpenRead(rawData)))
 						using (Stream toFile = new FileStream(rawData + ".raw_asset", FileMode.Create))
 						{
@@ -94,14 +96,19 @@ public class Carra
 						}
 
 						var bjgbgb = Path.GetFileName(rawData).Split('.');
-						long pathID = long.Parse(bjgbgb.First());
-						int treeID = int.Parse(bjgbgb.Last());
-						var treeInfo = asset.Metadata.TypeTreeTypes[treeID];
-						var scriptidx = treeInfo.ScriptTypeIndex;
-						var typeID = treeInfo.TypeId;
-
-						var __new = AssetFileInfo.Create(asset, pathID, typeID, scriptidx);
-						__new.SetNewData(File.ReadAllBytes(rawData + ".raw_asset"));
+						long.TryParse(bjgbgb.First(), out long pathID);
+						var success = int.TryParse(bjgbgb.Last(), out int treeID);
+						AssetFileInfo __new = new();
+						if (success)
+						{
+							var treeInfo = asset.Metadata.TypeTreeTypes[treeID];
+							var scriptidx = treeInfo.ScriptTypeIndex;
+							var typeID = treeInfo.TypeId;
+							Console.WriteLine($"finding treeidx {treeID} scriptidx {scriptidx} for {pathID}");
+							__new = AssetFileInfo.Create(asset, pathID, typeID, scriptidx);
+							//var __new__basefield = manager.GetBaseField(assetInst, __new); dont rlly need this
+							__new.SetNewData(File.ReadAllBytes(rawData + ".raw_asset"));
+						}
 
 						var overwrite_exist = asset.GetAssetInfo(pathID);
 						if (overwrite_exist != null)
