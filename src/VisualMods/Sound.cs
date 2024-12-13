@@ -23,35 +23,46 @@ public class Sound
 
 	public static void SoundReplace()
 	{
-		WaitingForValidation();
-		LetheHooks.LOG.LogInfo("Validation complete, replacing sound files...");
-		bool hasBank = false;
-		foreach (var customAppSubfolder in Carra.GetCustomAppearanceFolderList())
+		if (!CheckExistingBank())
+			LetheHooks.LOG.LogInfo("No .bank file found, skip sound replacing process.");
+		else
 		{
-			foreach (var bankPath in Directory.GetFiles(customAppSubfolder, "*.bank*", SearchOption.AllDirectories))
+			WaitingForValidation();
+			LetheHooks.LOG.LogInfo("Validation complete, replacing sound files...");
+			foreach (var customAppSubfolder in Carra.GetCustomAppearanceFolderList())
 			{
-				try
+				foreach (var bankPath in Directory.GetFiles(customAppSubfolder, "*.bank*", SearchOption.AllDirectories))
 				{
-					hasBank = true;
-					LetheHooks.LOG.LogInfo($"Replacing {bankPath}");
-					string target = Path.Combine(soundFolder, new FileInfo(bankPath).Name);
-					if (!File.Exists (target))
+					try
 					{
-						LetheHooks.LOG.LogInfo($"Can't find {target}, skip replacing...");
-						continue;
-					}	
-					File.Copy(target, $"{target}.bak", true);
-					File.Copy(bankPath, target, true);
-				}catch (Exception ex)
-				{
-					LetheHooks.LOG.LogError($"Error: {ex}");
+						LetheHooks.LOG.LogInfo($"Replacing {bankPath}");
+						string target = Path.Combine(soundFolder, new FileInfo(bankPath).Name);
+						if (!File.Exists(target))
+						{
+							LetheHooks.LOG.LogInfo($"Can't find {target}, skip replacing...");
+							continue;
+						}
+						File.Copy(target, $"{target}.bak", true);
+						File.Copy(bankPath, target, true);
+					}
+					catch (Exception ex)
+					{
+						LetheHooks.LOG.LogError($"Error: {ex}");
+					}
+
 				}
-					
-			}
+			}		
 		}
-		if (!hasBank) LetheHooks.LOG.LogInfo("No .bank file found, skip sound replacing process.");
 	}
 
+	public static bool CheckExistingBank()
+	{
+		foreach (var customAppSubfolder in Carra.GetCustomAppearanceFolderList())
+		{
+			if (Directory.GetFiles(customAppSubfolder, "*.bank*", SearchOption.AllDirectories).Length > 0) return true;
+		}		
+		return false;
+	}
 	public static void RestoreSound()
 	{
 		LetheHooks.LOG.LogInfo("Restoring sound...");
