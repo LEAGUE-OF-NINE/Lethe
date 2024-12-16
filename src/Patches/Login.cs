@@ -43,6 +43,7 @@ public class Login : Il2CppSystem.Object
     [HarmonyPostfix]
     private static void PostSetLoginInfo(LoginSceneManager __instance)
     {
+        SingletonBehavior<LoginInfoManager>.Instance._currentAccountType = ACCOUNT_TYPE.STEAM;
         __instance.btn_switchAccount.gameObject.SetActive(false);
         __instance.tmp_version_null.gameObject.SetActive(false);
         __instance.tmp_version_null.text = "Lethe v" + LetheMain.VERSION;
@@ -59,6 +60,7 @@ public class Login : Il2CppSystem.Object
     [HarmonyPrefix]
     private static void PostLoginSceneStart(LoginSceneManager __instance)
     {
+        SingletonBehavior<LoginInfoManager>.Instance._currentAccountType = ACCOUNT_TYPE.STEAM;
         PostSetLoginInfo(__instance);
     }
    
