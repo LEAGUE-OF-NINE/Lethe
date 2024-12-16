@@ -4,6 +4,7 @@ using System.Linq;
 using HarmonyLib;
 using MainUI;
 using UnhollowerRuntimeLib;
+using UnityEngine;
 
 namespace Lethe.Patches;
 
@@ -25,6 +26,20 @@ public class Fixes : Il2CppSystem.Object
                 if (type.FullName == null) continue;
                 _abnoTypes.Add(type.FullName, type);
                 LetheHooks.LOG.LogInfo($"Found abno type {type.FullName}");
+            }
+        }
+        
+        var stub = new HarmonyMethod(typeof(Fixes), nameof(Stub));
+        foreach (var methodInfo in typeof(PlayerPrefs).GetMethods().Where(it => it.IsDeclaredMember() && it.Name.StartsWith("Set")))
+        {
+            try
+            {
+                LetheHooks.LOG.LogInfo($"Patching {typeof(PlayerPrefs).FullName}#{methodInfo.Name}");
+                harmony.Patch(methodInfo, prefix: stub);
+            }
+            catch (Exception e)
+            {
+                LetheHooks.LOG.LogInfo($"Failed to patch {typeof(PlayerPrefs).FullName}#{methodInfo.Name} {e}");
             }
         }
     }
