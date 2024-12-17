@@ -10,14 +10,14 @@ using UnityEngine;
 
 namespace LetheV2.Passives
 {
-    internal class LChangeAppearance : MonoBehaviour
+    internal class ChangeAppearance : MonoBehaviour
     {
         private const int PASSIVE_ID = 1984;
         private const string PASSIVE_NAME = "ChangeAppearance_";
         public static void Setup(Harmony harmony)
         {
-            ClassInjector.RegisterTypeInIl2Cpp<LChangeAppearance>();
-            harmony.PatchAll(typeof(LChangeAppearance));
+            ClassInjector.RegisterTypeInIl2Cpp<ChangeAppearance>();
+            harmony.PatchAll(typeof(ChangeAppearance));
         }
 
         [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.Update_Cointoss))]

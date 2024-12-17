@@ -101,7 +101,6 @@ public class Request : MonoBehaviour
     private static void ServerSelector_GetServerURL(ServerSelector __instance, ref string __result)
     {
         var serverURL = PrivateServer.ConfigServer.Value;
-        LetheV2Main.Log.LogInfo(serverURL);
         if (!string.IsNullOrEmpty(serverURL)) __result = serverURL;
     }
 

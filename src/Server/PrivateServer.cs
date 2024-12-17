@@ -152,6 +152,7 @@ namespace LetheV2.Patches
             using var reader = new StreamReader(req.InputStream);
             var json = reader.ReadToEnd();
             _token = JSON.Parse(json)["token"].Value;
+            LetheV2Main.Log.LogInfo("GET");
         }
 
         /*private static void StaticData(HttpListenerRequest req, HttpListenerResponse resp)
