@@ -3,7 +3,10 @@ using System.Collections;
 using System.Text;
 using BepInEx.IL2CPP.Utils;
 using HarmonyLib;
+using LetheV2.Patches;
 using Server;
+using ServerConfig;
+using Steamworks;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -91,5 +94,41 @@ public class Request : MonoBehaviour
         {
             www.Dispose();
         }
+    }
+
+    [HarmonyPatch(typeof(ServerSelector), nameof(ServerSelector.GetServerURL))]
+    [HarmonyPostfix]
+    private static void ServerSelector_GetServerURL(ServerSelector __instance, ref string __result)
+    {
+        var serverURL = LPrivateServer.ConfigServer.Value;
+        if (!string.IsNullOrEmpty(serverURL)) __result = serverURL;
+    }
+
+    [HarmonyPatch(typeof(ServerSelector), nameof(ServerSelector.GetBattleLogServerURL))]
+    [HarmonyPrefix]
+    private static bool ServerSelector_GetServerURL(ref string __result)
+    {
+        __result = "https://battlelog.lethlc.site/";
+        return false;
+    }
+
+
+    [HarmonyPatch(typeof(SteamUser), nameof(SteamUser.GetAuthSessionTicket))]
+    [HarmonyPrefix]
+    private static bool SteamUser_GetAuthSessionTicket(ref AuthTicket __result)
+    {
+        __result = new AuthTicket
+        {
+            Data = Encoding.ASCII.GetBytes(LPrivateServer.AccountJwt())
+        };
+
+        return false;
+    }
+
+    [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.OnResponseWithErrorCode))]
+    [HarmonyPrefix]
+    private static void OnResponseWithErrorCode(HttpApiRequester __instance)
+    {
+        __instance._errorCount = 0;
     }
 }
