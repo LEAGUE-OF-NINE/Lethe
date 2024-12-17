@@ -34,14 +34,11 @@
     <!-- ~~~~~ NUGET ~~~~~ -->
 	<ItemGroup>
 		<PackageReference Include="AssetsTools.NET" Version="3.0.0" />
-		<PackageReference Include="HarmonyX" Version="2.13.0" IncludeAssets="compile" />
-		<PackageReference Include="Il2CppAssemblyUnhollower.BaseLib" Version="0.4.22" />
 		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="SharpCompress" Version="0.38.0" />
-		<PackageReference Include="System.Runtime" Version="4.3.0" IncludeAssets="compile" />
 	</ItemGroup>
 
     <!-- ~~~~~ ASSEMBLY REFERENCES ~~~~~ -->
@@ -63,7 +60,6 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="SkillAbility\" />
-      <Folder Include="Patches\" />
     </ItemGroup>
 
 	<Target Name="CopyFile" AfterTargets="build">

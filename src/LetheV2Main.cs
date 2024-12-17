@@ -2,6 +2,8 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using BepInEx.Logging;
+using HarmonyLib;
+using LetheV2.Patches;
 using System.IO;
 using UnityEngine;
 
@@ -27,7 +29,13 @@ public class LetheV2Main : BasePlugin
     public override void Load()
     {
         Log = base.Log;
+        Configuration = Config;
         LoadConfiguration();
+        
+
+        var harmony = new Harmony(GUID);
+        LetheBootstrap.Setup(harmony);
+        LPrivateServer.Setup(harmony);
     }
 
     public static void LoadConfiguration()

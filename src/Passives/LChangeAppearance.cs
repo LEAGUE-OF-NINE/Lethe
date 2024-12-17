@@ -7,17 +7,17 @@ using System.Text;
 using System.Threading.Tasks;
 using UnhollowerRuntimeLib;
 using UnityEngine;
-using static BattleUI.Abnormality.AbnormalityPartSkills;
 
 namespace LetheV2.Passives
 {
-    internal class ChangeAppearance : MonoBehaviour
+    internal class LChangeAppearance : MonoBehaviour
     {
-        private static int PASSIVE_ID = 1984;
+        private const int PASSIVE_ID = 1984;
+        private const string PASSIVE_NAME = "ChangeAppearance_";
         public static void Setup(Harmony harmony)
         {
-            ClassInjector.RegisterTypeInIl2Cpp<ChangeAppearance>();
-            harmony.PatchAll(typeof(ChangeAppearance));
+            ClassInjector.RegisterTypeInIl2Cpp<LChangeAppearance>();
+            harmony.PatchAll(typeof(LChangeAppearance));
         }
 
         [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.Update_Cointoss))]
@@ -40,9 +40,9 @@ namespace LetheV2.Passives
             int gacksungLv = actorLog._gaksungLevel;
             var skillData = StaticDataManager.Instance.SkillList.GetData(skillID);
 
-            var findPassive = skillData.GetAbilityScript(gacksungLv).ToArray().ToList().Find(x => x.scriptName.StartsWith("ChangeAppearance_"));
+            var findPassive = skillData.GetAbilityScript(gacksungLv).ToArray().ToList().Find(x => x.scriptName.StartsWith(PASSIVE_NAME));
             if (findPassive == null) return;
-            __instance.ChangeAppearance(findPassive.scriptName.Substring("ChangeAppearance_".Length), true);
+            __instance.ChangeAppearance(findPassive.scriptName.Substring(PASSIVE_NAME.Length), true);
 
             var curCoin = skillData.GetCoins(gacksungLv).ToArray().Last();
             if (coinIdx >= 0 && coinIdx < skillData.GetCoins(gacksungLv).Count) {
@@ -50,9 +50,9 @@ namespace LetheV2.Passives
             }
 
             if (curCoin != null && !isDuel) {
-                var findPassiveInCoin = curCoin.abilityScriptList.ToArray().ToList().Find(x => x.scriptName.StartsWith("ChangeAppearance_"));
+                var findPassiveInCoin = curCoin.abilityScriptList.ToArray().ToList().Find(x => x.scriptName.StartsWith(PASSIVE_NAME));
                 if (findPassiveInCoin == null) return;
-                __instance.ChangeAppearance(findPassiveInCoin.scriptName.Substring("ChangeAppearance_".Length), true);
+                __instance.ChangeAppearance(findPassiveInCoin.scriptName.Substring(PASSIVE_NAME.Length), true);
             }
           
         }
