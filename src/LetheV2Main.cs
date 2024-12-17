@@ -4,6 +4,7 @@ using BepInEx.IL2CPP;
 using BepInEx.Logging;
 using HarmonyLib;
 using LetheV2.Patches;
+using LetheV2.Server;
 using System.IO;
 using UnityEngine;
 
@@ -35,7 +36,8 @@ public class LetheV2Main : BasePlugin
 
         var harmony = new Harmony(GUID);
         LetheBootstrap.Setup(harmony);
-        LPrivateServer.Setup(harmony);
+        PrivateServer.Setup(harmony);
+        Request.Setup(harmony);
     }
 
     public static void LoadConfiguration()

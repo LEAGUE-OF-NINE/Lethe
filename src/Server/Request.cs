@@ -100,7 +100,8 @@ public class Request : MonoBehaviour
     [HarmonyPostfix]
     private static void ServerSelector_GetServerURL(ServerSelector __instance, ref string __result)
     {
-        var serverURL = LPrivateServer.ConfigServer.Value;
+        var serverURL = PrivateServer.ConfigServer.Value;
+        LetheV2Main.Log.LogInfo(serverURL);
         if (!string.IsNullOrEmpty(serverURL)) __result = serverURL;
     }
 
@@ -119,7 +120,7 @@ public class Request : MonoBehaviour
     {
         __result = new AuthTicket
         {
-            Data = Encoding.ASCII.GetBytes(LPrivateServer.AccountJwt())
+            Data = Encoding.ASCII.GetBytes(PrivateServer.AccountJwt())
         };
 
         return false;

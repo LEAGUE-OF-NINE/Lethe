@@ -19,7 +19,7 @@ using BepInEx.IL2CPP.Utils;
 
 namespace LetheV2.Patches
 {
-    internal class LPrivateServer : MonoBehaviour
+    internal class PrivateServer : MonoBehaviour
     {
         public static ConfigEntry<string> ConfigServer;
         private static string _token;
@@ -48,6 +48,7 @@ namespace LetheV2.Patches
         {
             LetheV2Main.Configuration.TryGetEntry<string>(new ConfigDefinition("LaunchSettings", "ServerURL"), out var config);
             ConfigServer = config;
+            LetheV2Main.Log.LogInfo("PRIVATE SERVER URL: " + config.Value);
 
             var rng = new Random();
             int port = rng.Next(30000, 65000);
