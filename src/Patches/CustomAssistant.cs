@@ -41,7 +41,7 @@ public class CustomAssistant : Il2CppSystem.Object
     }
 
     [HarmonyPatch(typeof(BattleObjectManager), nameof(BattleObjectManager.CreateAllyUnits),
-        typeof(Il2CppSystem.Collections.Generic.List<PlayerUnitData>))]
+        typeof(Il2CppSystem.Collections.Generic.List<PlayerUnitData>), typeof(BattleUnitModelFactory))]
     [HarmonyPrefix]
     private static void CreateAllyUnits(BattleObjectManager __instance,
         ref Il2CppSystem.Collections.Generic.List<PlayerUnitData> sortedParticipants)

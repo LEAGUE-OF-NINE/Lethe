@@ -76,23 +76,23 @@ public class LetheMain : BasePlugin
             Harmony harmony = new(NAME);
 
             // Setup harmony hooks
-            Patches.Request.Setup(harmony);
-            NewEvadeThenUseSkill.Setup(harmony);
-            ChangeCounterOnConditional.Setup(harmony);
-            ChangeSkillOnConditional.Setup(harmony);
-            CustomFurioso.Setup(harmony);
-            Patches.CustomAssistant.Setup(harmony);
-            Patches.Data.Setup(harmony);
-            Patches.Fixes.Setup(harmony);
-            Patches.Login.Setup(harmony);
-            Patches.Server.Setup(harmony);
-            Patches.Skin.Setup(harmony);
-            Patches.Texture.Setup(harmony);
-            ChangeAppearance.Setup(harmony);
-            Passives.ChangeAppearance_Passive.Setup(harmony);
-            ChangeSkillMotion.Setup(harmony);
-            if (toggleCRC.Value) Patches.TextAsset.Setup(harmony);
-            Patches.Skills.Setup(harmony);
+            SafeSetup(Patches.Request.Setup, harmony, "Request");
+            SafeSetup(NewEvadeThenUseSkill.Setup, harmony);
+            SafeSetup(ChangeCounterOnConditional.Setup, harmony);
+            SafeSetup(ChangeSkillOnConditional.Setup, harmony);
+            SafeSetup(CustomFurioso.Setup, harmony);
+            SafeSetup(Patches.CustomAssistant.Setup, harmony, "CustomAssistant");
+            SafeSetup(Patches.Data.Setup, harmony, "Data");
+            SafeSetup(Patches.Fixes.Setup, harmony, "Fixes");
+            SafeSetup(Patches.Login.Setup, harmony, "Login");
+            SafeSetup(Patches.Server.Setup, harmony, "Server");
+            SafeSetup(Patches.Skin.Setup, harmony, "Skin");
+            SafeSetup(Patches.Texture.Setup, harmony, "Texture");
+            SafeSetup(ChangeAppearance.Setup, harmony);
+            SafeSetup(Passives.ChangeAppearance_Passive.Setup, harmony);
+            SafeSetup(ChangeSkillMotion.Setup, harmony);
+            if (toggleCRC.Value) SafeSetup(Patches.TextAsset.Setup, harmony, "TextAsset");
+            SafeSetup(Patches.Skills.Setup, harmony, "Skills");
 
             //add some folder for the mod template
             Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_appearance"));
@@ -114,4 +114,20 @@ public class LetheMain : BasePlugin
             LogError(e.ToString());
         }
     }
+    
+    private void SafeSetup(Action<Harmony> setupAction, Harmony harmony, string patchName = null)
+    {
+        try
+        {
+            setupAction(harmony);
+        }
+        catch (Exception ex)
+        {
+            string name = patchName ?? setupAction.Method.DeclaringType?.Name ?? "Unknown";
+            LogError($"Failed to setup patch {name}: {ex.Message}");
+            LogError(ex.StackTrace);
+        }
+    }
+
+    
 }
