@@ -150,4 +150,23 @@ public class Login : Il2CppSystem.Object
         }
     }
 
+    [HarmonyPatch(typeof(SkillStaticDataList), nameof(SkillStaticDataList.Init))]
+    [HarmonyPrefix]
+    private static bool override_load_skill_data(Il2CppSystem.Collections.Generic.List<SkillStaticData> nodeList, SkillStaticDataList __instance)
+    {
+        __instance.list = new List<SkillStaticData>();
+        __instance.dict.Clear();
+        for (int i = 0; i < nodeList.Count; i++)
+        {
+            List<SkillStaticData> list = JsonUtility.FromJson<SkillStaticDataList>(nodeList[i].ToString()).GetList();
+            for (int j = 0; j < list.Count; j++)
+            {
+                bool success = __instance.dict.TryAdd(list[j].ID, list[j]);
+                if (success) __instance.list.Add(list[j]);
+            }
+        }
+
+        return false;
+    }
+
 }
