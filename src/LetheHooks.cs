@@ -32,13 +32,13 @@ public class LetheHooks : MonoBehaviour
 
     internal void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha0))
+        if (Input.GetKeyDown(LetheMain.dumpDataKey.Value))
         {
             EncounterHelper.SaveLocale();
             EncounterHelper.SaveEncounters();
             EncounterHelper.SaveIdentities();
         }
-        if (Input.GetKeyDown(KeyCode.Alpha8))
+        if (Input.GetKeyDown(LetheMain.reloadDataKey.Value))
         {
             Singleton<StaticDataManager>.Instance._isDataLoaded = false;
             GlobalGameManager.Instance.LoadUserDataAndSetScene(SCENE_STATE.Main);

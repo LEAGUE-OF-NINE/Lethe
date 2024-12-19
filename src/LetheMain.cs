@@ -31,6 +31,8 @@ public class LetheMain : BasePlugin
 	public static string EncounterConfig = Path.Combine(pluginPath.FullPath, "encounter.json");
 
     public static ConfigEntry<string> ConfigServer;
+    public static ConfigEntry<KeyCode> reloadDataKey;
+    public static ConfigEntry<KeyCode> dumpDataKey;
     public static Action<string, Action> LogFatalError { get; set; }
     public static Action<string> LogError { get; set; }
     public static Action<string> LogWarning { get; set; }
@@ -70,6 +72,22 @@ public class LetheMain : BasePlugin
                                         "CRCtoggle",
                                         false,
                                         "Toggle CRC checks from the game. It's recommended that it's disabled when downloading updates.");
+
+            reloadDataKey = Config.Bind
+            (
+                "General",
+                "ReloadData",
+                KeyCode.Alpha8,
+                "Key bind to reload data ingame."
+            );
+
+            dumpDataKey = Config.Bind
+            (
+                "General",
+                "DumpData",
+                KeyCode.Alpha0,
+                "not even dumping everything lol!!! dump locale, identities, and encounters"
+            );
 
 
             LetheHooks.Setup(Log, port);
