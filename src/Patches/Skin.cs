@@ -55,7 +55,7 @@ public class Skin : MonoBehaviour
                             Log.LogInfo($"{bundlePath}");
                             var bundle = AssetBundle.LoadFromFile(bundlePath, 0);
                             loadedAssets.Add(bundle);
-                            Log.LogWarning(@$"loaded bundle {bundle.name}!");
+                            Log.LogWarning(@$"loaded bundle {bundle?.name}!");
                         }
                     }
                     break;
@@ -63,12 +63,13 @@ public class Skin : MonoBehaviour
                 }
             case not SCENE_STATE.Battle:            
             {
-              foreach (var bundle in loadedAssets)
-              {
-                        LetheHooks.LOG.LogWarning($"unloading {bundle.name}");
-                        bundle.Unload(false);
-              }
-                loadedAssets.Clear();
+                    foreach (var bundle in loadedAssets)
+                    {
+                        if (bundle == null) continue;
+                        LetheHooks.LOG.LogWarning($"unloading {bundle?.name}");
+                        bundle?.Unload(false);
+                    }
+                    loadedAssets.Clear();
                 break;
             }
         
@@ -81,8 +82,9 @@ public class Skin : MonoBehaviour
     {
         foreach (var bundle in loadedAssets)
         {
-            LetheHooks.LOG.LogWarning($"unloading {bundle.name}");
-            bundle.Unload(false);
+            if (bundle == null) continue;
+            LetheHooks.LOG.LogWarning($"unloading {bundle?.name}");
+            bundle?.Unload(false);
         }
         loadedAssets.Clear();
     }
