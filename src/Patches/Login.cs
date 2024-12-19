@@ -162,7 +162,11 @@ public class Login : Il2CppSystem.Object
             for (int j = 0; j < list.Count; j++)
             {
                 bool success = __instance.dict.TryAdd(list[j].ID, list[j]);
-                if (success) __instance.list.Add(list[j]);
+                if (success)
+                {
+                    __instance.list.Add(list[j]);
+                    LetheHooks.LOG.LogWarning($"Replacing skill {list[j].ID} with custom data");
+                }
             }
         }
 
