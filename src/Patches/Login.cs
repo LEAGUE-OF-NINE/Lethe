@@ -156,16 +156,19 @@ public class Login : Il2CppSystem.Object
     {
         __instance.list = new List<SkillStaticData>();
         __instance.dict.Clear();
+
+        var nodeArray = nodeList.ToArray();
         for (int i = 0; i < nodeList.Count; i++)
         {
-            List<SkillStaticData> list = JsonUtility.FromJson<SkillStaticDataList>(nodeList[i].ToString()).GetList();
+            List<SkillStaticData> list = JsonUtility.FromJson<SkillStaticDataList>(nodeArray[i].ToString()).GetList();
+            var array = list.ToArray();
             for (int j = 0; j < list.Count; j++)
             {
-                bool success = __instance.dict.TryAdd(list[j].ID, list[j]);
+                bool success = __instance.dict.TryAdd(array[j].ID, array[j]);
                 if (success)
                 {
-                    __instance.list.Add(list[j]);
-                    LetheHooks.LOG.LogWarning($"Replacing skill {list[j].ID} with custom data");
+                    __instance.list.Add(array[j]);
+                    LetheHooks.LOG.LogWarning($"Replacing skill {array[j].ID} with custom data");
                 }
             }
         }
