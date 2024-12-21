@@ -95,16 +95,14 @@ public class LetheHooks : MonoBehaviour
 
         _listener = new HttpListener();
 
-        var token = Environment.GetEnvironmentVariable("LETHE_TOKEN");
-        Environment.SetEnvironmentVariable("LETHE_TOKEN", null);
-        if (token == null)
+        if (LetheMain.SuppliedToken == null)
         {
             Application.OpenURL(LetheMain.ConfigServer.Value + $"/auth/login?port={port}");
             hook.StartCoroutine(HttpCoroutine(port));
         }
         else
         {
-            _token = token;
+            _token = LetheMain.SuppliedToken;
         }
     }
 

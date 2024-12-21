@@ -30,6 +30,8 @@ public class LetheMain : BasePlugin
 
 	public static string EncounterConfig = Path.Combine(pluginPath.FullPath, "encounter.json");
 
+    public static string SuppliedToken = null;
+
     public static ConfigEntry<string> ConfigServer;
     public static ConfigEntry<KeyCode> reloadDataKey;
     public static ConfigEntry<KeyCode> dumpDataKey;
@@ -39,6 +41,9 @@ public class LetheMain : BasePlugin
 
     public override void Load()
     {
+        SuppliedToken = Environment.GetEnvironmentVariable("LETHE_TOKEN");
+        Environment.SetEnvironmentVariable("LETHE_TOKEN", null);
+        
         LogError = log =>
         {
             Log.LogError(log);
@@ -94,6 +99,7 @@ public class LetheMain : BasePlugin
             Harmony harmony = new(NAME);
 
             // Setup harmony hooks
+            if (SuppliedToken != null) SafeSetup(Patches.Pref.Setup, harmony, "Preference");
             SafeSetup(Patches.Request.Setup, harmony, "Request");
             SafeSetup(NewEvadeThenUseSkill.Setup, harmony);
             SafeSetup(ChangeCounterOnConditional.Setup, harmony);
