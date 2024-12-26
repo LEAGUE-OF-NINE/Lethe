@@ -117,7 +117,7 @@ public class LetheMain : BasePlugin
             SafeSetup(ChangeSkillMotion.Setup, harmony);
             if (toggleCRC.Value) SafeSetup(Patches.TextAsset.Setup, harmony, "TextAsset");
             SafeSetup(Patches.Skills.Setup, harmony, "Skills");
-            if (SuppliedToken != null) SafeSetup(Patches.Pref.Setup, harmony, "Preference");
+            // if (SuppliedToken != null) SafeSetup(Patches.Pref.Setup, harmony, "Preference");
 
             //add some folder for the mod template
             Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_appearance"));
