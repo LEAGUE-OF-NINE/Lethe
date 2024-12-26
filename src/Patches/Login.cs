@@ -168,7 +168,7 @@ public class Login : Il2CppSystem.Object
                 if (success)
                 {
                     __instance.list.Add(array[j]);
-                    LetheHooks.LOG.LogWarning($"Replacing skill {array[j].ID} with custom data");
+                    //LetheHooks.LOG.LogWarning($"Replacing skill {array[j].ID} with custom data");
                 }
             }
         }
