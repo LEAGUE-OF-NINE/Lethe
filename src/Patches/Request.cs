@@ -30,22 +30,6 @@ public class Request : MonoBehaviour
         harmony.PatchAll(typeof(Request));
     }
    
-    [HarmonyPatch(typeof(HttpBattleLogRequester), nameof(HttpBattleLogRequester.EnqueueRequest))]
-    [HarmonyPrefix]
-    public static bool PreBattleLogEnqueueRequest(HttpBattleLogSchema schema)
-    {
-        LetheHooks.LOG.LogInfo($"WARNING: LIMBUS TRIED TO REPORT TO PROJECT MOON: {schema.URL}");
-        return false;
-    }
-   
-    [HarmonyPatch(typeof(HttpBattleLogRequester), nameof(HttpBattleLogRequester.SendRequest))]
-    [HarmonyPrefix]
-    public static bool PreBattleLogSendRequest(HttpBattleLogSchema schema)
-    {
-        LetheHooks.LOG.LogInfo($"WARNING: LIMBUS TRIED TO REPORT TO PROJECT MOON: {schema.URL}");
-        return false;
-    }
-
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
     [HarmonyPrefix]
     public static bool PreSendRequest(HttpApiRequester __instance, HttpApiSchema httpApiSchema)

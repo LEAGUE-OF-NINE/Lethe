@@ -99,8 +99,8 @@ public class LetheMain : BasePlugin
             Harmony harmony = new(NAME);
 
             // Setup harmony hooks
-            if (SuppliedToken != null) SafeSetup(Patches.Pref.Setup, harmony, "Preference");
             SafeSetup(Patches.Request.Setup, harmony, "Request");
+            SafeSetup(Patches.BattleLog.Setup, harmony, "BattleLog");
             SafeSetup(NewEvadeThenUseSkill.Setup, harmony);
             SafeSetup(ChangeCounterOnConditional.Setup, harmony);
             SafeSetup(ChangeSkillOnConditional.Setup, harmony);
@@ -117,6 +117,7 @@ public class LetheMain : BasePlugin
             SafeSetup(ChangeSkillMotion.Setup, harmony);
             if (toggleCRC.Value) SafeSetup(Patches.TextAsset.Setup, harmony, "TextAsset");
             SafeSetup(Patches.Skills.Setup, harmony, "Skills");
+            if (SuppliedToken != null) SafeSetup(Patches.Pref.Setup, harmony, "Preference");
 
             //add some folder for the mod template
             Directory.CreateDirectory(Path.Combine(templatePath.FullPath, "custom_appearance"));
