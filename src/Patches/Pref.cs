@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Lethe.Patches;
 
-public class Pref
+public class Pref : Il2CppSystem.Object
 {
 
     private static string _configFolder;

@@ -4,7 +4,7 @@ using UnhollowerRuntimeLib;
 
 namespace Lethe.Patches;
 
-public class BattleLog
+public class BattleLog : Il2CppSystem.Object
 {
    
     public static void Setup(Harmony harmony)
