@@ -24,6 +24,7 @@ namespace Lethe.Patches
         {
             encounterPaths.Clear();
             StageIdToFolderPath.Clear();
+
             foreach (var modPath in Directory.GetDirectories(LetheMain.modsPath.FullPath))
             {
                 var expectedPath = Path.Combine(modPath, "custom_encounters");
@@ -173,9 +174,17 @@ namespace Lethe.Patches
         [HarmonyPrefix]
         private static bool PreGetStage(ref int id, ref StageStaticData __result)
         {
-            if (id == -1)
+            switch (id)
             {
-                id = 1;
+                case 6006583:
+                    var json = File.ReadAllText(LetheMain.EncounterConfig);
+                    var read = JsonUtility.FromJson<StageStaticData>(json);
+                    read.story.exit = null;
+                    __result = read;
+                    return false;
+                case -1:
+                    id = 1;
+                    break;
             }
 
             if (StageIdToFolderPath.TryGetValue(id, out var encounterFolder))
