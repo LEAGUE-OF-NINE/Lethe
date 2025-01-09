@@ -112,6 +112,7 @@ public class LetheMain : BasePlugin
             SafeSetup(Patches.Server.Setup, harmony, "Server");
             SafeSetup(Patches.Skin.Setup, harmony, "Skin");
             SafeSetup(Patches.Texture.Setup, harmony, "Texture");
+            SafeSetup(Patches.Encounters.Setup, harmony, "Encounters");
             SafeSetup(ChangeAppearance.Setup, harmony);
             SafeSetup(Passives.ChangeAppearance_Passive.Setup, harmony);
             SafeSetup(ChangeSkillMotion.Setup, harmony);

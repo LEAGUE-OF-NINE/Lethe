@@ -22,26 +22,6 @@ public class Data : Il2CppSystem.Object
         ClassInjector.RegisterTypeInIl2Cpp<Data>();
         harmony.PatchAll(typeof(Data));
     }
-    
-    [HarmonyPatch(typeof(StageStaticDataList), nameof(StageStaticDataList.GetStage))]
-    [HarmonyPrefix]
-    private static bool PreGetStage(ref int id, ref StageStaticData __result)
-    {
-        switch (id)
-        {
-            case 6006583:
-                var json = File.ReadAllText(LetheMain.EncounterConfig);                
-                var read = JsonUtility.FromJson<StageStaticData>(json);
-                read.story.exit = null;
-                __result = read;
-                return false;
-            case -1:
-                id = 1;
-                break;
-        }
-
-        return true;
-    }
 
     public static void LoadCustomLocale<T>(DirectoryInfo root, string name, JsonDataList<T> list)
         where T : LocalizeTextData, new()
@@ -162,8 +142,8 @@ public class Data : Il2CppSystem.Object
     public static void AddPlayground()
     {
         //damn i dont care anymore
-        var subchapterJSON = @"{""id"":6969,""illustSprName"":"""",""sprName"":""chapter0"",""subChapterNumber"":""1"",""mapSizeRow"":0,""mapSizeColoumn"":0,""region"":""p"",""unlockCondition"":{""mainChapterId"":0,""subChapterId"":0,""nodeId"":0,""unlockCode"":101},""stageNodeList"":[{""nodeId"":696901,""stageId"":6006583,""posx"":0,""posy"":0,""nodeIllustIdString"":"""",""unlockCondition"":{""mainChapterId"":0,""subChapterId"":0,""nodeId"":0,""unlockCode"":101,""possession"":{""type"":"""",""id"":0,""num"":0,""tags"":[]}},""upper"":0,""stageNodeType"":""NORMAL""}],""nextMainchapterid"":101,""nextSubchapterid"":102,""lastnodeid"":0,""nodeIconPath"":""""}";
-        var subchapterUIJSON = @"{""chapterId"":91,""subchapterId"":6969,""nodeId"":696901,""storyIdInTheaterData"":0,""isUnlockByUnlockCode"":false,""unlockCode"":101,""relatedData"":{""chapterId"":0,""subchapterId"":0,""nodeId"":0},""uiConfig"":{""customChapterText"":""1"",""chapterTagIconType"":""BATTLE"",""region"":""p"",""mapAreaId"":101,""timeLine"":""PLAYGROUND"",""illustId"":""""},""type"":""STAGE_NODE""}";
+        var subchapterJSON = @"{""id"":5858,""illustSprName"":"""",""sprName"":""chapter0"",""subChapterNumber"":""1"",""mapSizeRow"":0,""mapSizeColoumn"":0,""region"":""p"",""unlockCondition"":{""mainChapterId"":0,""subChapterId"":0,""nodeId"":0,""unlockCode"":101},""stageNodeList"":[{""nodeId"":696901,""stageId"":6006583,""posx"":0,""posy"":0,""nodeIllustIdString"":"""",""unlockCondition"":{""mainChapterId"":0,""subChapterId"":0,""nodeId"":0,""unlockCode"":101,""possession"":{""type"":"""",""id"":0,""num"":0,""tags"":[]}},""upper"":0,""stageNodeType"":""NORMAL""}],""nextMainchapterid"":101,""nextSubchapterid"":102,""lastnodeid"":0,""nodeIconPath"":""""}";
+        var subchapterUIJSON = @"{""chapterId"":91,""subchapterId"":5858,""nodeId"":696901,""storyIdInTheaterData"":0,""isUnlockByUnlockCode"":false,""unlockCode"":101,""relatedData"":{""chapterId"":0,""subchapterId"":0,""nodeId"":0},""uiConfig"":{""customChapterText"":""1"",""chapterTagIconType"":""BATTLE"",""region"":""p"",""mapAreaId"":101,""timeLine"":""PLAYGROUND"",""illustId"":""""},""type"":""STAGE_NODE""}";
 
 
         var subchapter = JsonUtility.FromJson<SubChapterData>(subchapterJSON);
