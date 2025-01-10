@@ -4,6 +4,7 @@ using HarmonyLib;
 using Il2CppSystem.IO;
 using UnhollowerRuntimeLib;
 using UnityEngine;
+using Utils;
 
 namespace Lethe.Patches
 {
@@ -164,8 +165,9 @@ namespace Lethe.Patches
 
             SubChapterData newSubchapterData = JsonUtility.FromJson<SubChapterData>(jsonTemplate);
             newSubchapterData.id = nodeId;
-            newSubchapterData.stageNodeList[0].nodeId = nodeId;
-            newSubchapterData.stageNodeList[0].stageId = nodeId;
+            var firstStageNode = newSubchapterData.stageNodeList.GetFirstElement();
+            firstStageNode.nodeId = nodeId;
+            firstStageNode.stageId = nodeId;
 
             return newSubchapterData;
         }
