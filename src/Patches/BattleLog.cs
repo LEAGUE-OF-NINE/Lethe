@@ -15,17 +15,17 @@ public class BattleLog : Il2CppSystem.Object
    
     [HarmonyPatch(typeof(HttpBattleLogRequester), nameof(HttpBattleLogRequester.EnqueueRequest))]
     [HarmonyPrefix]
-    public static bool PreBattleLogEnqueueRequest(HttpLogSchema schema)
+    public static bool PreBattleLogEnqueueRequest()
     {
-        LetheHooks.LOG.LogInfo($"WARNING: LIMBUS TRIED TO REPORT TO PROJECT MOON: {schema.URL}");
+        LetheHooks.LOG.LogInfo($"WARNING: LIMBUS TRIED TO REPORT TO PROJECT MOON");
         return false;
     }
    
     [HarmonyPatch(typeof(HttpBattleLogRequester), nameof(HttpBattleLogRequester.SendRequest))]
     [HarmonyPrefix]
-    public static bool PreBattleLogSendRequest(HttpLogSchema schema)
+    public static bool PreBattleLogSendRequest()
     {
-        LetheHooks.LOG.LogInfo($"WARNING: LIMBUS TRIED TO REPORT TO PROJECT MOON: {schema.URL}");
+        LetheHooks.LOG.LogInfo($"WARNING: LIMBUS TRIED TO REPORT TO PROJECT MOON");
         return false;
     }
 

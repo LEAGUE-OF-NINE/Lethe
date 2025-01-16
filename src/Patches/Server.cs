@@ -46,16 +46,9 @@ public class Server : Il2CppSystem.Object
         return false;
     }
 
-    [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.OnResponseWithErrorCode))]
-    [HarmonyPrefix]
-    private static void OnResponseWithErrorCode(HttpApiRequester __instance)
-    {
-        __instance._errorCount = 0;
-    }
-
     [HarmonyPatch(typeof(UserDataManager), nameof(UserDataManager.UpdateData))]
     [HarmonyPostfix]
-    private static void UpdateData(UserDataManager __instance, UpdatedFormat updated)
+    private static void UpdateData(UserDataManager __instance)
     {
         var unlockedPersonalities = __instance._personalities._personalityList._list;
         var unlockedPersonalityIds = new HashSet<int>();
