@@ -30,27 +30,27 @@ public class Request : MonoBehaviour
         _instance = obj.AddComponent<Request>();
         harmony.PatchAll(typeof(Request));
     }
-   
+
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
     [HarmonyPrefix]
-    public static bool PreSendRequest(HttpApiRequester __instance, PHHCPLHPHFF ONOHJEFJFOM)
+    public static bool PreSendRequest(HttpApiRequester __instance, BCLHICKGDMI BDEKMFJIAPN)
     {
-        var httpApiSchema = ONOHJEFJFOM;
+        var httpApiSchema = BDEKMFJIAPN;
         _instance.StartCoroutine(PostWebRequest(__instance, httpApiSchema, false));
         return false;
     }
 
-    public static void EnqueueWebRequest(HttpApiRequester requester, PHHCPLHPHFF httpApiSchema, bool isUrgent)
+    public static void EnqueueWebRequest(HttpApiRequester requester, BCLHICKGDMI httpApiSchema, bool isUrgent)
     {
         _instance.StartCoroutine(PostWebRequest(requester, httpApiSchema, true));
     }
 
-    private static IEnumerator PostWebRequest(HttpApiRequester requester, PHHCPLHPHFF httpApiSchema, bool isUrgent)
+    private static IEnumerator PostWebRequest(HttpApiRequester requester, BCLHICKGDMI httpApiSchema, bool isUrgent)
     {
-        var www = UnityWebRequest.Post(httpApiSchema.JJNDDCNBJNC, httpApiSchema.GODNKDPGPHN);
+        var www = UnityWebRequest.Post(httpApiSchema.LCNOMMLKEFO, httpApiSchema.JALCBFOGMMB);
         try
         {
-            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.GODNKDPGPHN);
+            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.JALCBFOGMMB);
             www.uploadHandler.Dispose();
             www.uploadHandler = new UploadHandlerRaw(bytes);
             www.SetRequestHeader("Content-Type", "application/json");
@@ -70,7 +70,7 @@ public class Request : MonoBehaviour
             }
             else
             {
-                httpApiSchema.AKAJDPOOILL.Invoke(www.downloadHandler.text);
+                httpApiSchema.MEOMIFIDCHF.Invoke(www.downloadHandler.text);
             }
         }
         finally
@@ -78,6 +78,4 @@ public class Request : MonoBehaviour
             www.Dispose();
         }
     }
-    
-    
 }
