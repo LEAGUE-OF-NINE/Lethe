@@ -35,12 +35,14 @@ public class LetheMain : BasePlugin
     public static ConfigEntry<string> ConfigServer;
     public static ConfigEntry<KeyCode> reloadDataKey;
     public static ConfigEntry<KeyCode> dumpDataKey;
+    public static ConfigFile config;
     public static Action<string, Action> LogFatalError { get; set; }
     public static Action<string> LogError { get; set; }
     public static Action<string> LogWarning { get; set; }
 
     public override void Load()
     {
+        config = Config;
         SuppliedToken = Environment.GetEnvironmentVariable("LETHE_TOKEN");
         Environment.SetEnvironmentVariable("LETHE_TOKEN", null);
         
@@ -119,6 +121,7 @@ public class LetheMain : BasePlugin
             SafeSetup(ChangeSkillMotion.Setup, harmony);
             if (toggleCRC.Value) SafeSetup(Patches.TextAsset.Setup, harmony, "TextAsset");
             SafeSetup(Patches.Skills.Setup, harmony, "Skills");
+            SafeSetup(Patches.ego_resource.Setup, harmony, "ego_res");
             // if (SuppliedToken != null) SafeSetup(Patches.Pref.Setup, harmony, "Preference");
 
             //add some folder for the mod template
