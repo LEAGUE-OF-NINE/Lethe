@@ -6,6 +6,7 @@ using BepInEx.IL2CPP.Utils;
 using HarmonyLib;
 using Server;
 using UnhollowerRuntimeLib;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -33,24 +34,24 @@ public class Request : MonoBehaviour
 
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
     [HarmonyPrefix]
-    public static bool PreSendRequest(HttpApiRequester __instance, BCLHICKGDMI BDEKMFJIAPN)
+    public static bool PreSendRequest(HttpApiRequester __instance, NHKJCKGBINH EPOPCLCFHAH)
     {
-        var httpApiSchema = BDEKMFJIAPN;
+        var httpApiSchema = EPOPCLCFHAH;
         _instance.StartCoroutine(PostWebRequest(__instance, httpApiSchema, false));
         return false;
     }
 
-    public static void EnqueueWebRequest(HttpApiRequester requester, BCLHICKGDMI httpApiSchema, bool isUrgent)
+    public static void EnqueueWebRequest(HttpApiRequester requester, NHKJCKGBINH httpApiSchema, bool isUrgent)
     {
         _instance.StartCoroutine(PostWebRequest(requester, httpApiSchema, true));
     }
 
-    private static IEnumerator PostWebRequest(HttpApiRequester requester, BCLHICKGDMI httpApiSchema, bool isUrgent)
+    private static IEnumerator PostWebRequest(HttpApiRequester requester, NHKJCKGBINH httpApiSchema, bool isUrgent)
     {
-        var www = UnityWebRequest.Post(httpApiSchema.LCNOMMLKEFO, httpApiSchema.JALCBFOGMMB);
+        var www = UnityWebRequest.Post(httpApiSchema.GLCKBAANBKG, httpApiSchema.IIDDMEPKBBO);
         try
         {
-            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.JALCBFOGMMB);
+            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.IIDDMEPKBBO);
             www.uploadHandler.Dispose();
             www.uploadHandler = new UploadHandlerRaw(bytes);
             www.SetRequestHeader("Content-Type", "application/json");
@@ -70,12 +71,34 @@ public class Request : MonoBehaviour
             }
             else
             {
-                httpApiSchema.MEOMIFIDCHF.Invoke(www.downloadHandler.text);
+                httpApiSchema.OOAEPJDLCFP.Invoke(www.downloadHandler.text);
             }
         }
         finally
         {
             www.Dispose();
+        }
+    }
+
+    private static void PrintAllMethodValues(NHKJCKGBINH httpApiSchema)
+    {
+        Type type = httpApiSchema.GetType();
+        MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+
+        foreach (MethodInfo method in methods)
+        {
+            if (method.GetParameters().Length == 0 && method.ReturnType != typeof(void)) // Only invoke parameterless methods with return values
+            {
+                try
+                {
+                    object result = method.Invoke(httpApiSchema, null);
+                    LetheHooks.LOG.LogError($"Method: {method.Name}, Value: {result}");
+                }
+                catch (Exception e)
+                {
+                    LetheHooks.LOG.LogError($"Method: {method.Name}, Value: {e.Message}");
+                }
+            }
         }
     }
 }
