@@ -95,7 +95,7 @@ namespace Lethe.SkillAbility
             }
         }
 
-        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitModel.OnRoundEnd))]
+        /*[HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitModel.OnRoundEnd))]
         [HarmonyPostfix]
         private static void OnRoundEnd(BattleUnitView __instance)
         {
@@ -103,6 +103,6 @@ namespace Lethe.SkillAbility
             var appearanceId = name.Replace("(Clone)", "");
             __instance.ChangeAppearance(appearanceId, true);
             //there is honestly a better way to do this
-        }
+        }*/
     }
 }

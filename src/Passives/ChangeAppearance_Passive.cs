@@ -77,19 +77,5 @@ namespace Lethe.Passives
                 __instance.ChangeAppearance(data.appearance, true);
             }
         }
-        [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.OnRoundEnd))]
-        [HarmonyPostfix]
-        private static void OnRoundEnd(BattleUnitView __instance)
-        {
-            string appearanceID = __instance.unitModel.GetAppearanceID();
-            var success = int.TryParse(appearanceID, out int __what);
-            if (success == true)
-            {
-                LetheHooks.LOG.LogWarning($"NOT A REAL APPEARANCE {appearanceID}");
-                return;
-            } //there are better ways to do this? but whatever
-            __instance.ChangeAppearance(appearanceID, true);
-        }
-
     }
 }

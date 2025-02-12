@@ -173,4 +173,29 @@ public class Skin : MonoBehaviour
         return true;
     }
 
+    [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.OnRoundEnd))]
+    [HarmonyPrefix]
+    private static void OnRoundEnd(BattleUnitView __instance)
+    {
+        string appearanceID = __instance.unitModel?.GetAppearanceID();
+        var success = int.TryParse(appearanceID, out int __what);
+        if (success == true || appearanceID == null)
+        {
+            LetheHooks.LOG.LogWarning($"NOT A REAL APPEARANCE {appearanceID ?? "NULL"}");
+            return;
+        } //there are better ways to do this? but whatever
+        __instance.ChangeAppearance(appearanceID, true);
+    }
+
+    [HarmonyPatch(typeof(BattleUnitView), nameof(BattleUnitView.ChangeAppearance))]
+    [HarmonyPrefix]
+    private static void check_name_err(BattleUnitView __instance, ref string appearanceId)
+    {
+        var check = "Appearance";
+        if (appearanceId.Contains(check))
+        {
+            appearanceId = appearanceId.Substring(0, appearanceId.IndexOf(check) + check.Length);
+        }
+    }
+
 }
