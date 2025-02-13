@@ -34,24 +34,24 @@ public class Request : MonoBehaviour
 
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
     [HarmonyPrefix]
-    public static bool PreSendRequest(HttpApiRequester __instance, NHKJCKGBINH EPOPCLCFHAH)
+    public static bool PreSendRequest(HttpApiRequester __instance, NCIBNHFMPNN INGELIPCNOG)
     {
-        var httpApiSchema = EPOPCLCFHAH;
+        var httpApiSchema = INGELIPCNOG;
         _instance.StartCoroutine(PostWebRequest(__instance, httpApiSchema, false));
         return false;
     }
 
-    public static void EnqueueWebRequest(HttpApiRequester requester, NHKJCKGBINH httpApiSchema, bool isUrgent)
+    public static void EnqueueWebRequest(HttpApiRequester requester, NCIBNHFMPNN httpApiSchema, bool isUrgent)
     {
         _instance.StartCoroutine(PostWebRequest(requester, httpApiSchema, true));
     }
 
-    private static IEnumerator PostWebRequest(HttpApiRequester requester, NHKJCKGBINH httpApiSchema, bool isUrgent)
+    private static IEnumerator PostWebRequest(HttpApiRequester requester, NCIBNHFMPNN httpApiSchema, bool isUrgent)
     {
-        var www = UnityWebRequest.Post(httpApiSchema.GLCKBAANBKG, httpApiSchema.IIDDMEPKBBO);
+        var www = UnityWebRequest.Post(httpApiSchema.PEDEKMKJFAB, httpApiSchema.OLKNGBDMFDF);
         try
         {
-            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.IIDDMEPKBBO);
+            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.OLKNGBDMFDF);
             www.uploadHandler.Dispose();
             www.uploadHandler = new UploadHandlerRaw(bytes);
             www.SetRequestHeader("Content-Type", "application/json");
@@ -71,7 +71,7 @@ public class Request : MonoBehaviour
             }
             else
             {
-                httpApiSchema.OOAEPJDLCFP.Invoke(www.downloadHandler.text);
+                httpApiSchema.PNLOMEPPADK.Invoke(www.downloadHandler.text);
             }
         }
         finally
@@ -80,7 +80,7 @@ public class Request : MonoBehaviour
         }
     }
 
-    private static void PrintAllMethodValues(NHKJCKGBINH httpApiSchema)
+    private static void PrintAllMethodValues(NCIBNHFMPNN httpApiSchema)
     {
         Type type = httpApiSchema.GetType();
         MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
