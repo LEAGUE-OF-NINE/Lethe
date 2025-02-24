@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using HarmonyLib;
 using Il2CppSystem.IO;
+using MainUI;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 using Utils;
@@ -19,10 +20,27 @@ namespace Lethe.Patches
             harmony.PatchAll(typeof(Encounters));
         }
 
+        private static void AddLegacyPlayground()
+        {
+            var subchapterJSON = @"{""id"":5858,""illustSprName"":"""",""sprName"":""chapter0"",""subChapterNumber"":""1"",""mapSizeRow"":0,""mapSizeColoumn"":0,""region"":""p"",""unlockCondition"":{""mainChapterId"":0,""subChapterId"":0,""nodeId"":0,""unlockCode"":101},""stageNodeList"":[{""nodeId"":696901,""stageId"":6006583,""posx"":0,""posy"":0,""nodeIllustIdString"":"""",""unlockCondition"":{""mainChapterId"":0,""subChapterId"":0,""nodeId"":0,""unlockCode"":101,""possession"":{""type"":"""",""id"":0,""num"":0,""tags"":[]}},""upper"":0,""stageNodeType"":""NORMAL""}],""nextMainchapterid"":101,""nextSubchapterid"":102,""lastnodeid"":0,""nodeIconPath"":""""}";
+            var subchapterUIJSON = @"{""chapterId"":91,""subchapterId"":5858,""nodeId"":696901,""storyIdInTheaterData"":0,""isUnlockByUnlockCode"":false,""unlockCode"":101,""relatedData"":{""chapterId"":0,""subchapterId"":0,""nodeId"":0},""uiConfig"":{""customChapterText"":""1"",""chapterTagIconType"":""BATTLE"",""region"":""p"",""mapAreaId"":101,""timeLine"":""PLAYGROUND"",""illustId"":""story-id_E041X""},""type"":""STAGE_NODE""}";
+
+
+            var subchapter = JsonUtility.FromJson<SubChapterData>(subchapterJSON);
+            var subchapterUI = JsonUtility.FromJson<SubchapterUIDataInPart>(subchapterUIJSON);
+
+            StaticDataManager.Instance._partList.GetPart(2).subchapterList.Insert(0, subchapter);
+            StaticDataManager.Instance._partList.GetPart(2).subchapterUIList.Insert(0, subchapterUI);
+
+            LetheHooks.LOG.LogWarning($"ADDED PLAYGROUND");
+        }
+
         [HarmonyPatch(typeof(PartStaticDataList), nameof(PartStaticDataList.Init))]
         [HarmonyPostfix]
         private static void PostMainUILoad()
         {
+            InitPartTwoData();
+            AddLegacyPlayground();
             encounterPaths.Clear();
             StageIdToFolderPath.Clear();
 
@@ -41,7 +59,6 @@ namespace Lethe.Patches
             // Adding the encounters dynamically
             AddEncounters();
         }
-
         private static void IndexStageNodeIds(string encounterFolder)
         {
             try
@@ -74,7 +91,6 @@ namespace Lethe.Patches
                 LetheHooks.LOG.LogError($"Failed to index stageNodeIds for encounter folder {encounterFolder}: {e.Message}");
             }
         }
-
         private static void AddEncounters()
         {
             foreach (var encounterFolder in encounterPaths)
@@ -105,8 +121,8 @@ namespace Lethe.Patches
                         encounterData.story.exit = null;
 
                         // Insert the parsed subchapter and subchapterUI at the start of the list
-                        StaticDataManager.Instance._partList.GetPart(1).subchapterList.Insert(0, subchapterData);
-                        StaticDataManager.Instance._partList.GetPart(1).subchapterUIList.Insert(0, subchapterUIData);
+                        StaticDataManager.Instance._partList.GetPart(2).subchapterList.Insert(0, subchapterData);
+                        StaticDataManager.Instance._partList.GetPart(2).subchapterUIList.Insert(0, subchapterUIData);
 
                         LetheHooks.LOG.LogWarning($"ADDED ENCOUNTER FROM {encounterFolder}");
                     }
@@ -122,6 +138,36 @@ namespace Lethe.Patches
             }
         }
 
+        private static void InitPartTwoData()
+        {
+            string jsonTemplate = @"
+            {
+                ""id"": 2,
+                ""sprName"": ""Part1"",
+                ""subchapterList"": [],
+                ""subchapterUIList"": []
+            }";
+            PartStaticData newPartData = JsonUtility.FromJson<PartStaticData>(jsonTemplate);
+
+            StaticDataManager.Instance._partList.list.Add(newPartData);
+        }
+
+        [HarmonyPatch(typeof(LobbyUIPresenter), nameof(LobbyUIPresenter.Initialize))]
+        [HarmonyPostfix]
+        private static void InitStageLocale()
+        {
+            TextData_StagePart text = new()
+            {
+                parttitle = "Lethe",
+            };
+            TextDataManager.Instance._stagePart._dic.AddOrReplace("part_2", text);
+
+            TextData_StageText text2 = new()
+            {
+                title = "Playground"
+            };
+            TextDataManager.Instance._stageNodeText._dic.AddOrReplace("696901", text2);
+        }
         private static SubChapterData GenerateSubchapterData(SubchapterUIDataInPart subchapterUIData)
         {
             string jsonTemplate = @"
