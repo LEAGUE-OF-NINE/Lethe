@@ -34,24 +34,31 @@ public class Request : MonoBehaviour
 
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
     [HarmonyPrefix]
-    public static bool PreSendRequest(HttpApiRequester __instance, MJOHKKGMGJJ EBKBNKFIBAE)
+    public static bool PreSendRequest(HttpApiRequester __instance, AFLIEJOFBKH BABHCIOOFPN)
     {
-        var httpApiSchema = EBKBNKFIBAE;
+        var httpApiSchema = BABHCIOOFPN;
         _instance.StartCoroutine(PostWebRequest(__instance, httpApiSchema, false));
         return false;
     }
 
-    public static void EnqueueWebRequest(HttpApiRequester requester, MJOHKKGMGJJ httpApiSchema, bool isUrgent)
+    public static void EnqueueWebRequest(HttpApiRequester requester, AFLIEJOFBKH httpApiSchema, bool isUrgent)
     {
         _instance.StartCoroutine(PostWebRequest(requester, httpApiSchema, true));
     }
 
-    private static IEnumerator PostWebRequest(HttpApiRequester requester, MJOHKKGMGJJ httpApiSchema, bool isUrgent)
+    private static IEnumerator PostWebRequest(HttpApiRequester requester, AFLIEJOFBKH httpApiSchema, bool isUrgent)
     {
-        var www = UnityWebRequest.Post(httpApiSchema.KNENIEFHIMH, httpApiSchema.DDBLBAKGOLO);
+        // LetheHooks.LOG.LogInfo($"1. {httpApiSchema.BELCPJHNLLO}");
+        // LetheHooks.LOG.LogInfo($"2. {httpApiSchema.DHPAJPEFJHK}");
+        // LetheHooks.LOG.LogInfo($"3. {httpApiSchema.FDGIANDOOCL}");
+        // LetheHooks.LOG.LogInfo($"4. {httpApiSchema.FNKENFLDGAN}");
+        // LetheHooks.LOG.LogInfo($"5. {httpApiSchema.JNFBHCCPJFL}");
+        // LetheHooks.LOG.LogInfo($"6. {httpApiSchema.IFFAGHGDBJE}");
+        
+        var www = UnityWebRequest.Post(httpApiSchema.BELCPJHNLLO, httpApiSchema.JNFBHCCPJFL);
         try
         {
-            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.DDBLBAKGOLO);
+            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.JNFBHCCPJFL);
             www.uploadHandler.Dispose();
             www.uploadHandler = new UploadHandlerRaw(bytes);
             www.SetRequestHeader("Content-Type", "application/json");
@@ -71,7 +78,8 @@ public class Request : MonoBehaviour
             }
             else
             {
-                httpApiSchema.NBIJHGPDHMP.Invoke(www.downloadHandler.text);
+                // LetheHooks.LOG.LogInfo($"Response: {www.downloadHandler.text}");
+                httpApiSchema.KFDPJHOGOBK.Invoke(www.downloadHandler.text);
             }
         }
         finally
@@ -80,7 +88,7 @@ public class Request : MonoBehaviour
         }
     }
 
-    private static void PrintAllMethodValues(MJOHKKGMGJJ httpApiSchema)
+    private static void PrintAllMethodValues(AFLIEJOFBKH httpApiSchema)
     {
         Type type = httpApiSchema.GetType();
         MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
