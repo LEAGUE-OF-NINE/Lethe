@@ -1,4 +1,5 @@
 using System;
+using BepInEx;
 using HarmonyLib;
 using Il2CppSystem.Collections.Generic;
 using Il2CppSystem.IO;
@@ -9,6 +10,7 @@ using SimpleJSON;
 using Steamworks;
 using UnhollowerRuntimeLib;
 using UnityEngine;
+using Utils;
 
 namespace Lethe.Patches;
 
@@ -16,36 +18,11 @@ public class Login : Il2CppSystem.Object
 {
 
     public static readonly System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> StaticData = new();
-
+    
     public static void Setup(Harmony harmony)
     {
         ClassInjector.RegisterTypeInIl2Cpp<Login>();
         harmony.PatchAll(typeof(Login));
-    }
-
-    [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.OnInitLoginInfoManagerEnd))]
-    [HarmonyPostfix]
-    private static void OnInitLoginInfoManagerEnd()
-    {
-        GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>(true);
-
-        foreach (GameObject obj in allObjects)
-        {
-            if (obj.name == "[Image]BG")
-            {
-                obj.SetActive(true);
-                break;
-            }
-        }
-
-        foreach (GameObject obj in allObjects)
-        {
-            if (obj.name == "[Image]Catchphrase")
-            {
-                obj.SetActive(false);
-                break;
-            }
-        }
     }
 
     [HarmonyPatch(typeof(LoginSceneManager), nameof(LoginSceneManager.OnClickGameStartButton))]
@@ -57,7 +34,7 @@ public class Login : Il2CppSystem.Object
         {
             return true;
         }
-
+        
         GlobalGameManager.Instance.OpenGlobalPopup("Lethe is still trying to sign in from your browser.");
         return false;
     }
@@ -86,7 +63,7 @@ public class Login : Il2CppSystem.Object
         SingletonBehavior<LoginInfoManager>.Instance._currentAccountType = ACCOUNT_TYPE.STEAM;
         PostSetLoginInfo(__instance);
     }
-
+   
     [HarmonyPatch(typeof(LoginInfoManager), nameof(LoginInfoManager.ProviderLogin_Steam))]
     [HarmonyPrefix]
     private static bool PreSignInLimbusSteam()
@@ -103,7 +80,7 @@ public class Login : Il2CppSystem.Object
         LetheHooks.LOG.LogInfo("SteamClient init intercepted");
         return false;
     }
-
+   
     [HarmonyPatch(typeof(ISteamUser), nameof(ISteamUser.GetSteamID))]
     [HarmonyPrefix]
     private static bool GetSteamID(ref SteamId __result)
@@ -116,7 +93,7 @@ public class Login : Il2CppSystem.Object
         };
         return false;
     }
-
+   
     [HarmonyPatch(typeof(StaticDataManager), nameof(StaticDataManager.LoadStaticDataFromJsonFile))]
     [HarmonyPrefix]
     private static void PreLoadStaticDataFromJsonFile(StaticDataManager __instance, string dataClass,
@@ -138,7 +115,7 @@ public class Login : Il2CppSystem.Object
             var expectedPath = Path.Combine(modPath, "custom_limbus_data", dataClass);
             if (!Directory.Exists(expectedPath)) continue;
 
-            foreach (var customData in Directory.GetFiles(expectedPath, "*.json", SearchOption.AllDirectories))
+            foreach(var customData in Directory.GetFiles(expectedPath, "*.json", SearchOption.AllDirectories))
             {
                 LetheHooks.LOG.LogInfo($"loading file from {customData.Substring(LetheMain.modsPath.FullPath.Length)}");
                 try
@@ -156,17 +133,16 @@ public class Login : Il2CppSystem.Object
         }
 
 
-        try
-        {
-            var url = Singleton<ServerSelector>.Instance.GetServerURL() + "/custom/upload/" + dataClass;
+        try {
+            var url = LetheMain.ConfigServer.Value + "/custom/upload/" + dataClass;
             var auth = SingletonBehavior<LoginInfoManager>.Instance.UserAuth.ToServerUserAuthFormat();
             var body = new JSONObject();
             var subNode = new JSONObject();
             subNode.Add("list", customDataList);
             body.Add("parameters", subNode);
             body.Add("userAuth", JSONNode.Parse(JsonUtility.ToJson(auth)));
-            var schema = new AFLIEJOFBKH(url, body.ToString(2), new Action<string>(_ => { }), "", false);
-            Request.EnqueueWebRequest(HttpApiRequester.JIJJOELHKFJ, schema, true);
+            var schema = new OELBAABNGHJ(url, body.ToString(2), new Action<string>(_ => { }), "", false);
+            Request.EnqueueWebRequest(HttpApiRequester.OBJNCFDLJHP, schema, true);
         }
         catch (Exception ex)
         {

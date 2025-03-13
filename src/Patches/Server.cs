@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using HarmonyLib;
 using Il2CppSystem.Text;
 using Server;
@@ -15,22 +17,6 @@ public class Server : Il2CppSystem.Object
     {
         ClassInjector.RegisterTypeInIl2Cpp<Server>();
         harmony.PatchAll(typeof(Server));
-    }
-
-    [HarmonyPatch(typeof(ServerSelector), nameof(ServerSelector.GetServerURL))]
-    [HarmonyPostfix]
-    private static void ServerSelector_GetServerURL(ServerSelector __instance, ref string __result)
-    {
-        var serverURL = LetheMain.ConfigServer.Value;
-        if (!string.IsNullOrEmpty(serverURL)) __result = serverURL;
-    }
-
-    [HarmonyPatch(typeof(ServerSelector), nameof(ServerSelector.GetBattleLogServerURL))]
-    [HarmonyPrefix]
-    private static bool ServerSelector_GetServerURL(ref string __result)
-    {
-        __result = "https://battlelog.lethlc.site/";
-        return false;
     }
 
     [HarmonyPatch(typeof(SteamUser), nameof(SteamUser.GetAuthSessionTicket))]
