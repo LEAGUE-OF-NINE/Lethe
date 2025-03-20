@@ -34,24 +34,24 @@ public class Request : MonoBehaviour
 
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
     [HarmonyPrefix]
-    public static bool PreSendRequest(HttpApiRequester __instance, OELBAABNGHJ DPCPBEACDAC)
+    public static bool PreSendRequest(HttpApiRequester __instance, BICKBFMOOPP JELMPDDPMGH)
     {
-        var httpApiSchema = DPCPBEACDAC;
+        var httpApiSchema = JELMPDDPMGH;
         _instance.StartCoroutine(PostWebRequest(__instance, httpApiSchema, false));
         return false;
     }
 
-    public static void EnqueueWebRequest(HttpApiRequester requester, OELBAABNGHJ httpApiSchema, bool isUrgent)
+    public static void EnqueueWebRequest(HttpApiRequester requester, BICKBFMOOPP httpApiSchema, bool isUrgent)
     {
         _instance.StartCoroutine(PostWebRequest(requester, httpApiSchema, true));
     }
 
-    private static IEnumerator PostWebRequest(HttpApiRequester requester, OELBAABNGHJ httpApiSchema, bool isUrgent)
+    private static IEnumerator PostWebRequest(HttpApiRequester requester, BICKBFMOOPP httpApiSchema, bool isUrgent)
     {        
-        var www = UnityWebRequest.Post(httpApiSchema.LBLNOEEBBHB, httpApiSchema.NLGGIIMCNAI);
+        var www = UnityWebRequest.Post(httpApiSchema.HHKFCKPGHBD, httpApiSchema.DCLPOAKNOBD);
         try
         {
-            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.NLGGIIMCNAI);
+            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.DCLPOAKNOBD);
             www.uploadHandler.Dispose();
             www.uploadHandler = new UploadHandlerRaw(bytes);
             www.SetRequestHeader("Content-Type", "application/json");
@@ -72,7 +72,7 @@ public class Request : MonoBehaviour
             else
             {
                 // LetheHooks.LOG.LogInfo($"Response: {www.downloadHandler.text}");
-                httpApiSchema.AAFGMNNIKOD.Invoke(www.downloadHandler.text);
+                httpApiSchema.KLFFCDBJLMM.Invoke(www.downloadHandler.text);
             }
         }
         finally
@@ -81,7 +81,7 @@ public class Request : MonoBehaviour
         }
     }
 
-    private static void PrintAllMethodValues(OELBAABNGHJ httpApiSchema)
+    private static void PrintAllMethodValues(BICKBFMOOPP httpApiSchema)
     {
         Type type = httpApiSchema.GetType();
         MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
