@@ -5,7 +5,7 @@ using UnhollowerRuntimeLib;
 
 namespace Lethe.Patches;
 
-public class Stage
+public class Stage : Il2CppSystem.Object
 {
 
     public static void Setup(Harmony harmony)
@@ -22,13 +22,13 @@ public class Stage
         var tag = "assistant_";
         var pattern = @"^assistant_(\d+)_(\d+)_(\d+)$"; 
         var stageScriptList = stageinfo.stageScriptList;
-        foreach (string stageScript_string in stageScriptList)
+        foreach (var stageScriptString in stageScriptList)
         {
-            if (!stageScript_string.StartsWith(tag)) continue;
-            var match = Regex.Match(stageScript_string, pattern);
+            if (!stageScriptString.StartsWith(tag)) continue;
+            var match = Regex.Match(stageScriptString, pattern);
             if (!match.Success)
             {
-                LetheHooks.LOG.LogWarning($"Lethe recognized stage script {stageScript_string}, but script name seems malformed?");
+                LetheHooks.LOG.LogWarning($"Lethe recognized stage script {stageScriptString}, but script name seems malformed?");
                 continue;
             }
             var id = int.Parse(match.Groups[1].Value);
@@ -37,7 +37,6 @@ public class Stage
             var seed = (int) Stopwatch.GetTimestamp();
             SingletonBehavior<BattleObjectManager>.Instance.CreateAssistantUnit(id, level, uptie, seed);
         }
-
     }
 
    
