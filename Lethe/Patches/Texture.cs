@@ -95,6 +95,45 @@ public class Texture : Il2CppSystem.Object
         return false;
     }
 
+    //[HarmonyPatch(typeof(BuffKeywordToolTipUI), nameof(BuffKeywordToolTipUI.SetData))]
+    //[HarmonyPostfix]
+    //private static void SetData(BuffKeywordToolTipUI __instance, BUFF_UNIQUE_KEYWORD keyword)
+    //{
+    //    Sprite customSprite = LoadSpriteFromFile("buffIcon_" + keyword.ToString());
+    //    if (customSprite != null)
+    //    {
+    //        __instance._keywordIconImage.sprite = customSprite;
+    //        __instance._keywordIconImage.gameObject.SetActive(true);
+    //    }
+    //}
+
+
+    [HarmonyPatch(typeof(BuffStaticData), nameof(GetBuffIconSprite))]
+    [HarmonyPrefix]
+    private static bool GetBuffIconSprite(BuffStaticData __instance, ref Sprite __result)
+    {
+        Sprite sprite = LoadSpriteFromFile("buffIcon_" + __instance.GetBuffIconID());
+        if (sprite == null)
+        {
+            return true;
+        }
+        __result = sprite;
+        return false;
+    }
+
+    [HarmonyPatch(typeof(BuffStaticData), nameof(GetBuffTypoIconSprite))]
+    [HarmonyPrefix]
+    private static bool GetBuffTypoIconSprite(BuffStaticData __instance, ref Sprite __result)
+    {
+        Sprite sprite = LoadSpriteFromFile("buffIcon_" + __instance.GetBuffIconID());
+        if (sprite == null)
+        {
+            return true;
+        }
+        __result = sprite;
+        return false;
+    }
+
     [HarmonyPatch(typeof(SkillModel), nameof(SkillModel.GetSkillSprite))]
     [HarmonyPrefix]
     private static bool GetSkillSprite(SkillModel __instance, ref Sprite __result)
