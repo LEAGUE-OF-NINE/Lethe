@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <PlatformTarget>x64</PlatformTarget>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+    <DebugSymbols>true</DebugSymbols>
+    <LangVersion>10.0</LangVersion>
+    <IsPublishable>True</IsPublishable>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Platforms>x64</Platforms>
+    <Configurations>BIE</Configurations>
+    <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
+    <OutputPath>.\Release</OutputPath>
+    <NoWarn>1701;1702;2211;CA2211;IDE1006;IDE0060</NoWarn>
+    <DebugType>none</DebugType>
+    <RootNamespace>Lethe</RootNamespace>
+    <AssemblyName>Lethe</AssemblyName>
+    <Product>Lethe</Product>
+    <Version>1.0.9</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json;
+      https://nuget.samboy.dev/v3/index.json
+    </RestoreAdditionalProjectSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.*" IncludeAssets="compile" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+  </ItemGroup>
+
+  <!-- ~~~~~ NUGET ~~~~~ -->
+  <ItemGroup>
+    <PackageReference Include="AssetsTools.NET" Version="3.0.0" />
+    <PackageReference Include="SharpCompress" Version="0.38.0" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34" />
+  </ItemGroup>
+
+  <!-- ~~~~~ ASSEMBLY REFERENCES ~~~~~ -->
+  <!-- BepinEx -->
+  <ItemGroup>
+    <Reference Include="System.Runtime" />
+    <Reference Include="$(LimbusCompanyFolder)\BepInEx\core\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(LimbusCompanyFolder)\BepInEx\interop\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(LimbusCompanyFolder)\mono\Managed\*.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="CopyFile" AfterTargets="build">
+    <Message Text="Repacking libraries..." Importance="high" />
+    <ItemGroup>
+      <InputAssemblies Include="$(OutputPath)$(AssemblyName).dll" />
+      <InputAssemblies Include="$(OutputPath)AssetsTools.NET.dll" />
+      <InputAssemblies Include="$(OutputPath)SharpCompress.dll" />
+    </ItemGroup>
+    <ILRepack AllowDuplicateResources="false" DebugInfo="true" LibraryPath="$(LimbusCompanyFolder)\BepInEx\core\" InputAssemblies="@(InputAssemblies)" OutputFile="$(OutputPath)Merged.dll" Parallel="true" TargetKind="SameAsPrimaryAssembly" />
+    <Message Text="Copying BIE files..." Importance="high" />
+    <Copy SourceFiles="$(OutputPath)Merged.dll" DestinationFiles="$(LimbusCompanyFolder)\BepInEx\plugins\Lethe.dll" />
+  </Target>
+</Project>
