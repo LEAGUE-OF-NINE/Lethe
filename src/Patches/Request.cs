@@ -34,24 +34,24 @@ public class Request : MonoBehaviour
 
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
     [HarmonyPrefix]
-    public static bool PreSendRequest(HttpApiRequester __instance, BICKBFMOOPP JELMPDDPMGH)
+    public static bool PreSendRequest(HttpApiRequester __instance, ObjectPublicStHHDCStDeNDBoBPDaOFUnique param_1)
     {
-        var httpApiSchema = JELMPDDPMGH;
-        _instance.StartCoroutine(PostWebRequest(__instance, httpApiSchema, false));
+        _instance.StartCoroutine(PostWebRequest(__instance, param_1, false));
         return false;
     }
 
-    public static void EnqueueWebRequest(HttpApiRequester requester, BICKBFMOOPP httpApiSchema, bool isUrgent)
+    public static void EnqueueWebRequest(HttpApiRequester requester, ObjectPublicStHHDCStDeNDBoBPDaOFUnique httpApiSchema, bool isUrgent)
     {
         _instance.StartCoroutine(PostWebRequest(requester, httpApiSchema, true));
     }
 
-    private static IEnumerator PostWebRequest(HttpApiRequester requester, BICKBFMOOPP httpApiSchema, bool isUrgent)
-    {        
-        var www = UnityWebRequest.Post(httpApiSchema.HHKFCKPGHBD, httpApiSchema.DCLPOAKNOBD);
+    private static IEnumerator PostWebRequest(HttpApiRequester requester, ObjectPublicStHHDCStDeNDBoBPDaOFUnique httpApiSchema, bool isUrgent)
+    {
+        var url = ReplaceDomain(httpApiSchema.prop_String_0, LetheMain.ConfigServer.Value);
+        var www = UnityWebRequest.Post(url, httpApiSchema.prop_String_1);
         try
         {
-            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.DCLPOAKNOBD);
+            var bytes = Encoding.UTF8.GetBytes(httpApiSchema.prop_String_1);
             www.uploadHandler.Dispose();
             www.uploadHandler = new UploadHandlerRaw(bytes);
             www.SetRequestHeader("Content-Type", "application/json");
@@ -72,7 +72,7 @@ public class Request : MonoBehaviour
             else
             {
                 // LetheHooks.LOG.LogInfo($"Response: {www.downloadHandler.text}");
-                httpApiSchema.KLFFCDBJLMM.Invoke(www.downloadHandler.text);
+                httpApiSchema.prop_DelegateEventString_0.Invoke(www.downloadHandler.text);
             }
         }
         finally
@@ -80,8 +80,20 @@ public class Request : MonoBehaviour
             www.Dispose();
         }
     }
+   
+    static string ReplaceDomain(string originalUrl, string newHost)
+    {
+        Uri uri = new Uri(originalUrl);
+        Uri target = new Uri(newHost);
+        UriBuilder uriBuilder = new UriBuilder(uri)
+        {
+            Host = target.Host,
+            Scheme = target.Scheme
+        };
+        return uriBuilder.ToString();
+    }
 
-    private static void PrintAllMethodValues(BICKBFMOOPP httpApiSchema)
+    private static void PrintAllMethodValues(ObjectPublicStHHDCStDeNDBoBPDaOFUnique httpApiSchema)
     {
         Type type = httpApiSchema.GetType();
         MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
