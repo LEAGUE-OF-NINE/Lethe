@@ -34,18 +34,18 @@ public class Request : MonoBehaviour
 
     [HarmonyPatch(typeof(HttpApiRequester), nameof(HttpApiRequester.AddRequest))]
     [HarmonyPrefix]
-    public static bool PreSendRequest(HttpApiRequester __instance, ObjectPublicStHHDCStDeNDBoBPDaOFUnique param_1)
+    public static bool PreSendRequest(HttpApiRequester __instance, ObjectPublicStPEMPStDeAABoBIDaFFUnique param_1)
     {
         _instance.StartCoroutine(PostWebRequest(__instance, param_1, false));
         return false;
     }
 
-    public static void EnqueueWebRequest(HttpApiRequester requester, ObjectPublicStHHDCStDeNDBoBPDaOFUnique httpApiSchema, bool isUrgent)
+    public static void EnqueueWebRequest(HttpApiRequester requester, ObjectPublicStPEMPStDeAABoBIDaFFUnique httpApiSchema, bool isUrgent)
     {
         _instance.StartCoroutine(PostWebRequest(requester, httpApiSchema, true));
     }
 
-    private static IEnumerator PostWebRequest(HttpApiRequester requester, ObjectPublicStHHDCStDeNDBoBPDaOFUnique httpApiSchema, bool isUrgent)
+    private static IEnumerator PostWebRequest(HttpApiRequester requester, ObjectPublicStPEMPStDeAABoBIDaFFUnique httpApiSchema, bool isUrgent)
     {
         var url = ReplaceDomain(httpApiSchema.prop_String_0, LetheMain.ConfigServer.Value);
         var www = UnityWebRequest.Post(url, httpApiSchema.prop_String_1);
@@ -93,7 +93,7 @@ public class Request : MonoBehaviour
         return uriBuilder.ToString();
     }
 
-    private static void PrintAllMethodValues(ObjectPublicStHHDCStDeNDBoBPDaOFUnique httpApiSchema)
+    private static void PrintAllMethodValues(ObjectPublicStPEMPStDeAABoBIDaFFUnique httpApiSchema)
     {
         Type type = httpApiSchema.GetType();
         MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);

@@ -141,7 +141,7 @@ public class Login : Il2CppSystem.Object
             subNode.Add("list", customDataList);
             body.Add("parameters", subNode);
             body.Add("userAuth", JSONNode.Parse(JsonUtility.ToJson(auth)));
-            var schema = new ObjectPublicStHHDCStDeNDBoBPDaOFUnique(url, body.ToString(2), new Action<string>(_ => { }), "", false);
+            var schema = new ObjectPublicStPEMPStDeAABoBIDaFFUnique(url, body.ToString(2), new Action<string>(_ => { }), "", false);
             Request.EnqueueWebRequest(HttpApiRequester.prop_HttpApiRequester_0, schema, true);
         }
         catch (Exception ex)
