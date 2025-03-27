@@ -38,7 +38,7 @@ namespace Lethe.SkillAbility
                 int coinIdx;
                 if (__instance._battleUnitView.GetSkillViewer(skillID) != null)
                 {
-                    coinIdx = __instance._battleUnitView.GetSkillViewer(skillID).curCoinIndex;
+                    coinIdx = __instance._battleUnitView.GetSkillViewer(skillID).CurCoinLogIndex;
                 }
                 else return;
                 var gacksungLv = behavior._gaksungLevel;
