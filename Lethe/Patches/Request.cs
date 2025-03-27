@@ -48,7 +48,8 @@ public class Request : MonoBehaviour
 
     private static IEnumerator PostWebRequest(HttpApiRequester requester, JIMKEFOFIME httpApiSchema, bool isUrgent)
     {
-        var www = UnityWebRequest.Post(httpApiSchema.PECNGBJOINB, httpApiSchema.MPDJBIGJIDI);
+        var url = ReplaceDomain(httpApiSchema.PECNGBJOINB, LetheMain.ConfigServer.Value);
+        var www = UnityWebRequest.Post(url, httpApiSchema.MPDJBIGJIDI);
         try
         {
             var bytes = Encoding.UTF8.GetBytes(httpApiSchema.MPDJBIGJIDI);
@@ -79,6 +80,18 @@ public class Request : MonoBehaviour
         {
             www.Dispose();
         }
+    }
+
+    static string ReplaceDomain(string originalUrl, string newHost)
+    {
+        Uri uri = new Uri(originalUrl);
+        Uri target = new Uri(newHost);
+        UriBuilder uriBuilder = new UriBuilder(uri)
+        {
+            Host = target.Host,
+            Scheme = target.Scheme
+        };
+        return uriBuilder.ToString();
     }
 
     private static void PrintAllMethodValues(JIMKEFOFIME  httpApiSchema)
